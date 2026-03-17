@@ -1,10 +1,3 @@
-//
-//  GardenViewModelTests.swift
-//  MoodGardenTests
-//
-//  Created by Daisuke Ooba on 2026/03/17.
-//
-
 import Foundation
 import SwiftData
 import Testing
@@ -13,25 +6,25 @@ import Testing
 
 @MainActor
 struct GardenViewModelTests {
-    private func makeViewModel() throws -> GardenViewModel {
-        let container = try ModelContainer(
-            for: MoodEntry.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
-        let context = container.mainContext
-        return GardenViewModel(modelContext: context)
-    }
 
     @Test
     func initiallyEmptyEntries() throws {
-        let viewModel = try makeViewModel()
+        let container = try ModelContainer(
+            for: MoodEntry.self, MonthlyGarden.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        let viewModel = GardenViewModel(modelContext: container.mainContext)
         viewModel.fetchEntries()
         #expect(viewModel.currentMonthEntries.isEmpty)
     }
 
     @Test
     func recordMoodIncreasesEntries() throws {
-        let viewModel = try makeViewModel()
+        let container = try ModelContainer(
+            for: MoodEntry.self, MonthlyGarden.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        let viewModel = GardenViewModel(modelContext: container.mainContext)
         viewModel.fetchEntries()
         #expect(viewModel.currentMonthEntries.isEmpty)
 
@@ -42,7 +35,11 @@ struct GardenViewModelTests {
 
     @Test
     func hasTodayEntryAfterRecording() throws {
-        let viewModel = try makeViewModel()
+        let container = try ModelContainer(
+            for: MoodEntry.self, MonthlyGarden.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        let viewModel = GardenViewModel(modelContext: container.mainContext)
         #expect(!viewModel.hasTodayEntry)
 
         viewModel.recordMood(.peaceful)
@@ -51,7 +48,11 @@ struct GardenViewModelTests {
 
     @Test
     func recordTwiceSameDayResultsInTwoEntries() throws {
-        let viewModel = try makeViewModel()
+        let container = try ModelContainer(
+            for: MoodEntry.self, MonthlyGarden.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        let viewModel = GardenViewModel(modelContext: container.mainContext)
         viewModel.recordMood(.happy)
         viewModel.recordMood(.sad)
         #expect(viewModel.currentMonthEntries.count == 2)
@@ -61,16 +62,14 @@ struct GardenViewModelTests {
     @Test
     func fetchEntriesOnlyReturnsCurrentMonth() throws {
         let container = try ModelContainer(
-            for: MoodEntry.self,
+            for: MoodEntry.self, MonthlyGarden.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         let context = container.mainContext
         let viewModel = GardenViewModel(modelContext: context)
 
-        // Insert an entry for the current month
         viewModel.recordMood(.energetic)
 
-        // Insert an entry for a previous month directly into the context
         let calendar = Calendar.current
         let lastMonth = calendar.date(byAdding: .month, value: -1, to: Date())!
         let oldEntry = MoodEntry(mood: .tired, date: lastMonth)
