@@ -44,6 +44,6 @@ class GardenViewModel {
     func recordMood(_ mood: MoodType) {
         let entry = MoodEntry(mood: mood)
         modelContext.insert(entry)
-        fetchEntries()
+        currentMonthEntries.append(entry)
     }
 }

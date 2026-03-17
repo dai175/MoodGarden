@@ -9,10 +9,7 @@ struct GardenViewModelTests {
 
     @Test
     func initiallyEmptyEntries() throws {
-        let container = try ModelContainer(
-            for: MoodEntry.self, MonthlyGarden.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
+        let container = try TestHelpers.makeModelContainer()
         let viewModel = GardenViewModel(modelContext: container.mainContext)
         viewModel.fetchEntries()
         #expect(viewModel.currentMonthEntries.isEmpty)
@@ -20,10 +17,7 @@ struct GardenViewModelTests {
 
     @Test
     func recordMoodIncreasesEntries() throws {
-        let container = try ModelContainer(
-            for: MoodEntry.self, MonthlyGarden.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
+        let container = try TestHelpers.makeModelContainer()
         let viewModel = GardenViewModel(modelContext: container.mainContext)
         viewModel.fetchEntries()
         #expect(viewModel.currentMonthEntries.isEmpty)
@@ -35,10 +29,7 @@ struct GardenViewModelTests {
 
     @Test
     func hasTodayEntryAfterRecording() throws {
-        let container = try ModelContainer(
-            for: MoodEntry.self, MonthlyGarden.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
+        let container = try TestHelpers.makeModelContainer()
         let viewModel = GardenViewModel(modelContext: container.mainContext)
         #expect(!viewModel.hasTodayEntry)
 
@@ -48,10 +39,7 @@ struct GardenViewModelTests {
 
     @Test
     func recordTwiceSameDayResultsInTwoEntries() throws {
-        let container = try ModelContainer(
-            for: MoodEntry.self, MonthlyGarden.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
+        let container = try TestHelpers.makeModelContainer()
         let viewModel = GardenViewModel(modelContext: container.mainContext)
         viewModel.recordMood(.happy)
         viewModel.recordMood(.sad)
@@ -61,10 +49,7 @@ struct GardenViewModelTests {
 
     @Test
     func fetchEntriesOnlyReturnsCurrentMonth() throws {
-        let container = try ModelContainer(
-            for: MoodEntry.self, MonthlyGarden.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
+        let container = try TestHelpers.makeModelContainer()
         let context = container.mainContext
         let viewModel = GardenViewModel(modelContext: context)
 

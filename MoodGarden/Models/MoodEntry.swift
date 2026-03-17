@@ -21,6 +21,6 @@ final class MoodEntry {
         self.date = Calendar.current.startOfDay(for: date)
         self.mood = mood
         self.gardenSeed = Int.random(in: 0...Int.max)
-        self.createdAt = Date()
+        self.createdAt = date
     }
 }
