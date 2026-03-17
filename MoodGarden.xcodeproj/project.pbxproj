@@ -102,6 +102,8 @@
 				7E8EC4492F697B0000AA72AD /* Sources */,
 				7E8EC44A2F697B0000AA72AD /* Frameworks */,
 				7E8EC44B2F697B0000AA72AD /* Resources */,
+				7E59E8842F698639004F337D /* SwiftLint */,
+				7E59E8852F698646004F337D /* swift-format Check */,
 			);
 			buildRules = (
 			);
@@ -230,6 +232,47 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7E59E8842F698639004F337D /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if command -v swiftlint >/dev/null 2>&1; then\n  swiftlint lint\nelse\n  echo \"warning: SwiftLint is not installed.\"\nfi\n";
+		};
+		7E59E8852F698646004F337D /* swift-format Check */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "swift-format Check";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if command -v swift-format >/dev/null 2>&1; then\n  swift-format lint --recursive MoodGarden\nelse\n  echo \"warning: swift-format is not installed.\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		7E8EC4492F697B0000AA72AD /* Sources */ = {
