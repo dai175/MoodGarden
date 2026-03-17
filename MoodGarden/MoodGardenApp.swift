@@ -5,14 +5,14 @@
 //  Created by Daisuke Ooba on 2026/03/17.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 @main
 struct MoodGardenApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Item.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

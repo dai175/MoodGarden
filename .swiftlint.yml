@@ -1,0 +1,51 @@
+# SwiftLint Configuration for MoodGarden
+# Role: Code quality & bug detection (formatting is handled by swift-format)
+
+# Disabled rules
+# - type_body_length, file_length, function_body_length: SwiftUI body and SpriteKit Scene can be large
+# - nesting: SwiftUI view builders often nest deeply
+# - todo: Allow TODOs during MVP development
+# - opening_brace: Handled by swift-format (avoid conflicts)
+disabled_rules:
+  - type_body_length
+  - file_length
+  - function_body_length
+  - nesting
+  - todo
+  - opening_brace
+
+# Opt-in rules for better code quality
+opt_in_rules:
+  - modifier_order
+  - empty_count
+  - first_where
+  - toggle_bool
+  - flatmap_over_map_reduce
+  - contains_over_filter_count
+  - contains_over_first_not_nil
+  - last_where
+  - sorted_first_last
+  - unavailable_function
+  - unowned_variable_capture
+  - private_over_fileprivate
+
+# Line length (matches swift-format setting)
+line_length:
+  warning: 120
+  error: 200
+  ignores_comments: true
+  ignores_urls: true
+
+# Paths
+included:
+  - MoodGarden
+  - MoodGardenTests
+  - MoodGardenUITests
+
+excluded:
+  - .build
+  - DerivedData
+  - MoodGarden.xcodeproj
+
+# Reporter for Xcode integration
+reporter: xcode

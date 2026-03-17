@@ -21,6 +21,29 @@ xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPh
 
 Requires Xcode 26 with iOS 26 SDK. Deployment target: iOS 26.0. No external package dependencies yet.
 
+## Lint & Format
+
+Code quality and style consistency enforced via SwiftLint (linter) + swift-format (Apple's official formatter).
+
+```bash
+# Install tools
+brew install swiftlint swift-format
+
+# Set up git pre-commit hook
+make setup
+
+# Run linter
+make lint
+
+# Auto-format code
+make format
+
+# Check both (no modifications)
+make check
+```
+
+The pre-commit hook auto-formats staged `.swift` files and blocks commits on SwiftLint errors. If tools are not installed, it shows a warning without blocking.
+
 ## Tech Stack
 
 - **Language:** Swift 6.1+
