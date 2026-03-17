@@ -63,7 +63,7 @@ struct MoodEntryTests {
     @MainActor
     @Test func crudWithInMemoryModelContainer() throws {
         let container = try ModelContainer(
-            for: MoodEntry.self,
+            for: MoodEntry.self, MonthlyGarden.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         let context = container.mainContext
@@ -95,7 +95,7 @@ struct MoodEntryTests {
     @MainActor
     @Test func multipleEntriesPersistedCorrectly() throws {
         let container = try ModelContainer(
-            for: MoodEntry.self,
+            for: MoodEntry.self, MonthlyGarden.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         let context = container.mainContext
@@ -115,7 +115,7 @@ struct MoodEntryTests {
     @MainActor
     @Test func entryDateStoredAndFetchedCorrectly() throws {
         let container = try ModelContainer(
-            for: MoodEntry.self,
+            for: MoodEntry.self, MonthlyGarden.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         let context = container.mainContext

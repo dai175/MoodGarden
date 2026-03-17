@@ -13,6 +13,7 @@ disabled_rules:
   - nesting
   - todo
   - opening_brace
+  - trailing_comma
 
 # Opt-in rules for better code quality
 opt_in_rules:
