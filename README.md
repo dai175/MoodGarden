@@ -20,7 +20,7 @@ Seven moods map to distinct garden elements. The garden does not judge: happy da
 ## Getting Started
 
 ```bash
-git clone https://github.com/focuswave/MoodGarden.git
+git clone https://github.com/dai175/MoodGarden.git
 cd MoodGarden
 
 # Install linter and formatter
