@@ -62,10 +62,7 @@ struct MoodEntryTests {
 
     @MainActor
     @Test func crudWithInMemoryModelContainer() throws {
-        let container = try ModelContainer(
-            for: MoodEntry.self, MonthlyGarden.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
+        let container = try TestHelpers.makeModelContainer()
         let context = container.mainContext
 
         // Create
@@ -94,10 +91,7 @@ struct MoodEntryTests {
 
     @MainActor
     @Test func multipleEntriesPersistedCorrectly() throws {
-        let container = try ModelContainer(
-            for: MoodEntry.self, MonthlyGarden.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
+        let container = try TestHelpers.makeModelContainer()
         let context = container.mainContext
 
         let moods: [MoodType] = [.peaceful, .happy, .energetic, .anxious, .sad, .angry, .tired]
@@ -114,10 +108,7 @@ struct MoodEntryTests {
 
     @MainActor
     @Test func entryDateStoredAndFetchedCorrectly() throws {
-        let container = try ModelContainer(
-            for: MoodEntry.self, MonthlyGarden.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
+        let container = try TestHelpers.makeModelContainer()
         let context = container.mainContext
 
         var components = DateComponents()
