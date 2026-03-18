@@ -31,6 +31,7 @@ struct MoodSelectorView: View {
                 )
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("Record mood")
     }
 
     private var expandedView: some View {

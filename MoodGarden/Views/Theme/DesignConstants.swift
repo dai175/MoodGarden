@@ -18,9 +18,9 @@ enum DesignConstants {
     }
 
     enum Typography {
-        static let monthTitle: Font = .system(size: 18, weight: .thin)
-        static let bodyText: Font = .system(size: 16, weight: .light)
-        static let caption: Font = .system(size: 13, weight: .thin)
+        static let monthTitle: Font = .title3.weight(.thin)
+        static let bodyText: Font = .body.weight(.light)
+        static let caption: Font = .caption.weight(.thin)
     }
 
     enum Layout {
