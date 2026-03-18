@@ -15,8 +15,8 @@ class GardenViewModel {
     private var modelContext: ModelContext
 
     var hasTodayEntry: Bool {
-        let today = Calendar.current.startOfDay(for: Date())
-        return currentMonthEntries.contains { $0.date == today }
+        let today = Calendar.current.component(.day, from: Date())
+        return entriesByDay[today] != nil
     }
 
     init(modelContext: ModelContext) {

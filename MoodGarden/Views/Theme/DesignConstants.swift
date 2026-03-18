@@ -26,6 +26,15 @@ enum DesignConstants {
         static let caption: Font = .caption.weight(.thin)
     }
 
+    enum Formatters {
+        static let monthYear: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMMM yyyy"
+            formatter.locale = Locale.current
+            return formatter
+        }()
+    }
+
     enum Layout {
         static let gridColumns = 7
         static let gridRows = 5

@@ -1,6 +1,6 @@
 import Foundation
 
-struct GardenElementData {
+struct GardenElementData: Equatable {
     let day: Int
     let mood: MoodType
     let seed: Int
