@@ -28,9 +28,6 @@ struct GardenView: View {
             }
             .padding()
         }
-        .onAppear {
-            viewModel.fetchEntries()
-        }
     }
 
     private var monthHeaderView: some View {
@@ -40,9 +37,7 @@ struct GardenView: View {
             } label: {
                 Text(monthName)
                     .font(DesignConstants.Typography.monthTitle)
-                    .foregroundStyle(
-                        DesignConstants.Colors.textPrimary.opacity(DesignConstants.Colors.textOpacity)
-                    )
+                    .foregroundStyle(DesignConstants.Colors.textSubdued)
             }
             .buttonStyle(.plain)
 
@@ -53,9 +48,7 @@ struct GardenView: View {
             } label: {
                 Image(systemName: "gearshape")
                     .font(.system(size: 16))
-                    .foregroundStyle(
-                        DesignConstants.Colors.textPrimary.opacity(DesignConstants.Colors.textOpacity)
-                    )
+                    .foregroundStyle(DesignConstants.Colors.textSubdued)
             }
             .buttonStyle(.plain)
         }
@@ -71,13 +64,12 @@ struct GardenView: View {
     }
 
     private func gardenCell(for day: Int) -> some View {
-        let entry = entryForDay(day)
+        let entry = viewModel.entryForDay(day)
+        let fillColor =
+            entry?.mood.color.opacity(0.6)
+            ?? DesignConstants.Colors.backgroundSecondary.opacity(DesignConstants.Layout.glassOpacity)
         return RoundedRectangle(cornerRadius: DesignConstants.Layout.cornerRadius)
-            .fill(
-                entry != nil
-                    ? entry!.mood.color.opacity(0.6)
-                    : DesignConstants.Colors.backgroundSecondary.opacity(DesignConstants.Layout.glassOpacity)
-            )
+            .fill(fillColor)
             .aspectRatio(1, contentMode: .fit)
             .overlay {
                 if let entry {
@@ -95,24 +87,13 @@ struct GardenView: View {
         .frame(height: 60)
     }
 
-    private func entryForDay(_ day: Int) -> MoodEntry? {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month], from: Date())
-        guard
-            let dayDate = calendar.date(
-                from: DateComponents(
-                    year: components.year, month: components.month, day: day
-                ))
-        else {
-            return nil
-        }
-        let startOfDay = calendar.startOfDay(for: dayDate)
-        return viewModel.currentMonthEntries.first { $0.date == startOfDay }
-    }
-
-    private var monthName: String {
+    private static let monthFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM"
-        return formatter.string(from: Date())
+        return formatter
+    }()
+
+    private var monthName: String {
+        Self.monthFormatter.string(from: Date())
     }
 }

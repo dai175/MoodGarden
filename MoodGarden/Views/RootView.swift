@@ -25,33 +25,19 @@ struct RootView: View {
             }
         }
         .sheet(isPresented: $showArchive) {
-            archivePlaceholder
+            placeholderSheet(title: "Archive")
         }
         .sheet(isPresented: $showSettings) {
-            settingsPlaceholder
+            placeholderSheet(title: "Settings")
         }
     }
 
-    private var archivePlaceholder: some View {
+    private func placeholderSheet(title: String) -> some View {
         ZStack {
             DesignConstants.Colors.backgroundPrimary.ignoresSafeArea()
-            Text("Archive")
+            Text(title)
                 .font(DesignConstants.Typography.monthTitle)
-                .foregroundStyle(
-                    DesignConstants.Colors.textPrimary.opacity(DesignConstants.Colors.textOpacity)
-                )
-        }
-        .presentationDetents([.medium])
-    }
-
-    private var settingsPlaceholder: some View {
-        ZStack {
-            DesignConstants.Colors.backgroundPrimary.ignoresSafeArea()
-            Text("Settings")
-                .font(DesignConstants.Typography.monthTitle)
-                .foregroundStyle(
-                    DesignConstants.Colors.textPrimary.opacity(DesignConstants.Colors.textOpacity)
-                )
+                .foregroundStyle(DesignConstants.Colors.textSubdued)
         }
         .presentationDetents([.medium])
     }
