@@ -12,7 +12,9 @@ struct GardenRenderer {
     ]
 
     func createNode(for data: GardenElementData, cellSize: CGSize) -> SKNode {
-        let element = elementMap[data.mood]!
+        guard let element = elementMap[data.mood] else {
+            return SKNode()
+        }
         let node = element.createNode(seed: data.seed, cellSize: cellSize)
         node.name = "element_day_\(data.day)"
         return node

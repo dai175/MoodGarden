@@ -7,7 +7,6 @@ struct GardenView: View {
     @Binding var showSettings: Bool
 
     @State private var gardenScene = GardenScene()
-    @State private var lastEntryCount = 0
 
     var body: some View {
         ZStack {
@@ -32,8 +31,6 @@ struct GardenView: View {
         }
         .onChange(of: viewModel.currentMonthEntries.count) { oldCount, newCount in
             if newCount == oldCount + 1, let last = viewModel.currentMonthEntries.last {
-                let entries = viewModel.currentMonthEntries.dropLast().map(makeElementData)
-                gardenScene.configure(with: entries)
                 gardenScene.addEntry(makeElementData(from: last), animated: true)
             } else {
                 updateScene()
@@ -67,7 +64,10 @@ struct GardenView: View {
 
     private var gardenSpriteView: some View {
         SpriteView(scene: gardenScene)
-            .aspectRatio(7.0 / 5.0, contentMode: .fit)
+            .aspectRatio(
+                CGFloat(DesignConstants.Layout.gridColumns) / CGFloat(DesignConstants.Layout.gridRows),
+                contentMode: .fit
+            )
             .clipShape(RoundedRectangle(cornerRadius: DesignConstants.Layout.cornerRadius))
     }
 

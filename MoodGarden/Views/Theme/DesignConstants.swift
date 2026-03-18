@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 enum DesignConstants {
 
@@ -9,6 +10,8 @@ enum DesignConstants {
         static let textOpacity: Double = 0.8
         static let textSubdued = textPrimary.opacity(textOpacity)
         static let accent = Color(red: 0.114, green: 0.620, blue: 0.459)  // #1D9E75
+
+        static let backgroundPrimaryUIColor = UIColor(red: 0.039, green: 0.102, blue: 0.071, alpha: 1)
     }
 
     enum Animation {
