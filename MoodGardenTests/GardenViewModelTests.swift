@@ -38,13 +38,13 @@ struct GardenViewModelTests {
     }
 
     @Test
-    func recordTwiceSameDayResultsInTwoEntries() throws {
+    func recordTwiceSameDayIgnoresSecond() throws {
         let container = try TestHelpers.makeModelContainer()
         let viewModel = GardenViewModel(modelContext: container.mainContext)
         viewModel.recordMood(.happy)
         viewModel.recordMood(.sad)
-        #expect(viewModel.currentMonthEntries.count == 2)
-        #expect(viewModel.hasTodayEntry)
+        #expect(viewModel.currentMonthEntries.count == 1)
+        #expect(viewModel.currentMonthEntries.first?.mood == .happy)
     }
 
     @Test

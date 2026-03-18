@@ -42,8 +42,11 @@ class GardenViewModel {
     }
 
     func recordMood(_ mood: MoodType) {
+        guard !hasTodayEntry else { return }
+
         let entry = MoodEntry(mood: mood)
         modelContext.insert(entry)
-        currentMonthEntries.append(entry)
+        fetchEntries()
+        try? modelContext.save()
     }
 }
