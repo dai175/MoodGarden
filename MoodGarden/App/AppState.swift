@@ -18,17 +18,38 @@ class AppState {
     @AppStorage(Keys.lastActiveMonth) private var _lastActiveMonth: Int = 0
 
     var hasCompletedOnboarding: Bool {
-        get { _hasCompletedOnboarding }
-        set { _hasCompletedOnboarding = newValue }
+        get {
+            access(keyPath: \.hasCompletedOnboarding)
+            return _hasCompletedOnboarding
+        }
+        set {
+            withMutation(keyPath: \.hasCompletedOnboarding) {
+                _hasCompletedOnboarding = newValue
+            }
+        }
     }
 
     var lastActiveYear: Int {
-        get { _lastActiveYear }
-        set { _lastActiveYear = newValue }
+        get {
+            access(keyPath: \.lastActiveYear)
+            return _lastActiveYear
+        }
+        set {
+            withMutation(keyPath: \.lastActiveYear) {
+                _lastActiveYear = newValue
+            }
+        }
     }
 
     var lastActiveMonth: Int {
-        get { _lastActiveMonth }
-        set { _lastActiveMonth = newValue }
+        get {
+            access(keyPath: \.lastActiveMonth)
+            return _lastActiveMonth
+        }
+        set {
+            withMutation(keyPath: \.lastActiveMonth) {
+                _lastActiveMonth = newValue
+            }
+        }
     }
 }

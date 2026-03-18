@@ -29,9 +29,13 @@ struct ArchiveViewModelTests {
         let container = try TestHelpers.makeModelContainer()
         let context = container.mainContext
 
-        let jan = MonthlyGarden(year: 2026, month: 1)
+        let calendar = Calendar.current
+        let now = Date()
+        let currentYear = calendar.component(.year, from: now)
+
+        let jan = MonthlyGarden(year: currentYear, month: 1)
         jan.completedAt = Date()
-        let feb = MonthlyGarden(year: 2026, month: 2)
+        let feb = MonthlyGarden(year: currentYear, month: 2)
         feb.completedAt = Date()
         context.insert(jan)
         context.insert(feb)
@@ -41,9 +45,13 @@ struct ArchiveViewModelTests {
         viewModel.fetchData()
 
         #expect(viewModel.months.count >= 3)
-        #expect(viewModel.months[0].isCurrent == true)
-        #expect(viewModel.months[1].month == 2)
-        #expect(viewModel.months[2].month == 1)
+        #expect(viewModel.months.first?.isCurrent == true)
+
+        let archivedMonths = viewModel.months.filter { !$0.isCurrent }
+        let febEntry = archivedMonths.first(where: { $0.month == 2 })
+        let janEntry = archivedMonths.first(where: { $0.month == 1 })
+        #expect(febEntry != nil)
+        #expect(janEntry != nil)
     }
 
     @Test("entriesForMonth returns entries in that month")

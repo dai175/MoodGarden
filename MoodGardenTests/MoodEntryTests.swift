@@ -17,7 +17,6 @@ struct MoodEntryTests {
         let entry = MoodEntry(mood: .happy)
         #expect(entry.mood == .happy)
         #expect(entry.gardenSeed >= 0)
-        #expect(entry.gardenSeed <= Int.max)
     }
 
     @Test func dateIsNormalizedToStartOfDay() {
