@@ -95,11 +95,3 @@ struct ArchiveView: View {
         }
     }
 }
-
-// Temporary placeholder - will be replaced by Task 6
-struct ArchiveDetailView: View {
-    let year: Int
-    let month: Int
-    let entries: [MoodEntry]
-    var body: some View { EmptyView() }
-}
