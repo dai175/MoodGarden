@@ -13,7 +13,7 @@ final class MonthlyGarden {
     var id: UUID
     var year: Int
     var month: Int
-    var snapshotImage: Data?
+    @Attribute(.externalStorage) var snapshotImage: Data?
     var completedAt: Date?
 
     init(year: Int, month: Int) {
