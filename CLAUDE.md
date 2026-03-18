@@ -10,16 +10,16 @@ MoodGarden is an iOS 26+ app that visualizes daily moods as an evolving garden. 
 
 ```bash
 # Build
-xcodebuild -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 16' build
+xcodebuild -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 
 # Run tests (unit + UI)
-xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 16'
+xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 
 # Run a single test
-xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:MoodGardenTests/TestClassName/testMethodName
+xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests/TestClassName/testMethodName
 ```
 
-Requires Xcode 26 with iOS 26 SDK. Deployment target: iOS 26.0. No external package dependencies yet.
+Requires Xcode 26+ with iOS 26 SDK. Deployment target: iOS 26.0+. No external package dependencies yet.
 
 ## Lint & Format
 
@@ -54,11 +54,14 @@ The pre-commit hook auto-formats staged `.swift` files and blocks commits on Swi
 
 ## Architecture
 
-### Planned Structure (per MVP spec)
+### Project Structure
 
 - `App/` - Entry point, app state
 - `Models/` - SwiftData models: `MoodEntry` (date, mood, gardenSeed), `MonthlyGarden` (snapshot), `MoodType` enum (7 moods)
+- `ViewModels/` - MVVM view models: `GardenViewModel`, `ArchiveViewModel`, `SettingsViewModel`
 - `Views/` - SwiftUI screens: Garden (home), MoodSelector, Archive, Settings, Onboarding
+  - `Views/Theme/` - Design constants, color definitions
+  - `Views/Components/` - Reusable components (MoodIcon)
 - `Garden/` - SpriteKit layer: `GardenScene`, `GardenRenderer`, element sprites (moss, flower, rain, fog, wind, grass, leaf), seasonal overlays
 - `Services/` - Notification scheduling, snapshot rendering
 
@@ -91,6 +94,14 @@ Conventional Commits format:
 - **subject:** lowercase, imperative mood, no period
 - **body:** optional. Explain "why" not "what". Blank line after subject. Wrap at 72 chars
 - **footer:** `BREAKING CHANGE: <description>` for breaking changes, `Closes #<number>` for issue refs
+
+## Gotchas
+
+- **`SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`** — all types are implicitly `@MainActor`; no need to annotate manually
+- **`MemberImportVisibility` enabled** — each file must directly `import` modules for types it uses (e.g. `import GameplayKit` if using `GKMersenneTwisterRandomSource`)
+- **`PBXFileSystemSynchronizedRootGroup`** — Xcode auto-syncs files on disk; no need to edit pbxproj when adding/removing files
+- **SwiftData tests** — `ModelContainer` must include ALL `@Model` types in its schema, even if the test only uses one. Keep the container alive in the test scope; if a helper creates it and returns only the context, the container is deallocated and the context crashes (SIGTRAP)
+- **`trailing_comma` SwiftLint rule disabled** — swift-format adds trailing commas, which conflicts with the default SwiftLint rule
 
 ## Reference Documents
 
