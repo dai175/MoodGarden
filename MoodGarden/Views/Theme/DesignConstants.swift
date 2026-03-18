@@ -29,8 +29,7 @@ enum DesignConstants {
     enum Formatters {
         static let monthYear: DateFormatter = {
             let formatter = DateFormatter()
-            formatter.dateFormat = "MMMM yyyy"
-            formatter.locale = Locale.current
+            formatter.setLocalizedDateFormatFromTemplate("MMMM yyyy")
             return formatter
         }()
     }

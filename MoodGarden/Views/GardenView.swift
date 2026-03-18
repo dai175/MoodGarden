@@ -59,6 +59,7 @@ struct GardenView: View {
                     .foregroundStyle(DesignConstants.Colors.textSubdued)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Settings")
         }
     }
 

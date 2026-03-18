@@ -51,12 +51,21 @@ final class SnapshotService {
 
         let snapshotData = renderSnapshot(entries: elementData)
 
-        let garden = MonthlyGarden(year: previousYear, month: previousMonth)
+        let garden: MonthlyGarden
+        if let existing = try? modelContext.fetch(descriptor).first {
+            garden = existing
+        } else {
+            garden = MonthlyGarden(year: previousYear, month: previousMonth)
+            modelContext.insert(garden)
+        }
         garden.snapshotImage = snapshotData
         garden.completedAt = Date()
-        modelContext.insert(garden)
 
-        try? modelContext.save()
-        return true
+        do {
+            try modelContext.save()
+            return true
+        } catch {
+            return false
+        }
     }
 }

@@ -12,8 +12,10 @@ struct GardenRenderer {
     ]
 
     func createNode(for data: GardenElementData, cellSize: CGSize) -> SKNode {
-        // swiftlint:disable:next force_unwrapping
-        let element = Self.elementMap[data.mood]!
+        guard let element = Self.elementMap[data.mood] else {
+            assertionFailure("Missing garden element for mood: \(data.mood)")
+            return SKNode()
+        }
         let node = element.createNode(seed: data.seed, cellSize: cellSize)
         node.name = "element_day_\(data.day)"
         return node
