@@ -43,6 +43,7 @@ struct MoodSelectorView: View {
                     MoodIcon(mood: mood)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(mood.rawValue)
             }
         }
         .padding(.horizontal, 20)

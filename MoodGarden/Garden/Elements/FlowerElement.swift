@@ -10,6 +10,7 @@ struct FlowerElement: GardenElement {
         let center = SKShapeNode(circleOfRadius: centerRadius)
         center.fillColor = MoodType.happy.uiColor
         center.strokeColor = .clear
+        center.zPosition = 1
         container.addChild(center)
 
         let petalCount = 4 + Int(random.nextInt(upperBound: 3))
@@ -33,7 +34,8 @@ struct FlowerElement: GardenElement {
 
         let sway = SKAction.sequence([
             SKAction.rotate(byAngle: 0.05, duration: 1.5),
-            SKAction.rotate(byAngle: -0.05, duration: 1.5),
+            SKAction.rotate(byAngle: -0.10, duration: 3.0),
+            SKAction.rotate(byAngle: 0.05, duration: 1.5),
         ])
         container.run(.repeatForever(sway))
 

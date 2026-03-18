@@ -93,6 +93,7 @@ struct GardenView: View {
     private static let monthFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM"
+        formatter.locale = Locale.current
         return formatter
     }()
 

@@ -52,16 +52,21 @@ class GardenViewModel {
 
         let entry = MoodEntry(mood: mood)
         modelContext.insert(entry)
-        fetchEntries()
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+            fetchEntries()
+        } catch {
+            modelContext.rollback()
+        }
     }
 
     private func rebuildIndex() {
         let calendar = Calendar.current
         entriesByDay = Dictionary(
-            uniqueKeysWithValues: currentMonthEntries.map { entry in
+            currentMonthEntries.map { entry in
                 (calendar.component(.day, from: entry.date), entry)
-            }
+            },
+            uniquingKeysWith: { _, latest in latest }
         )
     }
 }
