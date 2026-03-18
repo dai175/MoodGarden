@@ -1,3 +1,4 @@
+import SpriteKit
 import SwiftUI
 
 struct GardenView: View {
@@ -5,10 +6,8 @@ struct GardenView: View {
     @Binding var showArchive: Bool
     @Binding var showSettings: Bool
 
-    private let columns = Array(
-        repeating: GridItem(.flexible(), spacing: DesignConstants.Layout.cellSpacing),
-        count: DesignConstants.Layout.gridColumns
-    )
+    @State private var gardenScene = GardenScene()
+    @State private var lastEntryCount = 0
 
     var body: some View {
         ZStack {
@@ -22,11 +21,23 @@ struct GardenView: View {
             VStack {
                 monthHeaderView
                 Spacer()
-                gardenGridView
+                gardenSpriteView
                 Spacer()
                 moodSelectorSection
             }
             .padding()
+        }
+        .onAppear {
+            updateScene()
+        }
+        .onChange(of: viewModel.currentMonthEntries.count) { oldCount, newCount in
+            if newCount == oldCount + 1, let last = viewModel.currentMonthEntries.last {
+                let entries = viewModel.currentMonthEntries.dropLast().map(makeElementData)
+                gardenScene.configure(with: entries)
+                gardenScene.addEntry(makeElementData(from: last), animated: true)
+            } else {
+                updateScene()
+            }
         }
     }
 
@@ -54,28 +65,10 @@ struct GardenView: View {
         }
     }
 
-    private var gardenGridView: some View {
-        LazyVGrid(columns: columns, spacing: DesignConstants.Layout.cellSpacing) {
-            let totalCells = DesignConstants.Layout.gridColumns * DesignConstants.Layout.gridRows
-            ForEach(1...totalCells, id: \.self) { day in
-                gardenCell(for: day)
-            }
-        }
-    }
-
-    private func gardenCell(for day: Int) -> some View {
-        let entry = viewModel.entryForDay(day)
-        let fillColor =
-            entry?.mood.color.opacity(0.6)
-            ?? DesignConstants.Colors.backgroundSecondary.opacity(DesignConstants.Layout.glassOpacity)
-        return RoundedRectangle(cornerRadius: DesignConstants.Layout.cornerRadius)
-            .fill(fillColor)
-            .aspectRatio(1, contentMode: .fit)
-            .overlay {
-                if let entry {
-                    MoodIcon(mood: entry.mood, size: 24)
-                }
-            }
+    private var gardenSpriteView: some View {
+        SpriteView(scene: gardenScene)
+            .aspectRatio(7.0 / 5.0, contentMode: .fit)
+            .clipShape(RoundedRectangle(cornerRadius: DesignConstants.Layout.cornerRadius))
     }
 
     private var moodSelectorSection: some View {
@@ -85,6 +78,16 @@ struct GardenView: View {
             }
         }
         .frame(height: 60)
+    }
+
+    private func updateScene() {
+        let entries = viewModel.currentMonthEntries.map(makeElementData)
+        gardenScene.configure(with: entries)
+    }
+
+    private func makeElementData(from entry: MoodEntry) -> GardenElementData {
+        let day = Calendar.current.component(.day, from: entry.date)
+        return GardenElementData(day: day, mood: entry.mood, seed: entry.gardenSeed)
     }
 
     private static let monthFormatter: DateFormatter = {
