@@ -1,15 +1,11 @@
-//
-//  MoodGardenApp.swift
-//  MoodGarden
-//
-//  Created by Daisuke Ooba on 2026/03/17.
-//
-
 import SwiftData
 import SwiftUI
 
 @main
 struct MoodGardenApp: App {
+    @State private var appState = AppState()
+    @State private var notificationService = NotificationService()
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             MoodEntry.self,
@@ -30,6 +26,8 @@ struct MoodGardenApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .environment(appState)
+                .environment(notificationService)
         }
         .modelContainer(sharedModelContainer)
     }
