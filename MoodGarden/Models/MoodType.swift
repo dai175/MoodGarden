@@ -30,15 +30,7 @@ enum MoodType: String, Codable, CaseIterable {
     }
 
     var color: Color {
-        switch self {
-        case .peaceful: return Color(red: 0.114, green: 0.620, blue: 0.459)  // teal #1D9E75
-        case .happy: return Color(red: 0.984, green: 0.737, blue: 0.306)  // warm gold #FBBC4E
-        case .energetic: return Color(red: 0.502, green: 0.859, blue: 0.208)  // bright green #80DB35
-        case .anxious: return Color(red: 0.569, green: 0.545, blue: 0.620)  // muted purple #918B9E
-        case .sad: return Color(red: 0.365, green: 0.541, blue: 0.725)  // cool blue #5D8AB9
-        case .angry: return Color(red: 0.647, green: 0.165, blue: 0.165)  // dark red #A52A2A
-        case .tired: return Color(red: 0.651, green: 0.494, blue: 0.322)  // amber brown #A67E52
-        }
+        Color(uiColor)
     }
 
     var iconName: String {

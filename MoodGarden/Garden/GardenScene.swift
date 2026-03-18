@@ -34,6 +34,7 @@ final class GardenScene: SKScene {
     }
 
     func configure(with entries: [GardenElementData]) {
+        guard entries != currentEntries else { return }
         currentEntries = entries
         rebuildElements()
     }

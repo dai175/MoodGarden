@@ -12,6 +12,14 @@ final class NotificationService {
         }
     }
 
+    private enum Keys {
+        static let enabled = "notificationEnabled"
+        static let hour = "notificationHour"
+        static let minute = "notificationMinute"
+        static let lastActiveDate = "lastActiveDate"
+        static let frequency = "notificationFrequency"
+    }
+
     private static let messages = [
         "What's the weather in your garden today?",
         "How does today feel?",
@@ -23,40 +31,40 @@ final class NotificationService {
     private let defaults: UserDefaults
 
     var isEnabled: Bool {
-        get { defaults.bool(forKey: "notificationEnabled") }
+        get { defaults.bool(forKey: Keys.enabled) }
         set {
-            defaults.set(newValue, forKey: "notificationEnabled")
+            defaults.set(newValue, forKey: Keys.enabled)
             Task { await scheduleNotifications() }
         }
     }
 
     var scheduledHour: Int {
         get {
-            let val = defaults.integer(forKey: "notificationHour")
-            return val == 0 && !defaults.contains(key: "notificationHour") ? 21 : val
+            let val = defaults.integer(forKey: Keys.hour)
+            return val == 0 && !defaults.contains(key: Keys.hour) ? 21 : val
         }
-        set { defaults.set(newValue, forKey: "notificationHour") }
+        set { defaults.set(newValue, forKey: Keys.hour) }
     }
 
     var scheduledMinute: Int {
-        get { defaults.integer(forKey: "notificationMinute") }
-        set { defaults.set(newValue, forKey: "notificationMinute") }
+        get { defaults.integer(forKey: Keys.minute) }
+        set { defaults.set(newValue, forKey: Keys.minute) }
     }
 
     private var lastActiveDate: Date? {
-        get { defaults.object(forKey: "lastActiveDate") as? Date }
-        set { defaults.set(newValue, forKey: "lastActiveDate") }
+        get { defaults.object(forKey: Keys.lastActiveDate) as? Date }
+        set { defaults.set(newValue, forKey: Keys.lastActiveDate) }
     }
 
     private var currentFrequency: Frequency {
-        get { Frequency(rawValue: defaults.integer(forKey: "notificationFrequency")) ?? .daily }
-        set { defaults.set(newValue.rawValue, forKey: "notificationFrequency") }
+        get { Frequency(rawValue: defaults.integer(forKey: Keys.frequency)) ?? .daily }
+        set { defaults.set(newValue.rawValue, forKey: Keys.frequency) }
     }
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
-        if !defaults.contains(key: "notificationEnabled") {
-            defaults.set(true, forKey: "notificationEnabled")
+        if !defaults.contains(key: Keys.enabled) {
+            defaults.set(true, forKey: Keys.enabled)
         }
     }
 

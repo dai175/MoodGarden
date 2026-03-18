@@ -54,9 +54,6 @@ struct ArchiveDetailView: View {
     private var displayName: String {
         let components = DateComponents(year: year, month: month)
         guard let date = Calendar.current.date(from: components) else { return "" }
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
-        formatter.locale = Locale.current
-        return formatter.string(from: date)
+        return DesignConstants.Formatters.monthYear.string(from: date)
     }
 }

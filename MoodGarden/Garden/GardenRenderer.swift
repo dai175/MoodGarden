@@ -1,7 +1,7 @@
 import SpriteKit
 
 struct GardenRenderer {
-    private let elementMap: [MoodType: any GardenElement] = [
+    private static let elementMap: [MoodType: any GardenElement] = [
         .peaceful: MossElement(),
         .happy: FlowerElement(),
         .energetic: GrassElement(),
@@ -13,7 +13,7 @@ struct GardenRenderer {
 
     func createNode(for data: GardenElementData, cellSize: CGSize) -> SKNode {
         // swiftlint:disable:next force_unwrapping
-        let element = elementMap[data.mood]!
+        let element = Self.elementMap[data.mood]!
         let node = element.createNode(seed: data.seed, cellSize: cellSize)
         node.name = "element_day_\(data.day)"
         return node
