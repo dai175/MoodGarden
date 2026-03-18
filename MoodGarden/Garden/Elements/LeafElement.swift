@@ -14,7 +14,8 @@ struct LeafElement: GardenElement {
             let leaf = SKShapeNode(ellipseOf: CGSize(width: width, height: height))
 
             let brownShift = nextFloat(random, min: -0.05, max: 0.05)
-            leaf.fillColor = baseColor.withHueOffset(brownShift)
+            let brightnessScale = nextFloat(random, min: 0.8, max: 1.0)
+            leaf.fillColor = baseColor.withHueOffset(brownShift, brightnessMultiplier: brightnessScale)
             leaf.strokeColor = .clear
             leaf.alpha = nextFloat(random, min: 0.6, max: 0.9)
             leaf.zRotation = nextFloat(random, min: 0, max: .pi * 2)
