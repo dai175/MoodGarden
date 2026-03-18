@@ -11,6 +11,7 @@ import SwiftData
 @Observable
 class GardenViewModel {
     private(set) var currentMonthEntries: [MoodEntry] = []
+    private var entriesByDay: [Int: MoodEntry] = [:]
     private var modelContext: ModelContext
 
     var hasTodayEntry: Bool {
@@ -39,6 +40,11 @@ class GardenViewModel {
         } catch {
             currentMonthEntries = []
         }
+        rebuildIndex()
+    }
+
+    func entryForDay(_ day: Int) -> MoodEntry? {
+        entriesByDay[day]
     }
 
     func recordMood(_ mood: MoodType) {
@@ -48,5 +54,14 @@ class GardenViewModel {
         modelContext.insert(entry)
         fetchEntries()
         try? modelContext.save()
+    }
+
+    private func rebuildIndex() {
+        let calendar = Calendar.current
+        entriesByDay = Dictionary(
+            uniqueKeysWithValues: currentMonthEntries.map { entry in
+                (calendar.component(.day, from: entry.date), entry)
+            }
+        )
     }
 }
