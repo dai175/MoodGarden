@@ -6,9 +6,13 @@ extension UIColor {
         var sat: CGFloat = 0
         var bri: CGFloat = 0
         var alp: CGFloat = 0
-        getHue(&hue, saturation: &sat, brightness: &bri, alpha: &alp)
+        guard getHue(&hue, saturation: &sat, brightness: &bri, alpha: &alp) else {
+            return self
+        }
+        let adjustedHue = ((hue + offset).truncatingRemainder(dividingBy: 1.0) + 1.0)
+            .truncatingRemainder(dividingBy: 1.0)
         return UIColor(
-            hue: (hue + offset).truncatingRemainder(dividingBy: 1.0),
+            hue: adjustedHue,
             saturation: sat,
             brightness: bri * brightnessMultiplier,
             alpha: alp
