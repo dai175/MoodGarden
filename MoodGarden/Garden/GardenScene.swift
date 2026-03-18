@@ -21,7 +21,7 @@ final class GardenScene: SKScene {
     }
 
     private func commonInit() {
-        backgroundColor = UIColor(red: 0.039, green: 0.102, blue: 0.071, alpha: 1)  // #0A1A12
+        backgroundColor = DesignConstants.Colors.backgroundPrimaryUIColor
         scaleMode = .resizeFill
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         addChild(elementsLayer)
@@ -72,10 +72,10 @@ final class GardenScene: SKScene {
 
     private func makeLayout() -> GardenGridLayout {
         GardenGridLayout(
-            columns: 7,
-            rows: 5,
+            columns: DesignConstants.Layout.gridColumns,
+            rows: DesignConstants.Layout.gridRows,
             sceneSize: size,
-            spacing: 8
+            spacing: DesignConstants.Layout.cellSpacing
         )
     }
 }

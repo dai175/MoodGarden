@@ -6,6 +6,7 @@ struct LeafElement: GardenElement {
         let random = makeRandom(seed: seed)
         let container = SKNode()
         let leafCount = 1 + Int(random.nextInt(upperBound: 3))
+        let baseColor = MoodType.tired.uiColor
 
         for _ in 0..<leafCount {
             let width = nextFloat(random, min: 0.15, max: 0.25) * cellSize.width
@@ -13,18 +14,7 @@ struct LeafElement: GardenElement {
             let leaf = SKShapeNode(ellipseOf: CGSize(width: width, height: height))
 
             let brownShift = nextFloat(random, min: -0.05, max: 0.05)
-            let baseColor = MoodType.tired.uiColor
-            var hue: CGFloat = 0
-            var sat: CGFloat = 0
-            var bri: CGFloat = 0
-            var alp: CGFloat = 0
-            baseColor.getHue(&hue, saturation: &sat, brightness: &bri, alpha: &alp)
-            leaf.fillColor = UIColor(
-                hue: hue + brownShift,
-                saturation: sat,
-                brightness: bri * nextFloat(random, min: 0.8, max: 1.0),
-                alpha: 1
-            )
+            leaf.fillColor = baseColor.withHueOffset(brownShift)
             leaf.strokeColor = .clear
             leaf.alpha = nextFloat(random, min: 0.6, max: 0.9)
             leaf.zRotation = nextFloat(random, min: 0, max: .pi * 2)
