@@ -12,6 +12,15 @@ Seven moods map to distinct garden elements. The garden does not judge: happy da
 
 <!-- screenshots -->
 
+## Features
+
+- **7つのムード** — peaceful, happy, energetic, anxious, sad, angry, tired をガーデンエレメント（花、苔、雨、霧、風、草、葉）に変換
+- **リアルタイム描画** — SpriteKit による 7×5 グリッドのアニメーション付きガーデン
+- **季節オーバーレイ** — 春は桜、夏は蛍、秋は紅葉、冬は雪が庭に重なる
+- **月次アーカイブ** — 月替わりで庭がリセットされ、スナップショット画像付きで過去の庭を振り返れる
+- **リマインダー通知** — 毎日の記録を忘れないようにやさしく通知
+- **ダークテーマ** — 深い緑のダークUI、ミニマルで静かなデザイン
+
 ## Requirements
 
 - Xcode 26 with iOS 26 SDK
@@ -48,11 +57,12 @@ MVVM with SwiftUI for screens and SpriteKit for real-time garden rendering.
 
 ```
 MoodGarden/
-├── App/        # Entry point, app state
-├── Models/     # SwiftData models, MoodType enum
-├── Views/      # SwiftUI screens
-├── Garden/     # SpriteKit scene, renderer, element sprites
-└── Services/   # Notifications, snapshot rendering
+├── App/          # Entry point, app state
+├── Models/       # SwiftData models, MoodType enum
+├── ViewModels/   # MVVM view models
+├── Views/        # SwiftUI screens
+├── Garden/       # SpriteKit scene, renderer, element sprites
+└── Services/     # Notifications, snapshot rendering
 ```
 
 See [CLAUDE.md](CLAUDE.md) for detailed technical guidance.
