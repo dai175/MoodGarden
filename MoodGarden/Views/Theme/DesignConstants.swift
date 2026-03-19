@@ -12,6 +12,20 @@ enum DesignConstants {
         static let accent = Color(red: 0.114, green: 0.620, blue: 0.459)  // #1D9E75
 
         static let backgroundPrimaryUIColor = UIColor(red: 0.039, green: 0.102, blue: 0.071, alpha: 1)
+
+        // 季節ごとの背景グラデーション微調整用
+        static func seasonalTint(for season: Season) -> Color {
+            switch season {
+            case .spring:
+                return Color(red: 0.2, green: 0.8, blue: 0.3).opacity(0.03)
+            case .summer:
+                return Color(red: 0.8, green: 0.6, blue: 0.2).opacity(0.04)
+            case .autumn:
+                return Color(red: 0.8, green: 0.4, blue: 0.1).opacity(0.04)
+            case .winter:
+                return Color(red: 0.3, green: 0.4, blue: 0.7).opacity(0.04)
+            }
+        }
     }
 
     enum Animation {

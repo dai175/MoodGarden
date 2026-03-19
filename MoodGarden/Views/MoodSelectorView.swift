@@ -52,6 +52,7 @@ struct MoodSelectorView: View {
             Capsule()
                 .fill(DesignConstants.Colors.backgroundSecondary.opacity(0.8))
         )
+        .glassEffect(.regular.tint(DesignConstants.Colors.accent.opacity(0.1)), in: .capsule)
     }
 
     private func selectMood(_ mood: MoodType) {

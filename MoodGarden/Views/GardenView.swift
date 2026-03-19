@@ -8,13 +8,23 @@ struct GardenView: View {
 
     @State private var gardenScene = GardenScene()
 
+    private var currentSeason: Season {
+        Season.from(month: Calendar.current.component(.month, from: Date()))
+    }
+
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [DesignConstants.Colors.backgroundPrimary, DesignConstants.Colors.backgroundSecondary],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            ZStack {
+                LinearGradient(
+                    colors: [
+                        DesignConstants.Colors.backgroundPrimary,
+                        DesignConstants.Colors.backgroundSecondary,
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                DesignConstants.Colors.seasonalTint(for: currentSeason)
+            }
             .ignoresSafeArea()
 
             VStack {

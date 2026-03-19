@@ -60,6 +60,10 @@ struct ArchiveView: View {
                 thumbnailView(for: monthInfo)
                     .frame(height: 120)
                     .clipShape(RoundedRectangle(cornerRadius: DesignConstants.Layout.cornerRadius))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DesignConstants.Layout.cornerRadius)
+                            .stroke(DesignConstants.Colors.textSubdued.opacity(0.15), lineWidth: 0.5)
+                    )
 
                 Text(monthInfo.displayName)
                     .font(DesignConstants.Typography.caption)
