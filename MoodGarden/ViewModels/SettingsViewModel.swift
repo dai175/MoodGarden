@@ -39,13 +39,15 @@ final class SettingsViewModel {
         self.notificationTime = Calendar.current.date(from: components) ?? Date()
     }
 
-    func resetAllData() {
+    @discardableResult
+    func resetAllData() -> Bool {
         do {
             try modelContext.delete(model: MoodEntry.self)
             try modelContext.delete(model: MonthlyGarden.self)
             try modelContext.save()
+            return true
         } catch {
-            // Silent failure — data reset is best-effort
+            return false
         }
     }
 }
