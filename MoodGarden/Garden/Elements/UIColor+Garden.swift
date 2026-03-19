@@ -14,7 +14,7 @@ extension UIColor {
         return UIColor(
             hue: adjustedHue,
             saturation: sat,
-            brightness: bri * brightnessMultiplier,
+            brightness: min(bri * brightnessMultiplier, 1.0),
             alpha: alp
         )
     }

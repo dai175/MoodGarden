@@ -107,7 +107,13 @@ final class NotificationService {
                 content: content,
                 trigger: trigger
             )
-            try? await center.add(request)
+            do {
+                try await center.add(request)
+            } catch {
+                #if DEBUG
+                    print("[NotificationService] Failed to schedule notification: \(error)")
+                #endif
+            }
         }
     }
 
