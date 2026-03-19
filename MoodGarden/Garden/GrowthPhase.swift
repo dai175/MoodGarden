@@ -1,3 +1,4 @@
+import CoreGraphics
 import Foundation
 
 enum GrowthPhase: Equatable, CaseIterable {
@@ -23,7 +24,7 @@ enum GrowthPhase: Equatable, CaseIterable {
 
     static func from(daysSinceCreation: Int) -> GrowthPhase {
         switch daysSinceCreation {
-        case 0: return .seed
+        case ..<1: return .seed
         case 1: return .sprout
         case 2: return .bloom
         default: return .mature

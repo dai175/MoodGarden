@@ -1,7 +1,8 @@
 enum MoodPalette {
+    private static let maxHueShift: Float = 0.15
+
     struct Result: Equatable {
-        let hueShift: Float  // -0.15 to 0.15. Positive = warm, negative = cool
-        let brightness: Float?  // Always nil — brightness is season-only, not mood-driven
+        let hueShift: Float  // -maxHueShift to maxHueShift. Positive = warm, negative = cool
     }
 
     /// Hue direction per mood. All are equally valid aesthetic directions.
@@ -17,13 +18,13 @@ enum MoodPalette {
 
     static func analyze(moodRatios: [MoodType: Float]) -> Result {
         guard !moodRatios.isEmpty else {
-            return Result(hueShift: 0, brightness: nil)
+            return Result(hueShift: 0)
         }
         var shift: Float = 0
         for (mood, ratio) in moodRatios {
             shift += (hueDirections[mood] ?? 0) * ratio
         }
-        let capped = max(-0.15, min(0.15, shift))
-        return Result(hueShift: capped, brightness: nil)
+        let capped = shift.clamped(to: -maxHueShift...maxHueShift)
+        return Result(hueShift: capped)
     }
 }

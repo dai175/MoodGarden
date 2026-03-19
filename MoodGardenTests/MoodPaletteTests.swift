@@ -23,15 +23,6 @@ struct MoodPaletteTests {
         #expect(abs(result.hueShift) <= 0.15)
     }
 
-    @Test func allMoodsProduceEqualBrightness() {
-        // Principle 1: garden does not judge.
-        // Every single mood at 100% should produce the same brightness.
-        for mood in MoodType.allCases {
-            let result = MoodPalette.analyze(moodRatios: [mood: 1.0])
-            #expect(result.brightness == nil, "brightness must not be affected by mood ratios")
-        }
-    }
-
     @Test func mixedRatiosBlendShift() {
         let result = MoodPalette.analyze(moodRatios: [.happy: 0.5, .sad: 0.5])
         // Opposing shifts should partially cancel
