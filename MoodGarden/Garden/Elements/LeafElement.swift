@@ -33,6 +33,23 @@ struct LeafElement: GardenElement {
             leaf.run(.repeatForever(rotate))
             leaf.run(.repeatForever(drift))
 
+            // 横揺れ (sway)
+            let swayAmount = nextFloat(random, min: 0.04, max: 0.08) * cellSize.width
+            let swayDuration = nextFloat(random, min: 0.9, max: 1.4)
+            let swayLeft = SKAction.moveBy(x: -swayAmount, y: 0, duration: swayDuration)
+            let swayRight = SKAction.moveBy(x: swayAmount, y: 0, duration: swayDuration)
+            swayLeft.timingMode = .easeInEaseOut
+            swayRight.timingMode = .easeInEaseOut
+            leaf.run(.repeatForever(.sequence([swayLeft, swayRight])))
+
+            // alpha 緩やか変動
+            let baseAlpha = leaf.alpha
+            let fadeDown = SKAction.fadeAlpha(to: baseAlpha * 0.6, duration: nextFloat(random, min: 1.0, max: 1.5))
+            let fadeUp = SKAction.fadeAlpha(to: baseAlpha, duration: nextFloat(random, min: 1.0, max: 1.5))
+            fadeDown.timingMode = .easeInEaseOut
+            fadeUp.timingMode = .easeInEaseOut
+            leaf.run(.repeatForever(.sequence([fadeDown, fadeUp])))
+
             container.addChild(leaf)
         }
         return container

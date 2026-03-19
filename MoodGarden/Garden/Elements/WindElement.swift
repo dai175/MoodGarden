@@ -36,6 +36,19 @@ struct WindElement: GardenElement {
             ])
             line.run(.repeatForever(move))
 
+            // alpha 変動で風の強弱を表現
+            let baseAlpha = line.alpha
+            let alphaStrong = min(baseAlpha * 1.3, 1.0)
+            let alphaWeak = baseAlpha * 0.4
+            let gustDuration = nextFloat(random, min: 0.8, max: 1.3)
+            let gust = SKAction.sequence([
+                SKAction.fadeAlpha(to: alphaStrong, duration: gustDuration * 0.3),
+                SKAction.fadeAlpha(to: alphaWeak, duration: gustDuration * 0.7),
+                SKAction.fadeAlpha(to: baseAlpha, duration: gustDuration * 0.4),
+            ])
+            gust.timingMode = .easeInEaseOut
+            line.run(.repeatForever(gust))
+
             container.addChild(line)
         }
         return container

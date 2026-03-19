@@ -17,17 +17,27 @@ struct RainElement: GardenElement {
 
             let drop = SKShapeNode(path: path)
             drop.strokeColor = MoodType.sad.uiColor
-            drop.lineWidth = 1.5
+            // 太さバリエーション
+            drop.lineWidth = nextFloat(random, min: 1.0, max: 2.5)
             drop.alpha = nextFloat(random, min: 0.5, max: 0.8)
             drop.position = CGPoint(x: dropX, y: cellSize.height * 0.2)
 
             let fallDistance = cellSize.height * 0.5
             let duration = nextFloat(random, min: 0.8, max: 1.2)
+
+            // 着地リプル: 落下終端でスケールパルス
+            let rippleScale = SKAction.scale(to: 1.4, duration: 0.1)
+            let rippleRestore = SKAction.scale(to: 1.0, duration: 0.1)
+            rippleScale.timingMode = .easeInEaseOut
+            rippleRestore.timingMode = .easeInEaseOut
+
             let fall = SKAction.sequence([
                 SKAction.moveBy(x: 0, y: -fallDistance, duration: duration),
-                SKAction.fadeOut(withDuration: 0.1),
+                rippleScale,
+                rippleRestore,
+                SKAction.fadeOut(withDuration: 0.08),
                 SKAction.move(to: CGPoint(x: dropX, y: cellSize.height * 0.2), duration: 0),
-                SKAction.fadeAlpha(to: drop.alpha, duration: 0.1),
+                SKAction.fadeAlpha(to: drop.alpha, duration: 0.08),
             ])
             drop.run(.repeatForever(fall))
 
