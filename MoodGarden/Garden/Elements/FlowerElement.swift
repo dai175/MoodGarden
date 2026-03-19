@@ -11,6 +11,7 @@ struct FlowerElement: GardenElement {
         center.fillColor = MoodType.happy.uiColor
         center.strokeColor = .clear
         center.zPosition = 1
+        center.setScale(0.9)
         container.addChild(center)
 
         // 中心のグロー効果（スケールパルス）
