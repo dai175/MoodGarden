@@ -40,8 +40,8 @@ struct RootView: View {
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
-                notificationService.recordActivity()
                 notificationService.updateFrequencyIfNeeded()
+                notificationService.recordActivity()
                 checkMonthTransition()
             }
         }
@@ -91,6 +91,12 @@ struct RootView: View {
 
         let snapshotService = SnapshotService()
         let previousEntries = fetchEntries(year: lastYear, month: lastMonth)
+
+        if previousEntries.isEmpty {
+            appState.lastActiveYear = currentYear
+            appState.lastActiveMonth = currentMonth
+            return
+        }
 
         let success = snapshotService.performMonthTransition(
             modelContext: modelContext,

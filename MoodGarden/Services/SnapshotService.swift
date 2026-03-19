@@ -34,9 +34,14 @@ final class SnapshotService {
         )
         descriptor.fetchLimit = 1
 
-        if let existing = try? modelContext.fetch(descriptor).first,
-            existing.completedAt != nil
-        {
+        let existingGarden: MonthlyGarden?
+        do {
+            existingGarden = try modelContext.fetch(descriptor).first
+        } catch {
+            return false
+        }
+
+        if let existingGarden, existingGarden.completedAt != nil {
             return false
         }
 
@@ -52,8 +57,8 @@ final class SnapshotService {
         guard let snapshotData = renderSnapshot(entries: elementData) else { return false }
 
         let garden: MonthlyGarden
-        if let existing = try? modelContext.fetch(descriptor).first {
-            garden = existing
+        if let existingGarden {
+            garden = existingGarden
         } else {
             garden = MonthlyGarden(year: previousYear, month: previousMonth)
             modelContext.insert(garden)
