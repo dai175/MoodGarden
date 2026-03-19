@@ -14,6 +14,7 @@ struct GardenGridLayout {
     }
 
     func position(forDay day: Int) -> CGPoint {
+        precondition(day >= 1 && day <= columns * rows, "Day must be between 1 and \(columns * rows)")
         let index = day - 1
         let col = index % columns
         let row = index / columns

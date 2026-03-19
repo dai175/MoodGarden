@@ -30,11 +30,15 @@ final class NotificationService {
     @ObservationIgnored
     private let defaults: UserDefaults
 
+    @ObservationIgnored
+    private var schedulingTask: Task<Void, Never>?
+
     var isEnabled: Bool {
         get { defaults.bool(forKey: Keys.enabled) }
         set {
             defaults.set(newValue, forKey: Keys.enabled)
-            Task { await scheduleNotifications() }
+            schedulingTask?.cancel()
+            schedulingTask = Task { await scheduleNotifications() }
         }
     }
 
@@ -131,7 +135,8 @@ final class NotificationService {
         )
         if newFrequency != currentFrequency {
             currentFrequency = newFrequency
-            Task { await scheduleNotifications() }
+            schedulingTask?.cancel()
+            schedulingTask = Task { await scheduleNotifications() }
         }
     }
 
@@ -147,7 +152,8 @@ final class NotificationService {
         )
         if newFrequency != currentFrequency {
             currentFrequency = newFrequency
-            Task { await scheduleNotifications() }
+            schedulingTask?.cancel()
+            schedulingTask = Task { await scheduleNotifications() }
         }
     }
 
