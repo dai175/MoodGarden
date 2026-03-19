@@ -36,11 +36,11 @@ struct FogElement: GardenElement {
             let baseAlpha = fog.alpha
             let alphaLow = baseAlpha * 0.6
             let fadeDuration = nextFloat(random, min: 1.0, max: 1.5)
-            let alphaFade = SKAction.sequence([
-                SKAction.fadeAlpha(to: alphaLow, duration: fadeDuration),
-                SKAction.fadeAlpha(to: baseAlpha, duration: fadeDuration),
-            ])
-            alphaFade.timingMode = .easeInEaseOut
+            let fadeOut = SKAction.fadeAlpha(to: alphaLow, duration: fadeDuration)
+            fadeOut.timingMode = .easeInEaseOut
+            let fadeIn = SKAction.fadeAlpha(to: baseAlpha, duration: fadeDuration)
+            fadeIn.timingMode = .easeInEaseOut
+            let alphaFade = SKAction.sequence([fadeOut, fadeIn])
             fog.run(.repeatForever(alphaFade))
 
             container.addChild(fog)
