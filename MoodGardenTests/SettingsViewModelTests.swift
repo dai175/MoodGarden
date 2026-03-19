@@ -20,7 +20,8 @@ struct SettingsViewModelTests {
             notificationService: NotificationService(),
             modelContext: context
         )
-        viewModel.resetAllData()
+        let result = viewModel.resetAllData()
+        #expect(result == true)
 
         let entries = try context.fetch(FetchDescriptor<MoodEntry>())
         let gardens = try context.fetch(FetchDescriptor<MonthlyGarden>())
