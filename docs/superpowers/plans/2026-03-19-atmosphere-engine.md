@@ -26,7 +26,7 @@
 
 These are the foundational value types used by all other components. No SpriteKit dependency.
 
-- [ ] **Step 1: Create GrowthPhase enum**
+- [x] **Step 1: Create GrowthPhase enum**
 
 ```swift
 // MoodGarden/Garden/GrowthPhase.swift
@@ -64,7 +64,7 @@ enum GrowthPhase: Equatable, CaseIterable {
 }
 ```
 
-- [ ] **Step 2: Create PlacementZone enum**
+- [x] **Step 2: Create PlacementZone enum**
 
 ```swift
 // MoodGarden/Garden/PlacementZone.swift
@@ -96,7 +96,7 @@ enum PlacementZone: CaseIterable {
 }
 ```
 
-- [ ] **Step 3: Create ElementType enum**
+- [x] **Step 3: Create ElementType enum**
 
 ```swift
 // MoodGarden/Garden/ElementType.swift
@@ -131,7 +131,7 @@ enum ElementType: String, CaseIterable {
 }
 ```
 
-- [ ] **Step 4: Create ElementSpec struct**
+- [x] **Step 4: Create ElementSpec struct**
 
 ```swift
 // MoodGarden/Garden/ElementSpec.swift
@@ -147,7 +147,7 @@ struct ElementSpec: Equatable {
 }
 ```
 
-- [ ] **Step 5: Create AtmosphereState struct**
+- [x] **Step 5: Create AtmosphereState struct**
 
 ```swift
 // MoodGarden/Garden/AtmosphereState.swift
@@ -172,7 +172,7 @@ struct AtmosphereState: Equatable {
 }
 ```
 
-- [ ] **Step 6: Write tests for core types**
+- [x] **Step 6: Write tests for core types**
 
 ```swift
 // MoodGardenTests/AtmosphereStateTests.swift
@@ -222,12 +222,12 @@ struct AtmosphereStateTests {
 }
 ```
 
-- [ ] **Step 7: Build and run tests**
+- [x] **Step 7: Build and run tests**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests/AtmosphereStateTests`
 Expected: All 5 tests PASS
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add MoodGarden/Garden/GrowthPhase.swift MoodGarden/Garden/PlacementZone.swift \
@@ -248,7 +248,7 @@ GrowthPhase, PlacementZone, ElementType, ElementSpec, AtmosphereState"
 
 Pure logic: computes GrowthPhase from entry creation date vs. current date.
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```swift
 // MoodGardenTests/GrowthManagerTests.swift
@@ -292,12 +292,12 @@ struct GrowthManagerTests {
 }
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests/GrowthManagerTests`
 Expected: FAIL — `GrowthManager` not defined
 
-- [ ] **Step 3: Implement GrowthManager**
+- [x] **Step 3: Implement GrowthManager**
 
 ```swift
 // MoodGarden/Garden/GrowthManager.swift
@@ -312,12 +312,12 @@ enum GrowthManager {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests/GrowthManagerTests`
 Expected: All 5 tests PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add MoodGarden/Garden/GrowthManager.swift MoodGardenTests/GrowthManagerTests.swift
@@ -334,7 +334,7 @@ git commit -m "feat(garden): add GrowthManager for element growth phases"
 
 Pure logic: converts mood ratios into a hue shift direction. Critically, brightness is NEVER affected by mood ratios (Principle 1).
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```swift
 // MoodGardenTests/MoodPaletteTests.swift
@@ -379,12 +379,12 @@ struct MoodPaletteTests {
 }
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests/MoodPaletteTests`
 Expected: FAIL
 
-- [ ] **Step 3: Implement MoodPalette**
+- [x] **Step 3: Implement MoodPalette**
 
 ```swift
 // MoodGarden/Garden/MoodPalette.swift
@@ -420,12 +420,12 @@ enum MoodPalette {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests/MoodPaletteTests`
 Expected: All 6 tests PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add MoodGarden/Garden/MoodPalette.swift MoodGardenTests/MoodPaletteTests.swift
@@ -442,7 +442,7 @@ git commit -m "feat(garden): add MoodPalette for non-judgmental color direction"
 
 Selects 2-4 elements from each mood's pool based on seed, season, and context.
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```swift
 // MoodGardenTests/MoodAtmosphereTests.swift
@@ -500,12 +500,12 @@ struct MoodAtmosphereTests {
 }
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests/MoodAtmosphereTests`
 Expected: FAIL
 
-- [ ] **Step 3: Implement MoodAtmosphere**
+- [x] **Step 3: Implement MoodAtmosphere**
 
 ```swift
 // MoodGarden/Garden/MoodAtmosphere.swift
@@ -655,12 +655,12 @@ private extension Comparable {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests/MoodAtmosphereTests`
 Expected: All 5 tests PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add MoodGarden/Garden/MoodAtmosphere.swift MoodGardenTests/MoodAtmosphereTests.swift
@@ -677,7 +677,7 @@ git commit -m "feat(garden): add MoodAtmosphere element pool with deterministic 
 
 Converts ElementSpecs into scene positions using zone-based placement with minimum spacing.
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```swift
 // MoodGardenTests/PlacementRuleTests.swift
@@ -731,12 +731,12 @@ struct PlacementRuleTests {
 }
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests/PlacementRuleTests`
 Expected: FAIL
 
-- [ ] **Step 3: Implement PlacementRule**
+- [x] **Step 3: Implement PlacementRule**
 
 ```swift
 // MoodGarden/Garden/PlacementRule.swift
@@ -786,12 +786,12 @@ enum PlacementRule {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests/PlacementRuleTests`
 Expected: All 3 tests PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add MoodGarden/Garden/PlacementRule.swift MoodGardenTests/PlacementRuleTests.swift
@@ -808,7 +808,7 @@ git commit -m "feat(garden): add PlacementRule for zone-based element positionin
 
 The central orchestrator: takes MoodEntry array + Season → produces AtmosphereState.
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```swift
 // MoodGardenTests/AtmosphereEngineTests.swift
@@ -901,12 +901,12 @@ struct AtmosphereEngineTests {
 }
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests/AtmosphereEngineTests`
 Expected: FAIL
 
-- [ ] **Step 3: Implement AtmosphereEngine**
+- [x] **Step 3: Implement AtmosphereEngine**
 
 ```swift
 // MoodGarden/Garden/AtmosphereEngine.swift
@@ -1022,12 +1022,12 @@ enum AtmosphereEngine {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests/AtmosphereEngineTests`
 Expected: All 7 tests PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add MoodGarden/Garden/AtmosphereEngine.swift MoodGardenTests/AtmosphereEngineTests.swift
