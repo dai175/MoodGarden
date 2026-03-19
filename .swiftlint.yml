@@ -48,5 +48,12 @@ excluded:
   - DerivedData
   - MoodGarden.xcodeproj
 
+# Identifier name: allow short names common in math/loop/test contexts
+identifier_name:
+  min_length:
+    warning: 1
+  excluded:
+    - id
+
 # Reporter for Xcode integration
 reporter: xcode
