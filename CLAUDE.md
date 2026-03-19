@@ -19,7 +19,7 @@ xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPh
 xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests/TestClassName/testMethodName
 ```
 
-Requires Xcode 26+ with iOS 26 SDK. Deployment target: iOS 26.0+. No external package dependencies yet.
+Requires Xcode 26+ with iOS 26 SDK. No external package dependencies yet.
 
 ## Lint & Format
 
@@ -62,7 +62,7 @@ The pre-commit hook auto-formats staged `.swift` files and blocks commits on Swi
 - `Views/` - SwiftUI screens: Garden (home), MoodSelector, Archive, Settings, Onboarding
   - `Views/Theme/` - Design constants, color definitions
   - `Views/Components/` - Reusable components (MoodIcon)
-- `Garden/` - SpriteKit layer: `GardenScene`, `GardenRenderer`, element sprites (moss, flower, rain, fog, wind, grass, leaf), seasonal overlays
+- `Garden/` - SpriteKit layer: `GardenScene`, `GardenRenderer`, element sprites (moss, flower, rain, fog, wind, grass, leaf), `Season` enum, `SeasonalLayer` overlays
 - `Services/` - Notification scheduling, snapshot rendering
 
 ### Key Concepts
@@ -71,6 +71,12 @@ The pre-commit hook auto-formats staged `.swift` files and blocks commits on Swi
 - **Garden grid:** 7 columns x 5 rows, one cell per day, fills left-to-right
 - **Monthly cycle:** Garden resets each month; previous months saved to archive with snapshot images
 - **Seasonal layers:** Spring (cherry blossoms), Summer (fireflies), Autumn (falling leaves), Winter (snow)
+
+### Tests
+
+- `MoodGardenTests/` - Swift Testing framework unit tests (model, view model, service, garden logic)
+- `MoodGardenUITests/` - XCTest UI tests
+- `TestHelpers.swift` - shared ModelContainer factory and test utilities
 
 ## Design Guidelines
 
@@ -101,9 +107,11 @@ Conventional Commits format:
 - **`MemberImportVisibility` enabled** — each file must directly `import` modules for types it uses (e.g. `import GameplayKit` if using `GKMersenneTwisterRandomSource`)
 - **`PBXFileSystemSynchronizedRootGroup`** — Xcode auto-syncs files on disk; no need to edit pbxproj when adding/removing files
 - **SwiftData tests** — `ModelContainer` must include ALL `@Model` types in its schema, even if the test only uses one. Keep the container alive in the test scope; if a helper creates it and returns only the context, the container is deallocated and the context crashes (SIGTRAP)
+- **`SWIFT_APPROACHABLE_CONCURRENCY = YES`** — strict concurrency が有効; `nonisolated` を明示しない限り MainActor 隔離が推論される
 - **`trailing_comma` SwiftLint rule disabled** — swift-format adds trailing commas, which conflicts with the default SwiftLint rule
 
 ## Reference Documents
 
 - `docs/mood-garden-concept.md` - Full concept, philosophy, monetization strategy, v2 roadmap
 - `docs/mood-garden-mvp-spec.md` - MVP specification with detailed implementation guidance, data models, SpriteKit specs
+- `docs/mvp-implementation-plan.md` - MVP implementation plan with phased approach
