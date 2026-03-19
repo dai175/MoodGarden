@@ -226,12 +226,13 @@ Target: operation ≤ 3 seconds + transition 1.5-2.0 seconds = total ≤ 5 secon
    - Phase 1 — Stillness (0.3s): Existing animations slow down. No darkening.
    - Phase 2 — Fog rises (0.5s): Mood-tinted fog, soft focus.
    - Phase 3 — Fog clears (0.7-1.2s): New elements appear in `.seed` phase. Color temperature subtly adjusts.
-4. **Undo** (3s window): Small "undo" text appears briefly, fades naturally. Tapping reverses the recording:
+4. **Undo** (3s window, once only): Small "undo" text appears briefly, fades naturally. Tapping reverses the recording:
    - New `.seed` elements fade out (0.3s)
    - Fog briefly returns and clears (0.5s), restoring previous state
    - GardenViewModel deletes the MoodEntry from SwiftData
    - AtmosphereEngine re-analyzes remaining entries → new AtmosphereState
    - GardenScene re-renders from updated state
+   - After undo, the user can record again (selector reappears). This second recording is final — no undo is offered. This encourages intuitive, immediate selection (Principle 2) while allowing one chance to correct a genuine mis-tap.
 
 ### Adaptive Transition Duration
 
