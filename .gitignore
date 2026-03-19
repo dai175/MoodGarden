@@ -55,3 +55,4 @@ fastlane/test_output
 # Claude Code
 .claude/local/
 .claude/settings.local.json
+.superpowers/
