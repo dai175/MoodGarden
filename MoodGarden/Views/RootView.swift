@@ -92,20 +92,21 @@ struct RootView: View {
         let snapshotService = SnapshotService()
         let previousEntries = fetchEntries(year: lastYear, month: lastMonth)
 
-        if snapshotService.performMonthTransition(
+        let success = snapshotService.performMonthTransition(
             modelContext: modelContext,
             previousYear: lastYear,
             previousMonth: lastMonth,
             entries: previousEntries
-        ) {
-            withAnimation(DesignConstants.Animation.standard) {
-                showMonthTransitionToast = true
-            }
-        }
+        )
+
+        guard success else { return }
 
         appState.lastActiveYear = currentYear
         appState.lastActiveMonth = currentMonth
         viewModel?.fetchEntries()
+        withAnimation(DesignConstants.Animation.standard) {
+            showMonthTransitionToast = true
+        }
     }
 
     private func fetchEntries(year: Int, month: Int) -> [MoodEntry] {
