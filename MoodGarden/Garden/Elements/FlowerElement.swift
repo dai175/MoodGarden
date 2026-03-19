@@ -30,15 +30,14 @@ struct FlowerElement: GardenElement {
             let petal = SKShapeNode(ellipseOf: CGSize(width: petalWidth, height: petalLength))
             petal.fillColor = MoodType.happy.uiColor.withHueOffset(hueShift)
             petal.strokeColor = .clear
-            petal.alpha = 0.8
+            // 花弁個別の alpha 変動（位相差付き）
+            let baseAlpha = nextFloat(random, min: 0.6, max: 0.9)
+            petal.alpha = baseAlpha
             petal.zRotation = angle
             petal.position = CGPoint(
                 x: cos(angle) * petalLength * 0.3,
                 y: sin(angle) * petalLength * 0.3
             )
-
-            // 花弁個別の alpha 変動（位相差付き）
-            let baseAlpha = nextFloat(random, min: 0.6, max: 0.9)
             let fadeDown = SKAction.fadeAlpha(to: baseAlpha * 0.6, duration: nextFloat(random, min: 0.8, max: 1.3))
             let fadeUp = SKAction.fadeAlpha(to: baseAlpha, duration: nextFloat(random, min: 0.8, max: 1.3))
             fadeDown.timingMode = .easeInEaseOut

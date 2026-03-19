@@ -40,12 +40,11 @@ struct WindElement: GardenElement {
             let baseAlpha = line.alpha
             let alphaStrong = min(baseAlpha * 1.3, 1.0)
             let alphaWeak = baseAlpha * 0.4
-            let gustDuration = nextFloat(random, min: 0.8, max: 1.3)
-            let fadeStrong = SKAction.fadeAlpha(to: alphaStrong, duration: gustDuration * 0.3)
+            let fadeStrong = SKAction.fadeAlpha(to: alphaStrong, duration: nextFloat(random, min: 0.8, max: 1.1))
             fadeStrong.timingMode = .easeInEaseOut
-            let fadeWeak = SKAction.fadeAlpha(to: alphaWeak, duration: gustDuration * 0.7)
+            let fadeWeak = SKAction.fadeAlpha(to: alphaWeak, duration: nextFloat(random, min: 0.8, max: 1.3))
             fadeWeak.timingMode = .easeInEaseOut
-            let fadeBase = SKAction.fadeAlpha(to: baseAlpha, duration: gustDuration * 0.4)
+            let fadeBase = SKAction.fadeAlpha(to: baseAlpha, duration: nextFloat(random, min: 0.8, max: 1.1))
             fadeBase.timingMode = .easeInEaseOut
             let gust = SKAction.sequence([fadeStrong, fadeWeak, fadeBase])
             line.run(.repeatForever(gust))

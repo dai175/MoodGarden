@@ -26,8 +26,8 @@ struct RainElement: GardenElement {
             let duration = nextFloat(random, min: 0.8, max: 1.2)
 
             // 着地リプル: 落下終端でスケールパルス
-            let rippleScale = SKAction.scale(to: 1.4, duration: 0.1)
-            let rippleRestore = SKAction.scale(to: 1.0, duration: 0.1)
+            let rippleScale = SKAction.scale(to: 1.4, duration: 0.8)
+            let rippleRestore = SKAction.scale(to: 1.0, duration: 0.8)
             rippleScale.timingMode = .easeInEaseOut
             rippleRestore.timingMode = .easeInEaseOut
 
@@ -35,9 +35,9 @@ struct RainElement: GardenElement {
                 SKAction.moveBy(x: 0, y: -fallDistance, duration: duration),
                 rippleScale,
                 rippleRestore,
-                SKAction.fadeOut(withDuration: 0.08),
+                SKAction.fadeOut(withDuration: 0.8),
                 SKAction.move(to: CGPoint(x: dropX, y: cellSize.height * 0.2), duration: 0),
-                SKAction.fadeAlpha(to: drop.alpha, duration: 0.08),
+                SKAction.fadeAlpha(to: drop.alpha, duration: 0.8),
             ])
             drop.run(.repeatForever(fall))
 
