@@ -46,6 +46,7 @@ struct SnapshotServiceTests {
         #expect(gardens.first?.year == 2026)
         #expect(gardens.first?.month == 2)
         #expect(gardens.first?.completedAt != nil)
+        #expect(gardens.first?.snapshotImage != nil)
     }
 
     @Test("performMonthTransition skips if garden already exists")

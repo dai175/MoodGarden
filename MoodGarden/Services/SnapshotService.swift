@@ -49,7 +49,7 @@ final class SnapshotService {
             )
         }
 
-        let snapshotData = renderSnapshot(entries: elementData)
+        guard let snapshotData = renderSnapshot(entries: elementData) else { return false }
 
         let garden: MonthlyGarden
         if let existing = try? modelContext.fetch(descriptor).first {
