@@ -1,4 +1,5 @@
 import SpriteKit
+import UIKit
 
 final class GardenScene: SKScene {
     private let renderer = GardenRenderer()
@@ -70,6 +71,24 @@ final class GardenScene: SKScene {
             fadeIn.timingMode = .easeOut
             scaleUp.timingMode = .easeOut
             node.run(.group([fadeIn, scaleUp]))
+
+            // 霧が晴れるトランジション
+            let fogRect = CGRect(
+                x: -size.width / 2,
+                y: -size.height / 2,
+                width: size.width,
+                height: size.height
+            )
+            let fogOverlay = SKShapeNode(rect: fogRect)
+            fogOverlay.fillColor = UIColor(red: 0.06, green: 0.12, blue: 0.08, alpha: 1.0)
+            fogOverlay.strokeColor = .clear
+            fogOverlay.alpha = 0.5
+            fogOverlay.zPosition = 100
+            addChild(fogOverlay)
+
+            let fogFade = SKAction.fadeOut(withDuration: 1.0)
+            fogFade.timingMode = .easeInEaseOut
+            fogOverlay.run(.sequence([fogFade, .removeFromParent()]))
         } else {
             elementsLayer.addChild(node)
         }
