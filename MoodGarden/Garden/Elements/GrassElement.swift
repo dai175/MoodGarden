@@ -40,11 +40,10 @@ struct GrassElement: GardenElement {
             blade.run(.sequence([delay, .repeatForever(sway)]))
 
             // ブレード先端の微震え（alpha 変動で表現）
-            let tipShiverDuration = nextFloat(random, min: 0.8, max: 1.1)
             let tipAlphaLow = blade.alpha * 0.75
-            let fadeOut = SKAction.fadeAlpha(to: tipAlphaLow, duration: tipShiverDuration * 0.5)
+            let fadeOut = SKAction.fadeAlpha(to: tipAlphaLow, duration: nextFloat(random, min: 0.8, max: 1.1))
             fadeOut.timingMode = .easeInEaseOut
-            let fadeIn = SKAction.fadeAlpha(to: blade.alpha, duration: tipShiverDuration * 0.5)
+            let fadeIn = SKAction.fadeAlpha(to: blade.alpha, duration: nextFloat(random, min: 0.8, max: 1.1))
             fadeIn.timingMode = .easeInEaseOut
             let tipShiver = SKAction.sequence([fadeOut, fadeIn])
             let shiverDelay = SKAction.wait(forDuration: Double(index) * 0.25)
