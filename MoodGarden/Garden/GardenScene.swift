@@ -72,7 +72,10 @@ final class GardenScene: SKScene {
             scaleUp.timingMode = .easeOut
             node.run(.group([fadeIn, scaleUp]))
 
-            // 霧が晴れるトランジション
+            // 霧が晴れるトランジション（既存のものがあれば除去して再生成）
+            if let existing = childNode(withName: "fogTransition") {
+                existing.removeFromParent()
+            }
             let fogRect = CGRect(
                 x: -size.width / 2,
                 y: -size.height / 2,
@@ -80,7 +83,8 @@ final class GardenScene: SKScene {
                 height: size.height
             )
             let fogOverlay = SKShapeNode(rect: fogRect)
-            fogOverlay.fillColor = UIColor(red: 0.06, green: 0.12, blue: 0.08, alpha: 1.0)
+            fogOverlay.name = "fogTransition"
+            fogOverlay.fillColor = DesignConstants.Colors.backgroundPrimaryUIColor
             fogOverlay.strokeColor = .clear
             fogOverlay.alpha = 0.5
             fogOverlay.zPosition = 100

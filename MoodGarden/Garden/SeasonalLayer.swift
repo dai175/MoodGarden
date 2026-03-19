@@ -3,14 +3,8 @@ import UIKit
 
 final class SeasonalLayer: SKNode {
 
-    private var emitterNode: SKEmitterNode?
-    private var overlayNode: SKShapeNode?
-
     func configure(season: Season, sceneSize: CGSize) {
         removeAllChildren()
-        emitterNode = nil
-        overlayNode = nil
-
         addOverlay(for: season, sceneSize: sceneSize)
         addParticles(for: season, sceneSize: sceneSize)
     }
@@ -27,24 +21,10 @@ final class SeasonalLayer: SKNode {
         let shape = SKShapeNode(rect: rect)
         shape.strokeColor = .clear
         shape.lineWidth = 0
-        shape.fillColor = overlayColor(for: season)
+        shape.fillColor = season.tintColor
         shape.zPosition = 0
         shape.isUserInteractionEnabled = false
         addChild(shape)
-        overlayNode = shape
-    }
-
-    private func overlayColor(for season: Season) -> UIColor {
-        switch season {
-        case .spring:
-            return UIColor(red: 0.2, green: 0.8, blue: 0.3, alpha: 0.03)
-        case .summer:
-            return UIColor(red: 0.8, green: 0.6, blue: 0.2, alpha: 0.04)
-        case .autumn:
-            return UIColor(red: 0.8, green: 0.4, blue: 0.1, alpha: 0.04)
-        case .winter:
-            return UIColor(red: 0.3, green: 0.4, blue: 0.7, alpha: 0.04)
-        }
     }
 
     // MARK: - Particles
@@ -63,7 +43,6 @@ final class SeasonalLayer: SKNode {
         }
         emitter.zPosition = 1
         addChild(emitter)
-        emitterNode = emitter
     }
 
     // MARK: - Spring: Pink Cherry Blossoms
