@@ -1,3 +1,4 @@
+import Foundation
 import SwiftData
 import Testing
 
@@ -17,7 +18,9 @@ struct SettingsViewModelTests {
         try context.save()
 
         let viewModel = SettingsViewModel(
-            notificationService: NotificationService(),
+            notificationService: NotificationService(
+                defaults: UserDefaults(suiteName: "test.\(#function)")!
+            ),
             modelContext: context
         )
         let result = viewModel.resetAllData()
