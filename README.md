@@ -71,3 +71,4 @@ See [CLAUDE.md](CLAUDE.md) for detailed technical guidance.
 
 - [Concept Document](docs/mood-garden-concept.md) — Philosophy, design principles, monetization strategy
 - [MVP Specification](docs/mood-garden-mvp-spec.md) — Implementation details, data models, SpriteKit specs
+- [MVP Implementation Plan](docs/mvp-implementation-plan.md) — Phased implementation approach
