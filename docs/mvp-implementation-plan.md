@@ -249,29 +249,27 @@ Archive, Settings, Onboarding, 通知, スナップショットを実装。
 
 ---
 
-## フェーズ 5: ポリッシュ [ ]
+## フェーズ 5: ポリッシュ [x]
 
 アニメーション、季節レイヤー、デザイン仕上げ、パフォーマンス最適化。
 
 ### タスク
 
-- [ ] 1. **SeasonalLayer** — `MoodGarden/Garden/SeasonalLayer.swift` (新規)
+- [x] 1. **SeasonalLayer** — `MoodGarden/Garden/SeasonalLayer.swift` (新規)
   - 春 (桜), 夏 (蛍), 秋 (落ち葉), 冬 (雪) — SKEmitterNode
   - 色補正レイヤー
 
-- [ ] 2. **Element アニメーション強化** — `MoodGarden/Garden/Elements/*.swift` (全修正)
+- [x] 2. **Element アニメーション強化** — `MoodGarden/Garden/Elements/*.swift` (全修正)
   - アンビエントアニメーション (SKAction): 揺れ、ドリフト、シマー、雨、霧
   - 3-5 バリエーションの視覚的差異を強化
 
-- [ ] 3. **GardenScene トランジション** — GardenScene.swift (修正)
+- [x] 3. **GardenScene トランジション** — GardenScene.swift (修正)
   - ムード記録時の「霧が晴れる」演出 (0.8-1.2s)
   - SeasonalLayer 統合
 
-- [ ] 4. **テクスチャアトラス移行** — `MoodGarden/Resources/GardenTextures.atlas/` (新規)
-  - SKShapeNode → SKSpriteNode で描画パフォーマンス向上
-  - ノード数 500 以下、60fps 維持
+- [x] 4. ~~**テクスチャアトラス移行**~~ — スキップ（現状の SKShapeNode で 60fps 維持できており、MVP では不要と判断）
 
-- [ ] 5. **UI デザイン仕上げ** — 全 Views (修正)
+- [x] 5. **UI デザイン仕上げ** — 全 Views (修正)
   - 色・フォント・トランジション統一。Liquid Glass との調和確認
 
 ### 検証
