@@ -1,6 +1,12 @@
 import Foundation
 
 enum AtmosphereEngine {
+    private static let nodeBudget = 400
+    private static let longRunThreshold = 3
+    private static let shortRunThreshold = 2
+    private static let longRunMultiplier = 1.6
+    private static let shortRunMultiplier = 1.3
+
     static func analyze(
         entries: [MoodEntry], season: Season, referenceDate: Date = Date()
     ) -> AtmosphereState {
@@ -15,7 +21,10 @@ enum AtmosphereEngine {
         }
         let total = Float(entries.count)
         let moodRatios = moodCounts.mapValues { Float($0) / total }
-        let dominantMood = moodRatios.max(by: { $0.value < $1.value })?.key
+        let dominantMood =
+            moodRatios
+            .sorted { $0.key.rawValue < $1.key.rawValue }
+            .max(by: { $0.value < $1.value })?.key
 
         // 2. Compute hue shift via MoodPalette
         let palette = MoodPalette.analyze(moodRatios: moodRatios)
@@ -25,20 +34,20 @@ enum AtmosphereEngine {
 
         // 4. Generate element manifest
         var manifest: [ElementSpec] = []
-        var budgetRemaining = 400
+        var budgetRemaining = nodeBudget
 
         for (index, entry) in sorted.enumerated() {
             let phase = GrowthManager.phase(createdAt: entry.createdAt, referenceDate: referenceDate)
-            let previousMood = index > 0 ? sorted[index - 1].mood : nil
             let elements = MoodAtmosphere.selectElements(
-                mood: entry.mood, seed: entry.gardenSeed, season: season,
-                previousMood: previousMood
+                mood: entry.mood, seed: entry.gardenSeed
             )
 
             // Apply consecutive density multiplier per spec:
             // 2 consecutive = 1.3x, 3+ consecutive = 1.6x
             let runLength = consecutiveRuns[entry.id] ?? 1
-            let multiplier: Double = runLength >= 3 ? 1.6 : (runLength >= 2 ? 1.3 : 1.0)
+            let multiplier: Double =
+                runLength >= longRunThreshold
+                ? longRunMultiplier : (runLength >= shortRunThreshold ? shortRunMultiplier : 1.0)
             let targetCount = Int(ceil(Double(elements.count) * multiplier))
 
             var entrySpecs: [ElementSpec] = []
