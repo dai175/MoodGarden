@@ -48,6 +48,7 @@ struct ArchiveDetailView: View {
                 )
             }
             detailScene.configure(with: elementData)
+            detailScene.configureSeason(month: month)
         }
     }
 
