@@ -30,12 +30,25 @@ struct GrassElement: GardenElement {
                 y: -cellSize.height * 0.25
             )
 
-            let delay = SKAction.wait(forDuration: Double(index) * 0.2)
+            // delay をランダムに調整（以前の固定 index * 0.2 より自然な揺れに）
+            let delayBase = nextFloat(random, min: 0.0, max: 0.5)
+            let delay = SKAction.wait(forDuration: Double(index) * 0.15 + delayBase)
             let sway = SKAction.sequence([
                 SKAction.rotate(byAngle: 0.08, duration: 1.0),
                 SKAction.rotate(byAngle: -0.08, duration: 1.0),
             ])
             blade.run(.sequence([delay, .repeatForever(sway)]))
+
+            // ブレード先端の微震え（alpha 変動で表現）
+            let tipShiverDuration = nextFloat(random, min: 0.8, max: 1.1)
+            let tipAlphaLow = blade.alpha * 0.75
+            let tipShiver = SKAction.sequence([
+                SKAction.fadeAlpha(to: tipAlphaLow, duration: tipShiverDuration * 0.5),
+                SKAction.fadeAlpha(to: blade.alpha, duration: tipShiverDuration * 0.5),
+            ])
+            tipShiver.timingMode = .easeInEaseOut
+            let shiverDelay = SKAction.wait(forDuration: Double(index) * 0.25)
+            blade.run(.sequence([shiverDelay, .repeatForever(tipShiver)]))
 
             container.addChild(blade)
         }

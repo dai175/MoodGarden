@@ -21,12 +21,27 @@ struct FogElement: GardenElement {
                 y: nextFloat(random, min: -0.2, max: 0.2) * cellSize.height
             )
 
-            let drift = nextFloat(random, min: 0.1, max: 0.2) * cellSize.width
+            // 水平ドリフト + 垂直成分追加
+            let driftX = nextFloat(random, min: 0.1, max: 0.2) * cellSize.width
+            let driftY = nextFloat(random, min: 0.03, max: 0.07) * cellSize.height
+            let moveDuration1 = nextFloat(random, min: 1.2, max: 1.5)
+            let moveDuration2 = nextFloat(random, min: 1.2, max: 1.5)
             let move = SKAction.sequence([
-                SKAction.moveBy(x: drift, y: 0, duration: nextFloat(random, min: 1.2, max: 1.5)),
-                SKAction.moveBy(x: -drift, y: 0, duration: nextFloat(random, min: 1.2, max: 1.5)),
+                SKAction.moveBy(x: driftX, y: driftY, duration: moveDuration1),
+                SKAction.moveBy(x: -driftX, y: -driftY, duration: moveDuration2),
             ])
             fog.run(.repeatForever(move))
+
+            // alpha 緩やか変動
+            let baseAlpha = fog.alpha
+            let alphaLow = baseAlpha * 0.6
+            let fadeDuration = nextFloat(random, min: 1.0, max: 1.5)
+            let alphaFade = SKAction.sequence([
+                SKAction.fadeAlpha(to: alphaLow, duration: fadeDuration),
+                SKAction.fadeAlpha(to: baseAlpha, duration: fadeDuration),
+            ])
+            alphaFade.timingMode = .easeInEaseOut
+            fog.run(.repeatForever(alphaFade))
 
             container.addChild(fog)
         }
