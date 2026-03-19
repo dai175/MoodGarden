@@ -69,7 +69,6 @@ struct SeasonTests {
 }
 
 @Suite("SeasonalLayer Tests")
-@MainActor
 struct SeasonalLayerTests {
     private let sceneSize = CGSize(width: 350, height: 250)
 
