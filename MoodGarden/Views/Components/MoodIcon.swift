@@ -9,5 +9,6 @@ struct MoodIcon: View {
             .font(.system(size: size * 0.5))
             .foregroundStyle(mood.color)
             .frame(width: size, height: size)
+            .accessibilityLabel(mood.displayName)
     }
 }
