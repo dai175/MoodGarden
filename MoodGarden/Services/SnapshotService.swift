@@ -6,10 +6,11 @@ import UIKit
 final class SnapshotService {
     private let snapshotSize = CGSize(width: 350, height: 250)
 
-    func renderSnapshot(entries: [GardenElementData]) -> Data? {
+    func renderSnapshot(entries: [GardenElementData], month: Int = 1) -> Data? {
         let scene = GardenScene(size: snapshotSize)
         scene.scaleMode = .aspectFill
         scene.configure(with: entries)
+        scene.configureSeason(month: month)
 
         let view = SKView(frame: CGRect(origin: .zero, size: snapshotSize))
         view.presentScene(scene)
@@ -54,7 +55,7 @@ final class SnapshotService {
             )
         }
 
-        guard let snapshotData = renderSnapshot(entries: elementData) else { return false }
+        guard let snapshotData = renderSnapshot(entries: elementData, month: previousMonth) else { return false }
 
         let garden: MonthlyGarden
         if let existingGarden {

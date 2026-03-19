@@ -84,6 +84,8 @@ struct GardenView: View {
     private func updateScene() {
         let entries = viewModel.currentMonthEntries.map(makeElementData)
         gardenScene.configure(with: entries)
+        let month = Calendar.current.component(.month, from: Date())
+        gardenScene.configureSeason(month: month)
     }
 
     private func makeElementData(from entry: MoodEntry) -> GardenElementData {

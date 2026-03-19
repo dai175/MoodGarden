@@ -3,7 +3,9 @@ import SpriteKit
 final class GardenScene: SKScene {
     private let renderer = GardenRenderer()
     private let elementsLayer = SKNode()
+    private let seasonalLayer = SeasonalLayer()
     private var currentEntries: [GardenElementData] = []
+    private var currentMonth = Calendar.current.component(.month, from: Date())
 
     override init() {
         super.init(size: CGSize(width: 350, height: 250))
@@ -25,6 +27,8 @@ final class GardenScene: SKScene {
         scaleMode = .resizeFill
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         addChild(elementsLayer)
+        seasonalLayer.zPosition = 10
+        addChild(seasonalLayer)
     }
 
     override func didMove(to view: SKView) {
@@ -37,6 +41,12 @@ final class GardenScene: SKScene {
         super.didChangeSize(oldSize)
         guard size.width > 0, size.height > 0 else { return }
         rebuildElements()
+        seasonalLayer.configure(season: Season.from(month: currentMonth), sceneSize: size)
+    }
+
+    func configureSeason(month: Int) {
+        currentMonth = month
+        seasonalLayer.configure(season: Season.from(month: month), sceneSize: size)
     }
 
     func configure(with entries: [GardenElementData]) {
