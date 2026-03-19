@@ -27,6 +27,12 @@ final class GardenScene: SKScene {
         addChild(elementsLayer)
     }
 
+    override func didMove(to view: SKView) {
+        super.didMove(to: view)
+        isPaused = false
+        view.isPaused = false
+    }
+
     override func didChangeSize(_ oldSize: CGSize) {
         super.didChangeSize(oldSize)
         guard size.width > 0, size.height > 0 else { return }
