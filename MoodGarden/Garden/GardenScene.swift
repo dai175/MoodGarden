@@ -112,6 +112,14 @@ final class GardenScene: SKScene {
         }
     }
 
+    func performTransition(mood: MoodType, totalRecords: Int, newSpecs: [ElementSpec]) {
+        TransitionDirector.runTransition(
+            on: self, mood: mood, totalRecords: totalRecords
+        ) { [weak self] in
+            self?.addElements(from: newSpecs, animated: false)
+        }
+    }
+
     // MARK: - Private
 
     private func rebuildElements() {
