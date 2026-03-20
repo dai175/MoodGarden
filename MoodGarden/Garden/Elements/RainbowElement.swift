@@ -1,5 +1,6 @@
 import GameplayKit
 import SpriteKit
+import UIKit
 
 struct RainbowElement: GardenElement {
     let elementType = ElementType.rainbow

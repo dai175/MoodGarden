@@ -29,6 +29,7 @@ struct GardenRendererTests {
         "Creates node for each implemented element type",
         arguments: [
             ElementType.moss, .flower, .grass, .fog, .raindrop, .wind, .fallenLeaf,
+            .butterfly, .sunray, .rainbow, .puddle, .ripple, .vine, .mushroom,
         ]
     )
     func createsNodeForElementType(elementType: ElementType) {
@@ -78,11 +79,10 @@ struct GardenRendererTests {
         #expect(results[0].position.x < results[1].position.x)
     }
 
-    @Test("Unimplemented element type returns empty node gracefully")
-    func unimplementedElementType() {
+    @Test("Registered element type creates named node")
+    func registeredElementType() {
         let spec = makeSpec(elementType: .butterfly)
         let node = renderer.createNode(for: spec, sceneSize: sceneSize)
-        // Should return a node (possibly empty) without crashing
         #expect(node.name?.contains("butterfly") == true)
     }
 

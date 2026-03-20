@@ -4,7 +4,7 @@ import SpriteKit
 struct VineElement: GardenElement {
     let elementType = ElementType.vine
     let preferredZone = PlacementZone.foreground
-    let estimatedNodes = 3
+    let estimatedNodes = 4
 
     func createNode(seed: Int, phase: GrowthPhase, sceneSize: CGSize) -> SKNode {
         let random = makeRandom(seed: seed)
