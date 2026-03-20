@@ -4,7 +4,7 @@ import SpriteKit
 struct FlowerElement: GardenElement {
     let elementType = ElementType.flower
     let preferredZone = PlacementZone.hilltop
-    let estimatedNodes = 3
+    let estimatedNodes = 8
 
     func createNode(seed: Int, phase: GrowthPhase, sceneSize: CGSize) -> SKNode {
         let random = makeRandom(seed: seed)
