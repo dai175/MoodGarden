@@ -89,13 +89,7 @@ final class GardenScene: SKScene {
         guard size.width > 0, size.height > 0 else { return }
 
         // Merge new specs into currentState so rebuildElements() preserves them
-        let merged = currentState.elementManifest + specs
-        currentState = AtmosphereState(
-            moodRatios: currentState.moodRatios,
-            dominantMood: currentState.dominantMood,
-            hueShift: currentState.hueShift,
-            elementManifest: merged
-        )
+        currentState.elementManifest += specs
 
         let positions = PlacementRule.computePositions(for: specs, sceneSize: size)
         let nodes = renderer.createNodes(for: specs, positions: positions, sceneSize: size)
