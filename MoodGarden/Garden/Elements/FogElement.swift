@@ -2,8 +2,14 @@ import GameplayKit
 import SpriteKit
 
 struct FogElement: GardenElement {
-    func createNode(seed: Int, cellSize: CGSize) -> SKNode {
+    let elementType = ElementType.fog
+    let preferredZone = PlacementZone.anywhere
+    let estimatedNodes = 2
+
+    func createNode(seed: Int, phase: GrowthPhase, sceneSize: CGSize) -> SKNode {
         let random = makeRandom(seed: seed)
+        let cellSize = refSize(from: sceneSize)
+        let speed = animationSpeed(for: phase)
         let container = SKNode()
         let patchCount = 2 + Int(random.nextInt(upperBound: 2))
 
@@ -21,21 +27,19 @@ struct FogElement: GardenElement {
                 y: nextFloat(random, min: -0.2, max: 0.2) * cellSize.height
             )
 
-            // 水平ドリフト + 垂直成分追加
             let driftX = nextFloat(random, min: 0.1, max: 0.2) * cellSize.width
             let driftY = nextFloat(random, min: 0.03, max: 0.07) * cellSize.height
-            let moveDuration1 = nextFloat(random, min: 1.2, max: 1.5)
-            let moveDuration2 = nextFloat(random, min: 1.2, max: 1.5)
+            let moveDuration1 = nextFloat(random, min: 1.2, max: 1.5) * speed
+            let moveDuration2 = nextFloat(random, min: 1.2, max: 1.5) * speed
             let move = SKAction.sequence([
                 SKAction.moveBy(x: driftX, y: driftY, duration: moveDuration1),
                 SKAction.moveBy(x: -driftX, y: -driftY, duration: moveDuration2),
             ])
             fog.run(.repeatForever(move))
 
-            // alpha 緩やか変動
             let baseAlpha = fog.alpha
             let alphaLow = baseAlpha * 0.6
-            let fadeDuration = nextFloat(random, min: 1.0, max: 1.5)
+            let fadeDuration = nextFloat(random, min: 1.0, max: 1.5) * speed
             let fadeOut = SKAction.fadeAlpha(to: alphaLow, duration: fadeDuration)
             fadeOut.timingMode = .easeInEaseOut
             let fadeIn = SKAction.fadeAlpha(to: baseAlpha, duration: fadeDuration)
@@ -45,6 +49,7 @@ struct FogElement: GardenElement {
 
             container.addChild(fog)
         }
+        applyGrowthPhase(phase, to: container)
         return container
     }
 }

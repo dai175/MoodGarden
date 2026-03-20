@@ -2,8 +2,14 @@ import GameplayKit
 import SpriteKit
 
 struct MossElement: GardenElement {
-    func createNode(seed: Int, cellSize: CGSize) -> SKNode {
+    let elementType = ElementType.moss
+    let preferredZone = PlacementZone.waterside
+    let estimatedNodes = 3
+
+    func createNode(seed: Int, phase: GrowthPhase, sceneSize: CGSize) -> SKNode {
         let random = makeRandom(seed: seed)
+        let cellSize = refSize(from: sceneSize)
+        let speed = animationSpeed(for: phase)
         let container = SKNode()
         let patchCount = 2 + Int(random.nextInt(upperBound: 2))
 
@@ -20,8 +26,7 @@ struct MossElement: GardenElement {
                 y: nextFloat(random, min: -0.25, max: 0.25) * cellSize.height
             )
 
-            // alpha パルス（パッチ間の位相差をインデックスで付ける）
-            let pulseDuration = nextFloat(random, min: 1.2, max: 1.5)
+            let pulseDuration = nextFloat(random, min: 1.2, max: 1.5) * speed
             let pulse = SKAction.sequence([
                 SKAction.fadeAlpha(to: ellipse.alpha * 0.7, duration: pulseDuration),
                 SKAction.fadeAlpha(to: ellipse.alpha, duration: pulseDuration),
@@ -29,9 +34,8 @@ struct MossElement: GardenElement {
             let phaseDelay = SKAction.wait(forDuration: Double(patchIndex) * 0.4)
             ellipse.run(.sequence([phaseDelay, .repeatForever(pulse)]))
 
-            // 微細スケール変化 (0.97-1.03)
-            let scaleUp = SKAction.scale(to: 1.03, duration: nextFloat(random, min: 0.8, max: 1.2))
-            let scaleDown = SKAction.scale(to: 0.97, duration: nextFloat(random, min: 0.8, max: 1.2))
+            let scaleUp = SKAction.scale(to: 1.03, duration: nextFloat(random, min: 0.8, max: 1.2) * speed)
+            let scaleDown = SKAction.scale(to: 0.97, duration: nextFloat(random, min: 0.8, max: 1.2) * speed)
             scaleUp.timingMode = .easeInEaseOut
             scaleDown.timingMode = .easeInEaseOut
             let scalePulse = SKAction.sequence([scaleUp, scaleDown])
@@ -39,6 +43,7 @@ struct MossElement: GardenElement {
 
             container.addChild(ellipse)
         }
+        applyGrowthPhase(phase, to: container)
         return container
     }
 }
