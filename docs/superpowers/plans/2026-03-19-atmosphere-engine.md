@@ -1047,7 +1047,7 @@ git commit -m "feat(garden): add AtmosphereEngine orchestrating mood analysis pi
 
 Update the protocol to accept GrowthPhase and sceneSize. Migrate all 7 existing elements.
 
-- [ ] **Step 1: Update GardenElement protocol**
+- [x] **Step 1: Update GardenElement protocol**
 
 Replace contents of `MoodGarden/Garden/Elements/GardenElement.swift`:
 
@@ -1092,7 +1092,7 @@ extension GardenElement {
 }
 ```
 
-- [ ] **Step 2: Migrate MossElement**
+- [x] **Step 2: Migrate MossElement**
 
 Update `MoodGarden/Garden/Elements/MossElement.swift` — change method signature and add growth phase support. The core drawing logic stays the same, but uses `sceneSize` instead of `cellSize` and applies phase-based scaling.
 
@@ -1150,7 +1150,7 @@ struct MossElement: GardenElement {
 }
 ```
 
-- [ ] **Step 3: Migrate remaining 6 elements**
+- [x] **Step 3: Migrate remaining 6 elements**
 
 Apply the same pattern to each: change `createNode(seed:cellSize:)` → `createNode(seed:phase:sceneSize:)`, derive `refSize` from `sceneSize`, add `elementType`, `preferredZone`, apply `applyGrowthPhase` and `animationSpeed`. Core drawing logic stays the same.
 
@@ -1162,7 +1162,7 @@ Files to modify:
 - `WindElement.swift` — elementType: .wind, zone: .sky
 - `LeafElement.swift` — elementType: .fallenLeaf, zone: .foreground
 
-- [ ] **Step 4: Update GardenRenderer to use new protocol**
+- [x] **Step 4: Update GardenRenderer to use new protocol**
 
 Modify `MoodGarden/Garden/GardenRenderer.swift` to accept `ElementSpec` and `AtmosphereState`:
 
@@ -1203,12 +1203,12 @@ struct GardenRenderer {
 }
 ```
 
-- [ ] **Step 5: Build to verify compilation**
+- [x] **Step 5: Build to verify compilation**
 
 Run: `xcodebuild build -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`
 Expected: BUILD SUCCEEDED (existing tests may not run yet due to GardenScene changes pending)
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add MoodGarden/Garden/Elements/ MoodGarden/Garden/GardenRenderer.swift
@@ -1224,7 +1224,7 @@ git commit -m "refactor(garden): migrate elements to new protocol with GrowthPha
 
 Creates the 3-layer background system. Uses gradient placeholders until AI images are ready.
 
-- [ ] **Step 1: Implement BackgroundLayer**
+- [x] **Step 1: Implement BackgroundLayer**
 
 ```swift
 // MoodGarden/Garden/BackgroundLayer.swift
@@ -1377,12 +1377,12 @@ final class BackgroundLayer: SKNode {
 }
 ```
 
-- [ ] **Step 2: Build to verify**
+- [x] **Step 2: Build to verify**
 
 Run: `xcodebuild build -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`
 Expected: BUILD SUCCEEDED
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add MoodGarden/Garden/BackgroundLayer.swift
@@ -1400,7 +1400,7 @@ git commit -m "feat(garden): add BackgroundLayer with placeholder gradient textu
 
 This is the core integration: rewire GardenScene to use AtmosphereState, BackgroundLayer, and zone-based rendering.
 
-- [ ] **Step 1: Rewrite GardenScene**
+- [x] **Step 1: Rewrite GardenScene**
 
 Replace contents of `MoodGarden/Garden/GardenScene.swift`:
 
@@ -1547,7 +1547,7 @@ final class GardenScene: SKScene {
 }
 ```
 
-- [ ] **Step 2: Update GardenView to use AtmosphereEngine**
+- [x] **Step 2: Update GardenView to use AtmosphereEngine**
 
 Modify `MoodGarden/Views/GardenView.swift` — replace the `makeElementData` / grid-based flow with AtmosphereEngine:
 
@@ -1568,11 +1568,11 @@ private func updateScene() {
 
 The `onChange` handler for new entries should compute the new entry's specs via AtmosphereEngine and call `gardenScene.addElements(from:animated:)` for the incremental addition.
 
-- [ ] **Step 3: Update GardenViewModel if needed**
+- [x] **Step 3: Update GardenViewModel if needed**
 
 `GardenViewModel` likely needs no changes at this stage — it still provides `currentMonthEntries: [MoodEntry]`. The transformation to `AtmosphereState` happens in `GardenView`.
 
-- [ ] **Step 4: Update ArchiveDetailView**
+- [x] **Step 4: Update ArchiveDetailView**
 
 Modify `MoodGarden/Views/ArchiveDetailView.swift` — replace `GardenElementData` usage with `AtmosphereEngine`:
 
@@ -1585,7 +1585,7 @@ Modify `MoodGarden/Views/ArchiveDetailView.swift` — replace `GardenElementData
 }
 ```
 
-- [ ] **Step 5: Delete GardenGridLayout.swift and GardenElementData.swift**
+- [x] **Step 5: Delete GardenGridLayout.swift and GardenElementData.swift**
 
 Now that all consumers have been updated, remove the old grid-based files:
 
@@ -1594,16 +1594,16 @@ rm MoodGarden/Garden/GardenGridLayout.swift
 rm MoodGarden/Garden/GardenElementData.swift
 ```
 
-- [ ] **Step 6: Fix any remaining compilation errors**
+- [x] **Step 6: Fix any remaining compilation errors**
 
 Search for any remaining references to `GardenElementData`, `GardenGridLayout`, or the old `createNode(for:cellSize:)` signature and update them. Also remove the existing fog transition code from the old `addEntry(_:animated:)` method — fog transitions are now handled by `TransitionDirector` (Task 12).
 
-- [ ] **Step 7: Build and run existing tests**
+- [x] **Step 7: Build and run existing tests**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests`
 Expected: All tests PASS (including new AtmosphereEngine tests and legacy tests)
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add -A
