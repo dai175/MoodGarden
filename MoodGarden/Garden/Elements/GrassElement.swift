@@ -38,20 +38,11 @@ struct GrassElement: GardenElement {
 
             let delayBase = nextFloat(random, min: 0.0, max: 0.5)
             let delay = SKAction.wait(forDuration: Double(index) * 0.15 + delayBase)
-            let sway = SKAction.sequence([
-                SKAction.rotate(byAngle: 0.08, duration: 1.0 * speed),
-                SKAction.rotate(byAngle: -0.08, duration: 1.0 * speed),
-            ])
+            let sway = swayRotation(angle: 0.08, duration: 2.0 * speed)
             blade.run(.sequence([delay, .repeatForever(sway)]))
 
-            let tipAlphaLow = blade.alpha * 0.75
-            let fadeOut = SKAction.fadeAlpha(
-                to: tipAlphaLow, duration: nextFloat(random, min: 0.8, max: 1.1) * speed)
-            fadeOut.timingMode = .easeInEaseOut
-            let fadeIn = SKAction.fadeAlpha(
-                to: blade.alpha, duration: nextFloat(random, min: 0.8, max: 1.1) * speed)
-            fadeIn.timingMode = .easeInEaseOut
-            let tipShiver = SKAction.sequence([fadeOut, fadeIn])
+            let tipFadeDuration = nextFloat(random, min: 0.8, max: 1.1) * speed
+            let tipShiver = pulseAlpha(from: blade.alpha, to: blade.alpha * 0.75, duration: tipFadeDuration)
             let shiverDelay = SKAction.wait(forDuration: Double(index) * 0.25)
             blade.run(.sequence([shiverDelay, .repeatForever(tipShiver)]))
 

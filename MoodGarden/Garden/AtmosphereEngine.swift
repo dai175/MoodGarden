@@ -1,8 +1,12 @@
 import Foundation
 
 enum AtmosphereEngine {
+    /// Maximum total estimated nodes across all elements in a single garden render.
+    /// Balances visual richness with SpriteKit frame-rate on older devices.
     private static let nodeBudget = 400
+    /// Consecutive same-mood entries >= this threshold receive the larger density bonus (1.6×).
     private static let longRunThreshold = 3
+    /// Consecutive same-mood entries >= this threshold receive a moderate density bonus (1.3×).
     private static let shortRunThreshold = 2
     private static let longRunMultiplier = 1.6
     private static let shortRunMultiplier = 1.3
@@ -35,9 +39,12 @@ enum AtmosphereEngine {
         // 4. Generate element manifest
         var manifest: [ElementSpec] = []
         var budgetRemaining = nodeBudget
+        let referenceStartOfDay = Calendar.current.startOfDay(for: referenceDate)
 
-        for (index, entry) in sorted.enumerated() {
-            let phase = GrowthManager.phase(createdAt: entry.createdAt, referenceDate: referenceDate)
+        for entry in sorted {
+            let phase = GrowthManager.phase(
+                createdAt: entry.createdAt, referenceStartOfDay: referenceStartOfDay
+            )
             let elements = MoodAtmosphere.selectElements(
                 mood: entry.mood, seed: entry.gardenSeed
             )
@@ -97,21 +104,25 @@ enum AtmosphereEngine {
 
     /// Returns [entryID: consecutive run length] for same-mood streaks
     private static func computeConsecutiveRuns(_ sorted: [MoodEntry]) -> [UUID: Int] {
+        guard !sorted.isEmpty else { return [:] }
+
+        let calendar = Calendar.current
+        // Pre-compute startOfDay for each entry to avoid redundant Calendar calls
+        let startOfDays = sorted.map { calendar.startOfDay(for: $0.date) }
+
         var runs: [UUID: Int] = [:]
         var currentRun = 1
 
         for index in 0..<sorted.count {
             if index > 0 {
-                let prev = sorted[index - 1]
-                let curr = sorted[index]
                 let daysBetween =
-                    Calendar.current.dateComponents(
+                    calendar.dateComponents(
                         [.day],
-                        from: Calendar.current.startOfDay(for: prev.date),
-                        to: Calendar.current.startOfDay(for: curr.date)
+                        from: startOfDays[index - 1],
+                        to: startOfDays[index]
                     ).day ?? 0
 
-                if curr.mood == prev.mood && daysBetween == 1 {
+                if sorted[index].mood == sorted[index - 1].mood && daysBetween == 1 {
                     currentRun += 1
                 } else {
                     currentRun = 1

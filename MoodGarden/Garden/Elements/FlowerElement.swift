@@ -43,14 +43,10 @@ struct FlowerElement: GardenElement {
                 x: cos(angle) * petalLength * 0.3,
                 y: sin(angle) * petalLength * 0.3
             )
-            let fadeDown = SKAction.fadeAlpha(
-                to: baseAlpha * 0.6, duration: nextFloat(random, min: 0.8, max: 1.3) * speed)
-            let fadeUp = SKAction.fadeAlpha(
-                to: baseAlpha, duration: nextFloat(random, min: 0.8, max: 1.3) * speed)
-            fadeDown.timingMode = .easeInEaseOut
-            fadeUp.timingMode = .easeInEaseOut
+            let fadeDuration = nextFloat(random, min: 0.8, max: 1.3) * speed
+            let petalPulse = pulseAlpha(from: baseAlpha, to: baseAlpha * 0.6, duration: fadeDuration)
             let petalPhase = SKAction.wait(forDuration: Double(index) * 0.15)
-            petal.run(.sequence([petalPhase, .repeatForever(.sequence([fadeDown, fadeUp]))]))
+            petal.run(.sequence([petalPhase, .repeatForever(petalPulse)]))
 
             container.addChild(petal)
         }

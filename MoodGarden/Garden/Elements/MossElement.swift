@@ -27,10 +27,7 @@ struct MossElement: GardenElement {
             )
 
             let pulseDuration = nextFloat(random, min: 1.2, max: 1.5) * speed
-            let pulse = SKAction.sequence([
-                SKAction.fadeAlpha(to: ellipse.alpha * 0.7, duration: pulseDuration),
-                SKAction.fadeAlpha(to: ellipse.alpha, duration: pulseDuration),
-            ])
+            let pulse = pulseAlpha(from: ellipse.alpha, to: ellipse.alpha * 0.7, duration: pulseDuration)
             let phaseDelay = SKAction.wait(forDuration: Double(patchIndex) * 0.4)
             ellipse.run(.sequence([phaseDelay, .repeatForever(pulse)]))
 

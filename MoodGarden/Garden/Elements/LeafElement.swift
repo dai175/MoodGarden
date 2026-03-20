@@ -32,29 +32,17 @@ struct LeafElement: GardenElement {
 
             let rotSpeed = nextFloat(random, min: 1.0, max: 1.5) * speed
             let rotate = SKAction.rotate(byAngle: .pi * 2, duration: rotSpeed * 8)
-            let drift = SKAction.sequence([
-                SKAction.moveBy(x: 0, y: cellSize.height * 0.05, duration: rotSpeed * 2),
-                SKAction.moveBy(x: 0, y: -cellSize.height * 0.05, duration: rotSpeed * 2),
-            ])
+            let verticalDrift = driftAction(dx: 0, dy: cellSize.height * 0.05, duration: rotSpeed * 2)
             leaf.run(.repeatForever(rotate))
-            leaf.run(.repeatForever(drift))
+            leaf.run(.repeatForever(verticalDrift))
 
             let swayAmount = nextFloat(random, min: 0.04, max: 0.08) * cellSize.width
             let swayDuration = nextFloat(random, min: 0.9, max: 1.4) * speed
-            let swayLeft = SKAction.moveBy(x: -swayAmount, y: 0, duration: swayDuration)
-            let swayRight = SKAction.moveBy(x: swayAmount, y: 0, duration: swayDuration)
-            swayLeft.timingMode = .easeInEaseOut
-            swayRight.timingMode = .easeInEaseOut
-            leaf.run(.repeatForever(.sequence([swayLeft, swayRight])))
+            leaf.run(.repeatForever(driftAction(dx: -swayAmount, dy: 0, duration: swayDuration)))
 
             let leafAlpha = leaf.alpha
-            let fadeDown = SKAction.fadeAlpha(
-                to: leafAlpha * 0.6, duration: nextFloat(random, min: 1.0, max: 1.5) * speed)
-            let fadeUp = SKAction.fadeAlpha(
-                to: leafAlpha, duration: nextFloat(random, min: 1.0, max: 1.5) * speed)
-            fadeDown.timingMode = .easeInEaseOut
-            fadeUp.timingMode = .easeInEaseOut
-            leaf.run(.repeatForever(.sequence([fadeDown, fadeUp])))
+            let fadeDuration = nextFloat(random, min: 1.0, max: 1.5) * speed
+            leaf.run(.repeatForever(pulseAlpha(from: leafAlpha, to: leafAlpha * 0.6, duration: fadeDuration)))
 
             container.addChild(leaf)
         }

@@ -1,11 +1,15 @@
 enum ElementType: String, CaseIterable {
     // Ground elements
-    case flower, moss, grass, vine, puddle, fallenLeaf, mushroom, pebble
+    case flower, moss, grass, vine, puddle, fallenLeaf, mushroom
+    // TODO: Implement in polish phase — currently unused in MoodAtmosphere pools
+    case pebble
     // Aerial elements
     case butterfly, raindrop, fog, wind, sunray, rainbow
     // Water elements
-    case ripple, reflection
-    // Ambient
+    case ripple
+    // TODO: Implement in polish phase — currently unused in MoodAtmosphere pools
+    case reflection
+    // Ambient — TODO: Implement in polish phase — currently unused in MoodAtmosphere pools
     case warmLight, breeze, dimLight, shimmer
 
     var isGround: Bool {

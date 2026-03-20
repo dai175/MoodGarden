@@ -38,4 +38,32 @@ extension GardenElement {
         case .mature: return 1.3
         }
     }
+
+    // MARK: - Common Animation Helpers
+
+    /// Alpha fade/pulse cycle (easeInEaseOut). Returns a single cycle; wrap in `.repeatForever()`.
+    func pulseAlpha(from high: CGFloat, to low: CGFloat, duration: CGFloat) -> SKAction {
+        let fadeDown = SKAction.fadeAlpha(to: low, duration: duration)
+        fadeDown.timingMode = .easeInEaseOut
+        let fadeUp = SKAction.fadeAlpha(to: high, duration: duration)
+        fadeUp.timingMode = .easeInEaseOut
+        return .sequence([fadeDown, fadeUp])
+    }
+
+    /// Bidirectional drift movement cycle. Returns a single cycle; wrap in `.repeatForever()`.
+    func driftAction(dx: CGFloat, dy: CGFloat, duration: CGFloat) -> SKAction {
+        .sequence([
+            SKAction.moveBy(x: dx, y: dy, duration: duration),
+            SKAction.moveBy(x: -dx, y: -dy, duration: duration),
+        ])
+    }
+
+    /// Symmetric sway rotation cycle (easeInEaseOut). Returns a single cycle; wrap in `.repeatForever()`.
+    func swayRotation(angle: CGFloat, duration: CGFloat) -> SKAction {
+        let forward = SKAction.rotate(byAngle: angle, duration: duration / 2)
+        forward.timingMode = .easeInEaseOut
+        let backward = SKAction.rotate(byAngle: -angle, duration: duration / 2)
+        backward.timingMode = .easeInEaseOut
+        return .sequence([forward, backward])
+    }
 }
