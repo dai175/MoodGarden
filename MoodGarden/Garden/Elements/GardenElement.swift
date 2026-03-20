@@ -32,10 +32,10 @@ extension GardenElement {
     /// Scale animation durations by growth phase (mature elements animate slower).
     func animationSpeed(for phase: GrowthPhase) -> CGFloat {
         switch phase {
-        case .seed: return 1.3
-        case .sprout: return 1.1
+        case .seed: return 0.9
+        case .sprout: return 1.0
         case .bloom: return 1.0
-        case .mature: return 0.9
+        case .mature: return 1.3
         }
     }
 }
