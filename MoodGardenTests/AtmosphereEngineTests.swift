@@ -1,27 +1,33 @@
 import Foundation
+import SwiftData
 import Testing
 
 @testable import MoodGarden
 
+@MainActor
 struct AtmosphereEngineTests {
-    private func makeEntry(mood: MoodType, daysAgo: Int = 0, seed: Int = 42) -> MoodEntry {
-        let date = Calendar.current.date(byAdding: .day, value: -daysAgo, to: fixedDate)!
-        let entry = MoodEntry(mood: mood, date: date)
-        entry.gardenSeed = seed
-        return entry
-    }
-
     private let fixedDate = Calendar.current.date(
         from: DateComponents(year: 2026, month: 3, day: 19)
     )!
+
+    private func makeEntry(
+        mood: MoodType, daysAgo: Int = 0, seed: Int = 42, in context: ModelContext
+    ) -> MoodEntry {
+        let date = Calendar.current.date(byAdding: .day, value: -daysAgo, to: fixedDate)!
+        let entry = MoodEntry(mood: mood, date: date)
+        entry.gardenSeed = seed
+        context.insert(entry)
+        return entry
+    }
 
     @Test func emptyEntriesProduceEmptyState() {
         let state = AtmosphereEngine.analyze(entries: [], season: .spring, referenceDate: fixedDate)
         #expect(state == AtmosphereState.empty)
     }
 
-    @Test func singleEntryProducesElements() {
-        let entry = makeEntry(mood: .happy)
+    @Test func singleEntryProducesElements() throws {
+        let container = try TestHelpers.makeModelContainer()
+        let entry = makeEntry(mood: .happy, in: container.mainContext)
         let state = AtmosphereEngine.analyze(
             entries: [entry], season: .spring, referenceDate: fixedDate
         )
@@ -30,11 +36,13 @@ struct AtmosphereEngineTests {
         #expect(state.dominantMood == .happy)
     }
 
-    @Test func mixedEntriesProduceCorrectRatios() {
+    @Test func mixedEntriesProduceCorrectRatios() throws {
+        let container = try TestHelpers.makeModelContainer()
+        let context = container.mainContext
         let entries = [
-            makeEntry(mood: .happy, daysAgo: 2, seed: 1),
-            makeEntry(mood: .happy, daysAgo: 1, seed: 2),
-            makeEntry(mood: .sad, daysAgo: 0, seed: 3),
+            makeEntry(mood: .happy, daysAgo: 2, seed: 1, in: context),
+            makeEntry(mood: .happy, daysAgo: 1, seed: 2, in: context),
+            makeEntry(mood: .sad, daysAgo: 0, seed: 3, in: context),
         ]
         let state = AtmosphereEngine.analyze(
             entries: entries, season: .summer, referenceDate: fixedDate
@@ -44,10 +52,12 @@ struct AtmosphereEngineTests {
         #expect(state.dominantMood == .happy)
     }
 
-    @Test func growthPhasesAreAssigned() {
+    @Test func growthPhasesAreAssigned() throws {
+        let container = try TestHelpers.makeModelContainer()
+        let context = container.mainContext
         let entries = [
-            makeEntry(mood: .happy, daysAgo: 5, seed: 1),
-            makeEntry(mood: .peaceful, daysAgo: 0, seed: 2),
+            makeEntry(mood: .happy, daysAgo: 5, seed: 1, in: context),
+            makeEntry(mood: .peaceful, daysAgo: 0, seed: 2, in: context),
         ]
         let state = AtmosphereEngine.analyze(
             entries: entries, season: .spring, referenceDate: fixedDate
@@ -57,10 +67,12 @@ struct AtmosphereEngineTests {
         #expect(phases.contains(.seed))  // today
     }
 
-    @Test func nodeBudgetRespected() {
+    @Test func nodeBudgetRespected() throws {
+        let container = try TestHelpers.makeModelContainer()
+        let context = container.mainContext
         // 30 entries — worst case scenario
         let entries = (0..<30).map { i in
-            makeEntry(mood: MoodType.allCases[i % 7], daysAgo: i, seed: i)
+            makeEntry(mood: MoodType.allCases[i % 7], daysAgo: i, seed: i, in: context)
         }
         let state = AtmosphereEngine.analyze(
             entries: entries, season: .autumn, referenceDate: fixedDate
@@ -68,20 +80,23 @@ struct AtmosphereEngineTests {
         #expect(state.totalEstimatedNodes <= 400)
     }
 
-    @Test func hueShiftIsWithinBounds() {
-        let entries = [makeEntry(mood: .happy)]
+    @Test func hueShiftIsWithinBounds() throws {
+        let container = try TestHelpers.makeModelContainer()
+        let entries = [makeEntry(mood: .happy, in: container.mainContext)]
         let state = AtmosphereEngine.analyze(
             entries: entries, season: .spring, referenceDate: fixedDate
         )
         #expect(abs(state.hueShift) <= 0.15)
     }
 
-    @Test func consecutiveBonusIncreasesElements() {
+    @Test func consecutiveBonusIncreasesElements() throws {
+        let container = try TestHelpers.makeModelContainer()
+        let context = container.mainContext
         // 3 consecutive happy days -> 1.6x multiplier
         let consecutive = [
-            makeEntry(mood: .happy, daysAgo: 2, seed: 10),
-            makeEntry(mood: .happy, daysAgo: 1, seed: 11),
-            makeEntry(mood: .happy, daysAgo: 0, seed: 12),
+            makeEntry(mood: .happy, daysAgo: 2, seed: 10, in: context),
+            makeEntry(mood: .happy, daysAgo: 1, seed: 11, in: context),
+            makeEntry(mood: .happy, daysAgo: 0, seed: 12, in: context),
         ]
         let stateConsec = AtmosphereEngine.analyze(
             entries: consecutive, season: .spring, referenceDate: fixedDate
@@ -89,9 +104,9 @@ struct AtmosphereEngineTests {
 
         // 3 non-consecutive happy days -> no multiplier
         let nonConsecutive = [
-            makeEntry(mood: .happy, daysAgo: 6, seed: 10),
-            makeEntry(mood: .happy, daysAgo: 3, seed: 11),
-            makeEntry(mood: .happy, daysAgo: 0, seed: 12),
+            makeEntry(mood: .happy, daysAgo: 6, seed: 10, in: context),
+            makeEntry(mood: .happy, daysAgo: 3, seed: 11, in: context),
+            makeEntry(mood: .happy, daysAgo: 0, seed: 12, in: context),
         ]
         let stateNonConsec = AtmosphereEngine.analyze(
             entries: nonConsecutive, season: .spring, referenceDate: fixedDate

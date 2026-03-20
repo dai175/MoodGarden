@@ -112,14 +112,17 @@ enum MoodAtmosphere {
         let shuffledSupp = shufflePool(pool.supplementary, using: random)
         var suppCount = 0
         for entry in shuffledSupp where suppCount < maxSupplementaryCount {
-            if random.nextUniform() > supplementaryProbability {
+            if random.nextUniform() < supplementaryProbability {
                 selected.append(entry)
                 suppCount += 1
             }
         }
 
         // Ensure minimum of 2 elements
-        if selected.count < 2, let fallback = pool.supplementary.first {
+        if selected.count < 2,
+            let fallback = pool.supplementary.first(where: { !selected.contains($0) })
+                ?? pool.supplementary.first
+        {
             selected.append(fallback)
         }
 
