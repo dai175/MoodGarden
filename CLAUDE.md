@@ -91,7 +91,7 @@ The pre-commit hook auto-formats staged `.swift` files and blocks commits on Swi
 
 - **Dark theme only:** Background `#0A1A12` to `#0D2818`, soft white text `#E8E4DC` at 0.8 opacity
 - **Accent color:** Teal `#1D9E75`
-- **Transitions:** Slow, organic (0.8-1.5s). No bounce, no spring animations, no loading spinners
+- **Transitions:** Slow, organic (0.8-2.0s). No bounce, no spring animations, no loading spinners
 - **No haptic feedback** - maintain quietness
 - **Liquid Glass:** iOS 26 feature - test blending with system UI elements
 - **UI elements:** Semi-transparent backgrounds, minimal chrome
