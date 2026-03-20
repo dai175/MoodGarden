@@ -56,13 +56,19 @@ The pre-commit hook auto-formats staged `.swift` files and blocks commits on Swi
 
 ### Project Structure
 
-- `App/` - Entry point, app state
+- `App/` - Entry point (`MoodGardenApp.swift`), app state (`AppState.swift`)
 - `Models/` - SwiftData models: `MoodEntry` (date, mood, gardenSeed), `MonthlyGarden` (snapshot), `MoodType` enum (7 moods)
 - `ViewModels/` - MVVM view models: `GardenViewModel`, `ArchiveViewModel`, `SettingsViewModel`
 - `Views/` - SwiftUI screens: Garden (home), MoodSelector, Archive, Settings, Onboarding
   - `Views/Theme/` - Design constants, color definitions
   - `Views/Components/` - Reusable components (MoodIcon)
-- `Garden/` - SpriteKit layer: `GardenScene`, `GardenRenderer`, element sprites (moss, flower, rain, fog, wind, grass, leaf), `Season` enum, `SeasonalLayer` overlays
+- `Garden/` - SpriteKit layer
+  - Core: `GardenScene`, `GardenRenderer`, `TransitionDirector`, `BackgroundLayer`
+  - Atmosphere: `AtmosphereEngine`, `AtmosphereState`, `MoodAtmosphere`, `MoodPalette`
+  - Growth: `GrowthManager`, `GrowthPhase`
+  - Placement: `PlacementRule`, `PlacementZone`
+  - Elements: `ElementType` (ground/aerial/water categories), `ElementSpec`, 14 element sprites
+  - Seasonal: `Season`, `SeasonalLayer` (cherry blossoms, fireflies, falling leaves, snow)
 - `Services/` - Notification scheduling, snapshot rendering
 
 ### Key Concepts
@@ -71,6 +77,9 @@ The pre-commit hook auto-formats staged `.swift` files and blocks commits on Swi
 - **Garden grid:** 7 columns x 5 rows, one cell per day, fills left-to-right
 - **Monthly cycle:** Garden resets each month; previous months saved to archive with snapshot images
 - **Seasonal layers:** Spring (cherry blossoms), Summer (fireflies), Autumn (falling leaves), Winter (snow)
+- **ElementType categories:** Ground (flower, moss, grass, vine, puddle, fallenLeaf, mushroom), Aerial (butterfly, raindrop, fog, wind, sunray, rainbow), Water (ripple)
+- **MoodAtmosphere:** Each MoodType maps to a base element + supplementary element pool for variety
+- **AtmosphereEngine:** Analyzes mood entries to generate element placement with atmosphere effects
 
 ### Tests
 

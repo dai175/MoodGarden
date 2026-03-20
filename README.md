@@ -10,16 +10,18 @@ Mood Garden is a mood journaling app that transforms daily emotions into a livin
 
 Seven moods map to distinct garden elements. The garden does not judge: happy days do not bloom while sad days wilt. Every emotion produces an equally beautiful element. A garden that has experienced many weathers is richer than one with only sunshine.
 
-<!-- screenshots -->
+<!-- TODO: Add app screenshots -->
 
 ## Features
 
-- **7つのムード** — peaceful, happy, energetic, anxious, sad, angry, tired をガーデンエレメント（花、苔、雨、霧、風、草、葉）に変換
+- **7つのムード** — peaceful, happy, energetic, anxious, sad, angry, tired を 14 種類以上のガーデンエレメント（花、苔、草、蔦、蝶、虹、霧、雨粒など）に変換
 - **リアルタイム描画** — SpriteKit による 7×5 グリッドのアニメーション付きガーデン
 - **季節オーバーレイ** — 春は桜、夏は蛍、秋は紅葉、冬は雪が庭に重なる
 - **月次アーカイブ** — 月替わりで庭がリセットされ、スナップショット画像付きで過去の庭を振り返れる
 - **リマインダー通知** — 毎日の記録を忘れないようにやさしく通知
 - **ダークテーマ** — 深い緑のダークUI、ミニマルで静かなデザイン
+
+> **Status:** MVP complete — all core features implemented and polished.
 
 ## Requirements
 
@@ -47,6 +49,9 @@ Open `MoodGarden.xcodeproj` in Xcode and run on an iOS 26 simulator or device.
 make lint      # Run SwiftLint
 make format    # Auto-format with swift-format
 make check     # Check both (no modifications)
+
+# Run tests
+xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 ```
 
 A pre-commit hook auto-formats staged `.swift` files and blocks commits on SwiftLint errors.
@@ -61,7 +66,7 @@ MoodGarden/
 ├── Models/       # SwiftData models, MoodType enum
 ├── ViewModels/   # MVVM view models
 ├── Views/        # SwiftUI screens
-├── Garden/       # SpriteKit scene, renderer, element sprites
+├── Garden/       # SpriteKit: scene, renderer, atmosphere engine, elements, seasonal layers
 └── Services/     # Notifications, snapshot rendering
 ```
 
