@@ -2,7 +2,17 @@ import GameplayKit
 
 enum MoodAtmosphere {
     private static let supplementaryProbability: Float = 0.5
+    private static let seasonBonusProbability: Float = 0.7
     private static let maxSupplementaryCount = 2
+    private static let rainbowProbability: Float = 0.6
+
+    /// Elements favored by each season — their supplementary selection probability is boosted.
+    private static let seasonalBonuses: [Season: Set<ElementType>] = [
+        .spring: [.flower, .butterfly, .grass],
+        .summer: [.sunray, .ripple],
+        .autumn: [.fallenLeaf, .mushroom, .wind],
+        .winter: [.fog, .raindrop, .moss],
+    ]
 
     struct SelectedElement: Equatable {
         let elementType: ElementType
@@ -87,10 +97,13 @@ enum MoodAtmosphere {
 
     static func selectElements(
         mood: MoodType,
-        seed: Int
+        seed: Int,
+        season: Season,
+        previousMood: MoodType?
     ) -> [SelectedElement] {
         guard let pool = pools[mood] else { return [] }
         let random = GKMersenneTwisterRandomSource(seed: UInt64(bitPattern: Int64(seed)))
+        let bonusElements = seasonalBonuses[season] ?? []
 
         var selected: [SelectedElement] = []
 
@@ -103,13 +116,29 @@ enum MoodAtmosphere {
             selected.append(shuffledBase[index])
         }
 
-        // Select 0-2 supplementary elements (50% chance each)
+        // Select 0-2 supplementary elements
+        // Season-matching elements get boosted probability (0.7 vs 0.5)
         let shuffledSupp = shufflePool(pool.supplementary, using: random)
         var suppCount = 0
         for entry in shuffledSupp where suppCount < maxSupplementaryCount {
-            if random.nextUniform() < supplementaryProbability {
+            let probability =
+                bonusElements.contains(entry.elementType)
+                ? seasonBonusProbability : supplementaryProbability
+            if random.nextUniform() < probability {
                 selected.append(entry)
                 suppCount += 1
+            }
+        }
+
+        // Rainbow detection: sad → happy transition, ~60% chance
+        if previousMood == .sad && mood == .happy {
+            let rainbowElement = SelectedElement(
+                elementType: .rainbow, zone: .sky, estimatedNodes: 2
+            )
+            if random.nextUniform() < rainbowProbability,
+                !selected.contains(where: { $0.elementType == .rainbow })
+            {
+                selected.append(rainbowElement)
             }
         }
 

@@ -12,7 +12,7 @@ enum AtmosphereEngine {
     private static let shortRunMultiplier = 1.3
 
     static func analyze(
-        entries: [MoodEntry], referenceDate: Date = Date()
+        entries: [MoodEntry], season: Season, referenceDate: Date = Date()
     ) -> AtmosphereState {
         guard !entries.isEmpty else { return .empty }
 
@@ -41,12 +41,14 @@ enum AtmosphereEngine {
         var budgetRemaining = nodeBudget
         let referenceStartOfDay = Calendar.current.startOfDay(for: referenceDate)
 
-        for entry in sorted {
+        for (index, entry) in sorted.enumerated() {
+            let previousMood: MoodType? = index > 0 ? sorted[index - 1].mood : nil
             let phase = GrowthManager.phase(
                 createdAt: entry.createdAt, referenceStartOfDay: referenceStartOfDay
             )
             let elements = MoodAtmosphere.selectElements(
-                mood: entry.mood, seed: entry.gardenSeed
+                mood: entry.mood, seed: entry.gardenSeed,
+                season: season, previousMood: previousMood
             )
 
             // Apply consecutive density multiplier per spec:

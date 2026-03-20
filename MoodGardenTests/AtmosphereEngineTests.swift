@@ -21,7 +21,7 @@ struct AtmosphereEngineTests {
     }
 
     @Test func emptyEntriesProduceEmptyState() {
-        let state = AtmosphereEngine.analyze(entries: [], referenceDate: fixedDate)
+        let state = AtmosphereEngine.analyze(entries: [], season: .spring, referenceDate: fixedDate)
         #expect(state == AtmosphereState.empty)
     }
 
@@ -29,7 +29,7 @@ struct AtmosphereEngineTests {
         let container = try TestHelpers.makeModelContainer()
         let entry = makeEntry(mood: .happy, in: container.mainContext)
         let state = AtmosphereEngine.analyze(
-            entries: [entry], referenceDate: fixedDate
+            entries: [entry], season: .spring, referenceDate: fixedDate
         )
         #expect(!state.elementManifest.isEmpty)
         #expect(state.moodRatios[.happy] == 1.0)
@@ -45,7 +45,7 @@ struct AtmosphereEngineTests {
             makeEntry(mood: .sad, daysAgo: 0, seed: 3, in: context),
         ]
         let state = AtmosphereEngine.analyze(
-            entries: entries, referenceDate: fixedDate
+            entries: entries, season: .spring, referenceDate: fixedDate
         )
         #expect(state.moodRatios[.happy]! > 0.6)
         #expect(state.moodRatios[.sad]! > 0.3)
@@ -60,7 +60,7 @@ struct AtmosphereEngineTests {
             makeEntry(mood: .peaceful, daysAgo: 0, seed: 2, in: context),
         ]
         let state = AtmosphereEngine.analyze(
-            entries: entries, referenceDate: fixedDate
+            entries: entries, season: .spring, referenceDate: fixedDate
         )
         let phases = state.elementManifest.map(\.phase)
         #expect(phases.contains(.mature))  // 5 days ago
@@ -75,7 +75,7 @@ struct AtmosphereEngineTests {
             makeEntry(mood: MoodType.allCases[i % 7], daysAgo: i, seed: i, in: context)
         }
         let state = AtmosphereEngine.analyze(
-            entries: entries, referenceDate: fixedDate
+            entries: entries, season: .spring, referenceDate: fixedDate
         )
         #expect(state.totalEstimatedNodes <= 400)
     }
@@ -84,7 +84,7 @@ struct AtmosphereEngineTests {
         let container = try TestHelpers.makeModelContainer()
         let entries = [makeEntry(mood: .happy, in: container.mainContext)]
         let state = AtmosphereEngine.analyze(
-            entries: entries, referenceDate: fixedDate
+            entries: entries, season: .spring, referenceDate: fixedDate
         )
         #expect(abs(state.hueShift) <= 0.15)
     }
@@ -99,7 +99,7 @@ struct AtmosphereEngineTests {
             makeEntry(mood: .happy, daysAgo: 0, seed: 12, in: context),
         ]
         let stateConsec = AtmosphereEngine.analyze(
-            entries: consecutive, referenceDate: fixedDate
+            entries: consecutive, season: .spring, referenceDate: fixedDate
         )
 
         // 3 non-consecutive happy days -> no multiplier
@@ -109,9 +109,30 @@ struct AtmosphereEngineTests {
             makeEntry(mood: .happy, daysAgo: 0, seed: 12, in: context),
         ]
         let stateNonConsec = AtmosphereEngine.analyze(
-            entries: nonConsecutive, referenceDate: fixedDate
+            entries: nonConsecutive, season: .spring, referenceDate: fixedDate
         )
 
         #expect(stateConsec.elementManifest.count > stateNonConsec.elementManifest.count)
+    }
+
+    @Test func seasonAffectsElementSelection() throws {
+        let container = try TestHelpers.makeModelContainer()
+        let context = container.mainContext
+        // Use many entries with varied seeds to amplify seasonal probability differences
+        let entries = (0..<20).map { i in
+            makeEntry(mood: .happy, daysAgo: i, seed: i * 7 + 3, in: context)
+        }
+        let springState = AtmosphereEngine.analyze(
+            entries: entries, season: .spring, referenceDate: fixedDate
+        )
+        let winterState = AtmosphereEngine.analyze(
+            entries: entries, season: .winter, referenceDate: fixedDate
+        )
+        // Spring bonus favors flower/butterfly/grass for happy mood's supplementary pool
+        // Count spring-favored elements in each result
+        let springFavored: Set<ElementType> = [.flower, .butterfly, .grass]
+        let springCount = springState.elementManifest.filter { springFavored.contains($0.elementType) }.count
+        let winterCount = winterState.elementManifest.filter { springFavored.contains($0.elementType) }.count
+        #expect(springCount >= winterCount, "Spring should produce at least as many spring-favored elements as winter")
     }
 }
