@@ -5,6 +5,8 @@ final class BackgroundLayer: SKNode {
     private let skyNode = SKSpriteNode()
     private let hillsNode = SKSpriteNode()
     private let groundNode = SKSpriteNode()
+    private var lastSeason: Season?
+    private var lastSceneSize: CGSize = .zero
 
     override init() {
         super.init()
@@ -19,6 +21,10 @@ final class BackgroundLayer: SKNode {
     }
 
     func configure(season: Season, sceneSize: CGSize) {
+        let needsUpdate = lastSeason != season || lastSceneSize != sceneSize
+        guard needsUpdate else { return }
+        lastSeason = season
+        lastSceneSize = sceneSize
         layoutNodes(sceneSize: sceneSize)
         applyTextures(season: season, sceneSize: sceneSize)
         startParallax()

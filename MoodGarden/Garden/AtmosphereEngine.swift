@@ -12,7 +12,7 @@ enum AtmosphereEngine {
     private static let shortRunMultiplier = 1.3
 
     static func analyze(
-        entries: [MoodEntry], season _: Season, referenceDate: Date = Date()
+        entries: [MoodEntry], referenceDate: Date = Date()
     ) -> AtmosphereState {
         guard !entries.isEmpty else { return .empty }
 
