@@ -1892,11 +1892,11 @@ git commit -m "feat(garden): add TransitionDirector with adaptive fog-clearing e
 - Modify: `MoodGarden/Services/SnapshotService.swift` (if needed)
 - Test: Manual verification
 
-- [ ] **Step 1: Verify SnapshotService works with new scene**
+- [x] **Step 1: Verify SnapshotService works with new scene**
 
 Read `SnapshotService.swift` and verify it creates a GardenScene, configures it, and renders to image. The new GardenScene now accepts `AtmosphereState` instead of `[GardenElementData]`, so the service needs to call `AtmosphereEngine.analyze()` before configuring.
 
-- [ ] **Step 2: Update SnapshotService if needed**
+- [x] **Step 2: Update SnapshotService if needed**
 
 The snapshot rendering flow should be:
 ```swift
@@ -1906,17 +1906,16 @@ scene.configure(with: state)
 // render to image
 ```
 
-- [ ] **Step 3: Build and run all tests**
+> ✅ SnapshotService was already updated during Chunk 2 implementation. No changes needed.
+
+- [x] **Step 3: Build and run all tests**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests`
 Expected: All tests PASS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
-```bash
-git add MoodGarden/Services/SnapshotService.swift
-git commit -m "fix(services): update SnapshotService for atmosphere-driven scene"
-```
+> ✅ No code changes needed — skipped.
 
 ---
 
@@ -1926,7 +1925,7 @@ git commit -m "fix(services): update SnapshotService for atmosphere-driven scene
 - Remove any unused imports, dead code referencing old grid system
 - Verify all files compile cleanly
 
-- [ ] **Step 1: Search for dead references**
+- [x] **Step 1: Search for dead references**
 
 Search the codebase for any remaining references to:
 - `GardenGridLayout`
@@ -1934,24 +1933,25 @@ Search the codebase for any remaining references to:
 - `cellSize` in element contexts
 - Old `createNode(seed:cellSize:)` signature
 
-- [ ] **Step 2: Fix any remaining issues**
+> ✅ No dead references found in source code (only in docs).
 
-- [ ] **Step 3: Run full test suite**
+- [x] **Step 2: Fix any remaining issues**
+
+> ✅ No issues found.
+
+- [x] **Step 3: Run full test suite**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`
 Expected: All tests PASS, BUILD SUCCEEDED
 
-- [ ] **Step 4: Run linter**
+- [x] **Step 4: Run linter**
 
 Run: `make lint`
-Expected: No errors
+Expected: No errors — 0 violations in 71 files.
 
-- [ ] **Step 5: Final commit**
+- [x] **Step 5: Final commit**
 
-```bash
-git add -A
-git commit -m "chore(garden): clean up dead references from grid-based system"
-```
+> ✅ No code cleanup needed — only plan doc checkboxes updated.
 
 ---
 
