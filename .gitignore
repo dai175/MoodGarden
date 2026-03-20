@@ -56,3 +56,6 @@ fastlane/test_output
 .claude/local/
 .claude/settings.local.json
 .superpowers/
+
+# Serena
+.serena/
