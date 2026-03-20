@@ -1,0 +1,58 @@
+import GameplayKit
+import SpriteKit
+
+struct SunrayElement: GardenElement {
+    let elementType = ElementType.sunray
+    let preferredZone = PlacementZone.sky
+    let estimatedNodes = 3
+
+    func createNode(seed: Int, phase: GrowthPhase, sceneSize: CGSize) -> SKNode {
+        let random = makeRandom(seed: seed)
+        let cellSize = refSize(from: sceneSize)
+        let speed = animationSpeed(for: phase)
+        let container = SKNode()
+
+        let rayCount = 2 + Int(random.nextInt(upperBound: 2))
+        let baseAngle = nextFloat(random, min: -0.4, max: 0.4)
+
+        for index in 0..<rayCount {
+            let length = nextFloat(random, min: 0.3, max: 0.55) * cellSize.height
+            let width = nextFloat(random, min: 0.02, max: 0.04) * cellSize.width
+            let ray = SKShapeNode(rectOf: CGSize(width: width, height: length), cornerRadius: width / 2)
+            ray.fillColor = MoodType.happy.uiColor
+            ray.strokeColor = .clear
+            ray.alpha = nextFloat(random, min: 0.3, max: 0.55)
+
+            let spreadAngle = nextFloat(random, min: 0.1, max: 0.25) * CGFloat(index - rayCount / 2)
+            ray.zRotation = baseAngle + spreadAngle
+            ray.position = CGPoint(
+                x: nextFloat(random, min: -0.1, max: 0.1) * cellSize.width,
+                y: nextFloat(random, min: -0.05, max: 0.05) * cellSize.height
+            )
+
+            // Alpha pulse
+            let baseAlpha = ray.alpha
+            let pulseDuration = nextFloat(random, min: 1.5, max: 2.5) * speed
+            let pulseUp = SKAction.fadeAlpha(to: min(baseAlpha * 1.6, 0.7), duration: pulseDuration)
+            let pulseDown = SKAction.fadeAlpha(to: baseAlpha * 0.5, duration: pulseDuration)
+            pulseUp.timingMode = .easeInEaseOut
+            pulseDown.timingMode = .easeInEaseOut
+            let phaseDelay = SKAction.wait(forDuration: Double(index) * 0.5)
+            ray.run(.sequence([phaseDelay, .repeatForever(.sequence([pulseUp, pulseDown]))]))
+
+            // Gentle rotation
+            let rotAmount = nextFloat(random, min: 0.03, max: 0.08)
+            let rotDuration = nextFloat(random, min: 3.0, max: 5.0) * speed
+            let sway = SKAction.sequence([
+                SKAction.rotate(byAngle: rotAmount, duration: rotDuration / 2),
+                SKAction.rotate(byAngle: -rotAmount, duration: rotDuration / 2),
+            ])
+            ray.run(.repeatForever(sway))
+
+            container.addChild(ray)
+        }
+
+        applyGrowthPhase(phase, to: container)
+        return container
+    }
+}

@@ -9,6 +9,13 @@ struct GardenRenderer {
         .raindrop: RainElement(),
         .wind: WindElement(),
         .fallenLeaf: LeafElement(),
+        .butterfly: ButterflyElement(),
+        .sunray: SunrayElement(),
+        .rainbow: RainbowElement(),
+        .puddle: PuddleElement(),
+        .ripple: RippleElement(),
+        .vine: VineElement(),
+        .mushroom: MushroomElement(),
     ]
 
     func createNode(for spec: ElementSpec, sceneSize: CGSize) -> SKNode {
