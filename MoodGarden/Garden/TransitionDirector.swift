@@ -3,6 +3,26 @@ import UIKit
 
 enum TransitionDirector {
 
+    static let fogNodeName = "transitionFog"
+
+    static func makeFogOverlay(
+        sceneSize: CGSize, fillColor: UIColor, alpha: CGFloat = 0
+    ) -> SKShapeNode {
+        let rect = CGRect(
+            x: -sceneSize.width / 2,
+            y: -sceneSize.height / 2,
+            width: sceneSize.width,
+            height: sceneSize.height
+        )
+        let overlay = SKShapeNode(rect: rect)
+        overlay.name = fogNodeName
+        overlay.fillColor = fillColor
+        overlay.strokeColor = .clear
+        overlay.alpha = alpha
+        overlay.zPosition = 100
+        return overlay
+    }
+
     static func duration(totalRecords: Int) -> TimeInterval {
         switch totalRecords {
         case 0...10: return 2.0
@@ -27,18 +47,10 @@ enum TransitionDirector {
         scene.speed = 0.3
 
         // Create fog overlay
-        let fogRect = CGRect(
-            x: -scene.size.width / 2,
-            y: -scene.size.height / 2,
-            width: scene.size.width,
-            height: scene.size.height
+        let fogOverlay = makeFogOverlay(
+            sceneSize: scene.size,
+            fillColor: mood.uiColor.withAlphaComponent(0.3)
         )
-        let fogOverlay = SKShapeNode(rect: fogRect)
-        fogOverlay.name = "transitionFog"
-        fogOverlay.fillColor = mood.uiColor.withAlphaComponent(0.3)
-        fogOverlay.strokeColor = .clear
-        fogOverlay.alpha = 0
-        fogOverlay.zPosition = 100
         scene.addChild(fogOverlay)
 
         // Phase 2: Fog rise — after pause

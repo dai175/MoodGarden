@@ -39,8 +39,7 @@ struct ArchiveDetailView: View {
         .navigationTitle(displayName)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            let season = Season.from(month: month)
-            let state = AtmosphereEngine.analyze(entries: entries, season: season)
+            let state = AtmosphereEngine.analyze(entries: entries)
             detailScene.configure(with: state)
             detailScene.configureSeason(month: month)
         }

@@ -11,6 +11,7 @@ final class GardenScene: SKScene {
 
     private var currentState: AtmosphereState = .empty
     private var currentMonth = Calendar.current.component(.month, from: Date())
+    private var lastOverlayMonth: Int?
 
     override init() {
         super.init(size: CGSize(width: 350, height: 250))
@@ -68,7 +69,9 @@ final class GardenScene: SKScene {
     // MARK: - Public API
 
     func configureSeason(month: Int) {
+        let monthChanged = currentMonth != month
         currentMonth = month
+        if monthChanged { lastOverlayMonth = nil }
         let season = Season.from(month: month)
         backgroundLayer.configure(season: season, sceneSize: size)
         seasonalLayer.configure(season: season, sceneSize: size)
@@ -145,6 +148,8 @@ final class GardenScene: SKScene {
 
     private func updateAtmosphereOverlay() {
         guard size.width > 0, size.height > 0 else { return }
+        guard lastOverlayMonth != currentMonth else { return }
+        lastOverlayMonth = currentMonth
         let season = Season.from(month: currentMonth)
         let rect = CGRect(
             x: -size.width / 2,
@@ -158,21 +163,14 @@ final class GardenScene: SKScene {
     }
 
     private func addFogTransition() {
-        if let existing = childNode(withName: "fogTransition") {
+        if let existing = childNode(withName: TransitionDirector.fogNodeName) {
             existing.removeFromParent()
         }
-        let fogRect = CGRect(
-            x: -size.width / 2,
-            y: -size.height / 2,
-            width: size.width,
-            height: size.height
+        let fogOverlay = TransitionDirector.makeFogOverlay(
+            sceneSize: size,
+            fillColor: DesignConstants.Colors.backgroundPrimaryUIColor,
+            alpha: 0.5
         )
-        let fogOverlay = SKShapeNode(rect: fogRect)
-        fogOverlay.name = "fogTransition"
-        fogOverlay.fillColor = DesignConstants.Colors.backgroundPrimaryUIColor
-        fogOverlay.strokeColor = .clear
-        fogOverlay.alpha = 0.5
-        fogOverlay.zPosition = 100
         addChild(fogOverlay)
 
         let fogFade = SKAction.fadeOut(withDuration: 1.0)
