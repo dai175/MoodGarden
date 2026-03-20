@@ -47,6 +47,9 @@ enum TransitionDirector {
         let originalSpeed = scene.speed
         scene.speed = 0.3
 
+        // Remove any existing fog from a previous transition
+        scene.childNode(withName: fogNodeName)?.removeFromParent()
+
         // Create fog overlay
         let fogOverlay = makeFogOverlay(
             sceneSize: scene.size,
