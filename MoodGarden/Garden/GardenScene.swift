@@ -87,8 +87,8 @@ final class GardenScene: SKScene {
         let positions = PlacementRule.computePositions(for: specs, sceneSize: size)
         let nodes = renderer.createNodes(for: specs, positions: positions, sceneSize: size)
 
-        for (node, position) in nodes {
-            let spec = specs[nodes.firstIndex(where: { $0.node === node }) ?? 0]
+        for (index, (node, position)) in nodes.enumerated() {
+            let spec = specs[index]
             node.position = position
             let targetLayer = spec.elementType.isGround ? groundElementsLayer : aerialElementsLayer
 
