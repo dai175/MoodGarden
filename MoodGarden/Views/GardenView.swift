@@ -3,6 +3,7 @@ import SwiftUI
 
 struct GardenView: View {
     @Environment(GardenViewModel.self) private var viewModel
+    @Environment(AppState.self) private var appState
     @Binding var showArchive: Bool
     @Binding var showSettings: Bool
 
@@ -43,7 +44,11 @@ struct GardenView: View {
             if newCount == oldCount + 1, let last = viewModel.currentMonthEntries.last {
                 let newState = AtmosphereEngine.analyze(
                     entries: [last], season: currentSeason)
-                gardenScene.addElements(from: newState.elementManifest, animated: true)
+                gardenScene.performTransition(
+                    mood: last.mood,
+                    totalRecords: appState.totalRecordCount,
+                    newSpecs: newState.elementManifest
+                )
             } else {
                 updateScene()
             }
