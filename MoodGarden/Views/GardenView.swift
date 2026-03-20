@@ -42,11 +42,12 @@ struct GardenView: View {
         }
         .onChange(of: viewModel.currentMonthEntries.count) { oldCount, newCount in
             if newCount == oldCount + 1, let last = viewModel.currentMonthEntries.last {
-                let newState = AtmosphereEngine.analyze(entries: [last])
+                let newState = AtmosphereEngine.analyze(entries: viewModel.currentMonthEntries)
+                let newSpecs = newState.elementManifest.filter { $0.entryID == last.id }
                 gardenScene.performTransition(
                     mood: last.mood,
                     totalRecords: appState.totalRecordCount,
-                    newSpecs: newState.elementManifest
+                    newSpecs: newSpecs
                 )
             } else {
                 updateScene()
