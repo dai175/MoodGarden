@@ -1707,7 +1707,7 @@ git commit -m "feat(garden): add 7 new element types for enriched mood expressio
 - Modify: `MoodGarden/Views/MoodSelectorView.swift`
 - Modify: `MoodGarden/App/AppState.swift` (add totalRecordCount)
 
-- [ ] **Step 1: Add totalRecordCount to AppState**
+- [x] **Step 1: Add totalRecordCount to AppState**
 
 Add to `MoodGarden/App/AppState.swift` following the existing `@AppStorage` pattern:
 
@@ -1732,7 +1732,7 @@ var totalRecordCount: Int {
 }
 ```
 
-- [ ] **Step 2: Redesign MoodSelectorView**
+- [x] **Step 2: Redesign MoodSelectorView**
 
 Rewrite `MoodGarden/Views/MoodSelectorView.swift` with:
 - Arc layout for mood icons
@@ -1750,16 +1750,16 @@ The view should:
 
 Undo tracking: Use a `@State private var undoUsedThisSession = false` flag. Once undo is used, the flag is set to true and no further undo is offered for the remainder of the session. This is session-scoped (not persisted), matching the spec's "once only" intent — if the user re-opens the app, they get a fresh undo opportunity for a new recording.
 
-- [ ] **Step 3: Increment totalRecordCount on recording**
+- [x] **Step 3: Increment totalRecordCount on recording**
 
 In `MoodSelectorView`'s selectMood handler, increment `appState.totalRecordCount`.
 
-- [ ] **Step 4: Build and verify**
+- [x] **Step 4: Build and verify**
 
 Run: `xcodebuild build -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`
 Expected: BUILD SUCCEEDED
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add MoodGarden/Views/MoodSelectorView.swift MoodGarden/App/AppState.swift
@@ -1774,7 +1774,7 @@ git commit -m "feat(views): redesign MoodSelector with arc layout and single-tap
 - Create: `MoodGarden/Garden/TransitionDirector.swift`
 - Modify: `MoodGarden/Garden/GardenScene.swift` (integrate transition)
 
-- [ ] **Step 1: Implement TransitionDirector**
+- [x] **Step 1: Implement TransitionDirector**
 
 ```swift
 // MoodGarden/Garden/TransitionDirector.swift
@@ -1848,7 +1848,7 @@ final class TransitionDirector {
 }
 ```
 
-- [ ] **Step 2: Integrate into GardenScene**
+- [x] **Step 2: Integrate into GardenScene**
 
 Add a convenience method to GardenScene:
 
@@ -1860,21 +1860,21 @@ func performTransition(mood: MoodType, totalRecords: Int, newSpecs: [ElementSpec
 }
 ```
 
-- [ ] **Step 3: Wire transition into GardenView**
+- [x] **Step 3: Wire transition into GardenView**
 
 Update the `onChange` handler in GardenView to call `performTransition` when a new entry is recorded, passing `appState.totalRecordCount`.
 
-- [ ] **Step 4: Build and verify**
+- [x] **Step 4: Build and verify**
 
 Run: `xcodebuild build -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`
 Expected: BUILD SUCCEEDED
 
-- [ ] **Step 5: Run all tests**
+- [x] **Step 5: Run all tests**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests`
 Expected: All tests PASS
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add MoodGarden/Garden/TransitionDirector.swift MoodGarden/Garden/GardenScene.swift \
