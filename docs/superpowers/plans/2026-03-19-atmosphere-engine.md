@@ -1632,7 +1632,7 @@ Integrate AtmosphereEngine into GardenView and ArchiveDetailView."
 
 Each new element follows the same `GardenElement` protocol pattern as the existing 7 elements. They use `SKShapeNode` procedural drawing with `GrowthPhase` support.
 
-- [ ] **Step 1: Implement all 7 new elements**
+- [x] **Step 1: Implement all 7 new elements**
 
 Each element should:
 - Conform to `GardenElement` protocol
@@ -1653,7 +1653,7 @@ Element sketches (implement with SKShapeNode procedural drawing):
 | VineElement | Curved path with small leaf nodes | 2-3 | Gentle sway rotation |
 | MushroomElement | Ellipse cap + rectangle stem | 2 | Subtle scale pulse |
 
-- [ ] **Step 2: Register new elements in GardenRenderer**
+- [x] **Step 2: Register new elements in GardenRenderer**
 
 Add to `GardenRenderer.elementMap`:
 
@@ -1680,17 +1680,17 @@ private static let elementMap: [ElementType: any GardenElement] = [
 
 Note: ElementTypes that don't have a dedicated class yet (warmLight, breeze, dimLight, shimmer, pebble, reflection) will render as empty nodes. These can be implemented later as polish items.
 
-- [ ] **Step 3: Build and verify**
+- [x] **Step 3: Build and verify**
 
 Run: `xcodebuild build -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`
 Expected: BUILD SUCCEEDED
 
-- [ ] **Step 4: Run all tests**
+- [x] **Step 4: Run all tests**
 
 Run: `xcodebuild test -scheme MoodGarden -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MoodGardenTests`
 Expected: All tests PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add MoodGarden/Garden/Elements/ MoodGarden/Garden/GardenRenderer.swift
