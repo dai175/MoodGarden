@@ -25,9 +25,9 @@ enum TransitionDirector {
 
     static func duration(totalRecords: Int) -> TimeInterval {
         switch totalRecords {
-        case 0...10: return 1.5
-        case 11...30: return 1.3
-        default: return 1.0
+        case 0...10: return 2.0
+        case 11...30: return 1.7
+        default: return 1.5
         }
     }
 

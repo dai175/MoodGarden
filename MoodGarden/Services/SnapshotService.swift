@@ -46,7 +46,9 @@ final class SnapshotService {
             return false
         }
 
-        let state = AtmosphereEngine.analyze(entries: entries)
+        let state = AtmosphereEngine.analyze(
+            entries: entries, season: Season.from(month: previousMonth)
+        )
 
         guard let snapshotData = renderSnapshot(state: state, month: previousMonth) else { return false }
 
