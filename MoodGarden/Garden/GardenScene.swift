@@ -94,10 +94,11 @@ final class GardenScene: SKScene {
 
             if animated {
                 node.alpha = 0
-                node.setScale(0.5)
+                let originalScale = node.xScale
+                node.setScale(originalScale * 0.5)
                 targetLayer.addChild(node)
                 let fadeIn = SKAction.fadeIn(withDuration: 1.2)
-                let scaleUp = SKAction.scale(to: node.xScale * 2, duration: 1.2)
+                let scaleUp = SKAction.scale(to: originalScale, duration: 1.2)
                 fadeIn.timingMode = .easeOut
                 scaleUp.timingMode = .easeOut
                 node.run(.group([fadeIn, scaleUp]))
