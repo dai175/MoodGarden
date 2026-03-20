@@ -6,6 +6,7 @@ class AppState {
         static let hasCompletedOnboarding = "hasCompletedOnboarding"
         static let lastActiveYear = "lastActiveYear"
         static let lastActiveMonth = "lastActiveMonth"
+        static let totalRecordCount = "totalRecordCount"
     }
 
     @ObservationIgnored
@@ -16,6 +17,9 @@ class AppState {
 
     @ObservationIgnored
     @AppStorage(Keys.lastActiveMonth) private var _lastActiveMonth: Int = 0
+
+    @ObservationIgnored
+    @AppStorage(Keys.totalRecordCount) private var _totalRecordCount: Int = 0
 
     var hasCompletedOnboarding: Bool {
         get {
@@ -49,6 +53,18 @@ class AppState {
         set {
             withMutation(keyPath: \.lastActiveMonth) {
                 _lastActiveMonth = newValue
+            }
+        }
+    }
+
+    var totalRecordCount: Int {
+        get {
+            access(keyPath: \.totalRecordCount)
+            return _totalRecordCount
+        }
+        set {
+            withMutation(keyPath: \.totalRecordCount) {
+                _totalRecordCount = newValue
             }
         }
     }

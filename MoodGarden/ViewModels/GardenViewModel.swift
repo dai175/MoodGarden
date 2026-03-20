@@ -60,6 +60,21 @@ class GardenViewModel {
         }
     }
 
+    func undoLastMood() {
+        guard let lastEntry = currentMonthEntries.last else { return }
+        let today = Calendar.current.component(.day, from: Date())
+        let entryDay = Calendar.current.component(.day, from: lastEntry.date)
+        guard entryDay == today else { return }
+
+        modelContext.delete(lastEntry)
+        do {
+            try modelContext.save()
+            fetchEntries()
+        } catch {
+            modelContext.rollback()
+        }
+    }
+
     private func rebuildIndex() {
         let calendar = Calendar.current
         entriesByDay = Dictionary(
