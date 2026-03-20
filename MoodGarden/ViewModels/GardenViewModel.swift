@@ -62,9 +62,7 @@ class GardenViewModel {
 
     func undoLastMood() {
         guard let lastEntry = currentMonthEntries.last else { return }
-        let today = Calendar.current.component(.day, from: Date())
-        let entryDay = Calendar.current.component(.day, from: lastEntry.date)
-        guard entryDay == today else { return }
+        guard Calendar.current.isDate(lastEntry.date, inSameDayAs: Date()) else { return }
 
         modelContext.delete(lastEntry)
         do {

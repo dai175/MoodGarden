@@ -34,15 +34,16 @@ struct MushroomElement: GardenElement {
         cap.zPosition = 1
         container.addChild(cap)
 
-        // Subtle scale pulse — breathing effect
+        applyGrowthPhase(phase, to: container)
+
+        // Subtle scale pulse — breathing effect (relative to growth phase scale)
+        let baseScale = phase.scale
         let pulseDuration = nextFloat(random, min: 2.0, max: 3.5) * speed
-        let pulseUp = SKAction.scale(to: 1.04, duration: pulseDuration)
-        let pulseDown = SKAction.scale(to: 0.97, duration: pulseDuration)
+        let pulseUp = SKAction.scale(to: baseScale * 1.04, duration: pulseDuration)
+        let pulseDown = SKAction.scale(to: baseScale * 0.97, duration: pulseDuration)
         pulseUp.timingMode = .easeInEaseOut
         pulseDown.timingMode = .easeInEaseOut
         container.run(.repeatForever(.sequence([pulseUp, pulseDown])))
-
-        applyGrowthPhase(phase, to: container)
         return container
     }
 }

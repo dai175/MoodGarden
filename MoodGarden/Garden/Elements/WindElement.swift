@@ -4,7 +4,7 @@ import SpriteKit
 struct WindElement: GardenElement {
     let elementType = ElementType.wind
     let preferredZone = PlacementZone.sky
-    let estimatedNodes = 2
+    let estimatedNodes = 4
 
     func createNode(seed: Int, phase: GrowthPhase, sceneSize: CGSize) -> SKNode {
         let random = makeRandom(seed: seed)

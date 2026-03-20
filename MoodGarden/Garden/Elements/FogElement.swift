@@ -4,7 +4,7 @@ import SpriteKit
 struct FogElement: GardenElement {
     let elementType = ElementType.fog
     let preferredZone = PlacementZone.anywhere
-    let estimatedNodes = 2
+    let estimatedNodes = 3
 
     func createNode(seed: Int, phase: GrowthPhase, sceneSize: CGSize) -> SKNode {
         let random = makeRandom(seed: seed)

@@ -20,7 +20,9 @@ struct GardenRenderer {
 
     func createNode(for spec: ElementSpec, sceneSize: CGSize) -> SKNode {
         let element = Self.elementMap[spec.elementType]
-        // TODO: Unregistered ElementTypes fall back to empty SKNode — implement remaining types in polish phase
+        if element == nil {
+            assertionFailure("Unregistered ElementType: \(spec.elementType)")
+        }
         let node =
             element?.createNode(seed: spec.seed, phase: spec.phase, sceneSize: sceneSize) ?? SKNode()
         node.name = "element_\(spec.elementType.rawValue)_\(spec.seed)"
@@ -30,7 +32,11 @@ struct GardenRenderer {
     func createNodes(
         for specs: [ElementSpec], positions: [CGPoint], sceneSize: CGSize
     ) -> [(node: SKNode, position: CGPoint)] {
-        zip(specs, positions).map { spec, position in
+        precondition(
+            specs.count == positions.count,
+            "specs.count (\(specs.count)) != positions.count (\(positions.count))"
+        )
+        return zip(specs, positions).map { spec, position in
             let node = createNode(for: spec, sceneSize: sceneSize)
             return (node: node, position: position)
         }

@@ -44,6 +44,7 @@ enum TransitionDirector {
         let fogClearDuration = remaining * 0.6
 
         // Phase 1: Pause — slow down scene
+        let originalSpeed = scene.speed
         scene.speed = 0.3
 
         // Create fog overlay
@@ -61,7 +62,7 @@ enum TransitionDirector {
         // Phase 3: Fog clear — fade out + restore speed
         let fogClear = SKAction.fadeOut(withDuration: fogClearDuration)
         fogClear.timingMode = .easeOut
-        let restoreSpeed = SKAction.run { scene.speed = 1.0 }
+        let restoreSpeed = SKAction.run { scene.speed = originalSpeed }
         let cleanup = SKAction.removeFromParent()
         let notifyCompletion = SKAction.run { completion() }
 

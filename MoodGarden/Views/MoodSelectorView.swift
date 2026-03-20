@@ -28,6 +28,12 @@ struct MoodSelectorView: View {
         }
         .animation(DesignConstants.Animation.standard, value: isExpanded)
         .animation(DesignConstants.Animation.standard, value: showUndo)
+        .task(id: showUndo) {
+            guard showUndo else { return }
+            try? await Task.sleep(for: .seconds(3))
+            guard !Task.isCancelled else { return }
+            showUndo = false
+        }
     }
 
     // MARK: - Collapsed State
@@ -46,7 +52,7 @@ struct MoodSelectorView: View {
         .accessibilityLabel("Record mood")
         .onAppear {
             withAnimation(
-                .easeInOut(duration: 2.0).repeatForever(autoreverses: true)
+                .easeInOut(duration: 1.5).repeatForever(autoreverses: true)
             ) {
                 pulseScale = 1.3
             }
@@ -120,10 +126,6 @@ struct MoodSelectorView: View {
 
         if !undoUsedThisSession {
             showUndo = true
-            Task {
-                try? await Task.sleep(for: .seconds(3))
-                showUndo = false
-            }
         }
     }
 
