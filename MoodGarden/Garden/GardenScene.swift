@@ -75,6 +75,7 @@ final class GardenScene: SKScene {
         let season = Season.from(month: month)
         backgroundLayer.configure(season: season, sceneSize: size)
         seasonalLayer.configure(season: season, sceneSize: size)
+        updateAtmosphereOverlay()
     }
 
     func configure(with state: AtmosphereState) {
