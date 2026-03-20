@@ -55,12 +55,7 @@ struct VineElement: GardenElement {
         // Gentle sway rotation
         let swayAngle = nextFloat(random, min: 0.03, max: 0.07)
         let swayDuration = nextFloat(random, min: 2.0, max: 3.5) * speed
-        let sway = SKAction.sequence([
-            SKAction.rotate(byAngle: swayAngle, duration: swayDuration / 2),
-            SKAction.rotate(byAngle: -swayAngle, duration: swayDuration / 2),
-        ])
-        sway.timingMode = .easeInEaseOut
-        container.run(.repeatForever(sway))
+        container.run(.repeatForever(swayRotation(angle: swayAngle, duration: swayDuration)))
 
         applyGrowthPhase(phase, to: container)
         return container

@@ -24,11 +24,10 @@ struct PuddleElement: GardenElement {
         // Alpha ripple — shimmer effect
         let baseAlpha = puddle.alpha
         let rippleDuration = nextFloat(random, min: 1.5, max: 2.5) * speed
-        let brighten = SKAction.fadeAlpha(to: min(baseAlpha * 1.5, 0.7), duration: rippleDuration)
-        let dim = SKAction.fadeAlpha(to: baseAlpha * 0.6, duration: rippleDuration)
-        brighten.timingMode = .easeInEaseOut
-        dim.timingMode = .easeInEaseOut
-        puddle.run(.repeatForever(.sequence([brighten, dim])))
+        puddle.run(
+            .repeatForever(
+                pulseAlpha(from: min(baseAlpha * 1.5, 0.7), to: baseAlpha * 0.6, duration: rippleDuration)
+            ))
 
         // Shimmer highlight — small bright spot
         let shimmerSize = puddleWidth * nextFloat(random, min: 0.15, max: 0.25)
@@ -42,12 +41,7 @@ struct PuddleElement: GardenElement {
         )
         shimmer.zPosition = 1
 
-        let shimmerFade = SKAction.sequence([
-            SKAction.fadeAlpha(to: 0.3, duration: 1.8 * speed),
-            SKAction.fadeAlpha(to: 0.1, duration: 1.8 * speed),
-        ])
-        shimmerFade.timingMode = .easeInEaseOut
-        shimmer.run(.repeatForever(shimmerFade))
+        shimmer.run(.repeatForever(pulseAlpha(from: 0.3, to: 0.1, duration: 1.8 * speed)))
 
         container.addChild(shimmer)
 

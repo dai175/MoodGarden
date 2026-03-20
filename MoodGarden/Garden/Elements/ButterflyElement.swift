@@ -51,11 +51,7 @@ struct ButterflyElement: GardenElement {
         let driftX = nextFloat(random, min: 0.1, max: 0.25) * cellSize.width
         let driftY = nextFloat(random, min: 0.05, max: 0.15) * cellSize.height
         let driftDuration = nextFloat(random, min: 2.0, max: 3.5) * speed
-        let drift = SKAction.sequence([
-            SKAction.moveBy(x: driftX, y: driftY, duration: driftDuration),
-            SKAction.moveBy(x: -driftX, y: -driftY, duration: driftDuration),
-        ])
-        container.run(.repeatForever(drift))
+        container.run(.repeatForever(driftAction(dx: driftX, dy: driftY, duration: driftDuration)))
 
         applyGrowthPhase(phase, to: container)
         return container

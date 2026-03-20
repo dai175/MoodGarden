@@ -33,21 +33,15 @@ struct SunrayElement: GardenElement {
             // Alpha pulse
             let baseAlpha = ray.alpha
             let pulseDuration = nextFloat(random, min: 1.5, max: 2.5) * speed
-            let pulseUp = SKAction.fadeAlpha(to: min(baseAlpha * 1.6, 0.7), duration: pulseDuration)
-            let pulseDown = SKAction.fadeAlpha(to: baseAlpha * 0.5, duration: pulseDuration)
-            pulseUp.timingMode = .easeInEaseOut
-            pulseDown.timingMode = .easeInEaseOut
+            let rayPulse = pulseAlpha(
+                from: min(baseAlpha * 1.6, 0.7), to: baseAlpha * 0.5, duration: pulseDuration)
             let phaseDelay = SKAction.wait(forDuration: Double(index) * 0.5)
-            ray.run(.sequence([phaseDelay, .repeatForever(.sequence([pulseUp, pulseDown]))]))
+            ray.run(.sequence([phaseDelay, .repeatForever(rayPulse)]))
 
             // Gentle rotation
             let rotAmount = nextFloat(random, min: 0.03, max: 0.08)
             let rotDuration = nextFloat(random, min: 3.0, max: 5.0) * speed
-            let sway = SKAction.sequence([
-                SKAction.rotate(byAngle: rotAmount, duration: rotDuration / 2),
-                SKAction.rotate(byAngle: -rotAmount, duration: rotDuration / 2),
-            ])
-            ray.run(.repeatForever(sway))
+            ray.run(.repeatForever(swayRotation(angle: rotAmount, duration: rotDuration)))
 
             container.addChild(ray)
         }

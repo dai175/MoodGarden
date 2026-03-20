@@ -20,6 +20,7 @@ struct GardenRenderer {
 
     func createNode(for spec: ElementSpec, sceneSize: CGSize) -> SKNode {
         let element = Self.elementMap[spec.elementType]
+        // TODO: Unregistered ElementTypes fall back to empty SKNode — implement remaining types in polish phase
         let node =
             element?.createNode(seed: spec.seed, phase: spec.phase, sceneSize: sceneSize) ?? SKNode()
         node.name = "element_\(spec.elementType.rawValue)_\(spec.seed)"

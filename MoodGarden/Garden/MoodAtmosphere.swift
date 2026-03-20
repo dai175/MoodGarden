@@ -17,20 +17,18 @@ enum MoodAtmosphere {
                 SelectedElement(elementType: .ripple, zone: .waterside, estimatedNodes: 2),
             ],
             supplementary: [
-                SelectedElement(elementType: .warmLight, zone: .anywhere, estimatedNodes: 1),
-                SelectedElement(elementType: .pebble, zone: .foreground, estimatedNodes: 1),
                 SelectedElement(elementType: .mushroom, zone: .foreground, estimatedNodes: 2),
+                SelectedElement(elementType: .fog, zone: .anywhere, estimatedNodes: 2),
             ]
         ),
         .happy: (
             base: [
                 SelectedElement(elementType: .flower, zone: .hilltop, estimatedNodes: 3),
-                SelectedElement(elementType: .warmLight, zone: .anywhere, estimatedNodes: 1),
+                SelectedElement(elementType: .sunray, zone: .sky, estimatedNodes: 2),
             ],
             supplementary: [
                 SelectedElement(elementType: .butterfly, zone: .sky, estimatedNodes: 2),
-                SelectedElement(elementType: .breeze, zone: .sky, estimatedNodes: 1),
-                SelectedElement(elementType: .shimmer, zone: .anywhere, estimatedNodes: 1),
+                SelectedElement(elementType: .rainbow, zone: .sky, estimatedNodes: 2),
             ]
         ),
         .energetic: (
@@ -50,8 +48,7 @@ enum MoodAtmosphere {
                 SelectedElement(elementType: .vine, zone: .foreground, estimatedNodes: 2),
             ],
             supplementary: [
-                SelectedElement(elementType: .dimLight, zone: .anywhere, estimatedNodes: 1),
-                SelectedElement(elementType: .shimmer, zone: .waterside, estimatedNodes: 1),
+                SelectedElement(elementType: .wind, zone: .sky, estimatedNodes: 2),
                 SelectedElement(elementType: .fog, zone: .sky, estimatedNodes: 2),
             ]
         ),
@@ -63,7 +60,6 @@ enum MoodAtmosphere {
             supplementary: [
                 SelectedElement(elementType: .puddle, zone: .foreground, estimatedNodes: 2),
                 SelectedElement(elementType: .fog, zone: .anywhere, estimatedNodes: 2),
-                SelectedElement(elementType: .dimLight, zone: .sky, estimatedNodes: 1),
             ]
         ),
         .angry: (
@@ -80,12 +76,11 @@ enum MoodAtmosphere {
         .tired: (
             base: [
                 SelectedElement(elementType: .fallenLeaf, zone: .foreground, estimatedNodes: 2),
-                SelectedElement(elementType: .dimLight, zone: .anywhere, estimatedNodes: 1),
+                SelectedElement(elementType: .fog, zone: .anywhere, estimatedNodes: 2),
             ],
             supplementary: [
                 SelectedElement(elementType: .mushroom, zone: .foreground, estimatedNodes: 2),
-                SelectedElement(elementType: .shimmer, zone: .waterside, estimatedNodes: 1),
-                SelectedElement(elementType: .pebble, zone: .foreground, estimatedNodes: 1),
+                SelectedElement(elementType: .moss, zone: .waterside, estimatedNodes: 3),
             ]
         ),
     ]
