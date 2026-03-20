@@ -3,9 +3,13 @@ import UIKit
 
 final class GardenScene: SKScene {
     private let renderer = GardenRenderer()
-    private let elementsLayer = SKNode()
+    private let backgroundLayer = BackgroundLayer()
+    private let groundElementsLayer = SKNode()
+    private let aerialElementsLayer = SKNode()
     private let seasonalLayer = SeasonalLayer()
-    private var currentEntries: [GardenElementData] = []
+    private let atmosphereOverlay = SKShapeNode()
+
+    private var currentState: AtmosphereState = .empty
     private var currentMonth = Calendar.current.component(.month, from: Date())
 
     override init() {
@@ -27,9 +31,22 @@ final class GardenScene: SKScene {
         backgroundColor = DesignConstants.Colors.backgroundPrimaryUIColor
         scaleMode = .resizeFill
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        addChild(elementsLayer)
-        seasonalLayer.zPosition = 10
+
+        backgroundLayer.zPosition = 0
+        addChild(backgroundLayer)
+
+        groundElementsLayer.zPosition = 10
+        addChild(groundElementsLayer)
+
+        aerialElementsLayer.zPosition = 20
+        addChild(aerialElementsLayer)
+
+        seasonalLayer.zPosition = 30
         addChild(seasonalLayer)
+
+        atmosphereOverlay.zPosition = 40
+        atmosphereOverlay.strokeColor = .clear
+        addChild(atmosphereOverlay)
     }
 
     override func didMove(to view: SKView) {
@@ -41,81 +58,116 @@ final class GardenScene: SKScene {
     override func didChangeSize(_ oldSize: CGSize) {
         super.didChangeSize(oldSize)
         guard size.width > 0, size.height > 0 else { return }
+        let season = Season.from(month: currentMonth)
+        backgroundLayer.configure(season: season, sceneSize: size)
         rebuildElements()
-        seasonalLayer.configure(season: Season.from(month: currentMonth), sceneSize: size)
+        seasonalLayer.configure(season: season, sceneSize: size)
+        updateAtmosphereOverlay()
     }
+
+    // MARK: - Public API
 
     func configureSeason(month: Int) {
         currentMonth = month
-        seasonalLayer.configure(season: Season.from(month: month), sceneSize: size)
+        let season = Season.from(month: month)
+        backgroundLayer.configure(season: season, sceneSize: size)
+        seasonalLayer.configure(season: season, sceneSize: size)
     }
 
-    func configure(with entries: [GardenElementData]) {
-        guard entries != currentEntries else { return }
-        currentEntries = entries
+    func configure(with state: AtmosphereState) {
+        guard state != currentState else { return }
+        currentState = state
         rebuildElements()
+        updateAtmosphereOverlay()
+        backgroundLayer.applyHueShift(state.hueShift)
     }
 
-    func addEntry(_ entry: GardenElementData, animated: Bool) {
-        currentEntries.append(entry)
-        let layout = makeLayout()
-        let node = renderer.createNode(for: entry, cellSize: layout.cellSize)
-        node.position = layout.position(forDay: entry.day)
+    func addElements(from specs: [ElementSpec], animated: Bool) {
+        guard size.width > 0, size.height > 0 else { return }
+        let positions = PlacementRule.computePositions(for: specs, sceneSize: size)
+        let nodes = renderer.createNodes(for: specs, positions: positions, sceneSize: size)
+
+        for (node, position) in nodes {
+            let spec = specs[nodes.firstIndex(where: { $0.node === node }) ?? 0]
+            node.position = position
+            let targetLayer = spec.elementType.isGround ? groundElementsLayer : aerialElementsLayer
+
+            if animated {
+                node.alpha = 0
+                node.setScale(0.5)
+                targetLayer.addChild(node)
+                let fadeIn = SKAction.fadeIn(withDuration: 1.2)
+                let scaleUp = SKAction.scale(to: node.xScale * 2, duration: 1.2)
+                fadeIn.timingMode = .easeOut
+                scaleUp.timingMode = .easeOut
+                node.run(.group([fadeIn, scaleUp]))
+            } else {
+                targetLayer.addChild(node)
+            }
+        }
 
         if animated {
-            node.alpha = 0
-            node.setScale(0.5)
-            elementsLayer.addChild(node)
-            let fadeIn = SKAction.fadeIn(withDuration: 1.2)
-            let scaleUp = SKAction.scale(to: 1.0, duration: 1.2)
-            fadeIn.timingMode = .easeOut
-            scaleUp.timingMode = .easeOut
-            node.run(.group([fadeIn, scaleUp]))
-
-            // 霧が晴れるトランジション（既存のものがあれば除去して再生成）
-            if let existing = childNode(withName: "fogTransition") {
-                existing.removeFromParent()
-            }
-            let fogRect = CGRect(
-                x: -size.width / 2,
-                y: -size.height / 2,
-                width: size.width,
-                height: size.height
-            )
-            let fogOverlay = SKShapeNode(rect: fogRect)
-            fogOverlay.name = "fogTransition"
-            fogOverlay.fillColor = DesignConstants.Colors.backgroundPrimaryUIColor
-            fogOverlay.strokeColor = .clear
-            fogOverlay.alpha = 0.5
-            fogOverlay.zPosition = 100
-            addChild(fogOverlay)
-
-            let fogFade = SKAction.fadeOut(withDuration: 1.0)
-            fogFade.timingMode = .easeInEaseOut
-            fogOverlay.run(.sequence([fogFade, .removeFromParent()]))
-        } else {
-            elementsLayer.addChild(node)
+            addFogTransition()
         }
     }
+
+    // MARK: - Private
 
     private func rebuildElements() {
-        elementsLayer.removeAllChildren()
+        groundElementsLayer.removeAllChildren()
+        aerialElementsLayer.removeAllChildren()
         guard size.width > 0, size.height > 0 else { return }
 
-        let layout = makeLayout()
-        let nodes = renderer.createNodes(for: currentEntries, layout: layout)
-        for (node, position) in nodes {
+        let specs = currentState.elementManifest
+        guard !specs.isEmpty else { return }
+
+        let positions = PlacementRule.computePositions(for: specs, sceneSize: size)
+        let nodes = renderer.createNodes(for: specs, positions: positions, sceneSize: size)
+
+        for (index, (node, position)) in nodes.enumerated() {
             node.position = position
-            elementsLayer.addChild(node)
+            if specs[index].elementType.isGround {
+                groundElementsLayer.addChild(node)
+            } else {
+                aerialElementsLayer.addChild(node)
+            }
         }
     }
 
-    private func makeLayout() -> GardenGridLayout {
-        GardenGridLayout(
-            columns: DesignConstants.Layout.gridColumns,
-            rows: DesignConstants.Layout.gridRows,
-            sceneSize: size,
-            spacing: DesignConstants.Layout.cellSpacing
+    private func updateAtmosphereOverlay() {
+        guard size.width > 0, size.height > 0 else { return }
+        let season = Season.from(month: currentMonth)
+        let rect = CGRect(
+            x: -size.width / 2,
+            y: -size.height / 2,
+            width: size.width,
+            height: size.height
         )
+        atmosphereOverlay.path = CGPath(rect: rect, transform: nil)
+        atmosphereOverlay.fillColor = season.tintColor
+        atmosphereOverlay.alpha = 1.0
+    }
+
+    private func addFogTransition() {
+        if let existing = childNode(withName: "fogTransition") {
+            existing.removeFromParent()
+        }
+        let fogRect = CGRect(
+            x: -size.width / 2,
+            y: -size.height / 2,
+            width: size.width,
+            height: size.height
+        )
+        let fogOverlay = SKShapeNode(rect: fogRect)
+        fogOverlay.name = "fogTransition"
+        fogOverlay.fillColor = DesignConstants.Colors.backgroundPrimaryUIColor
+        fogOverlay.strokeColor = .clear
+        fogOverlay.alpha = 0.5
+        fogOverlay.zPosition = 100
+        addChild(fogOverlay)
+
+        let fogFade = SKAction.fadeOut(withDuration: 1.0)
+        fogFade.timingMode = .easeInEaseOut
+        fogOverlay.run(.sequence([fogFade, .removeFromParent()]))
     }
 }

@@ -2,8 +2,14 @@ import GameplayKit
 import SpriteKit
 
 struct WindElement: GardenElement {
-    func createNode(seed: Int, cellSize: CGSize) -> SKNode {
+    let elementType = ElementType.wind
+    let preferredZone = PlacementZone.sky
+    let estimatedNodes = 2
+
+    func createNode(seed: Int, phase: GrowthPhase, sceneSize: CGSize) -> SKNode {
         let random = makeRandom(seed: seed)
+        let cellSize = refSize(from: sceneSize)
+        let speed = animationSpeed(for: phase)
         let container = SKNode()
         let lineCount = 2 + Int(random.nextInt(upperBound: 3))
 
@@ -31,26 +37,31 @@ struct WindElement: GardenElement {
 
             let drift = nextFloat(random, min: 0.15, max: 0.3) * cellSize.width
             let move = SKAction.sequence([
-                SKAction.moveBy(x: drift, y: drift * 0.3, duration: nextFloat(random, min: 0.8, max: 1.2)),
-                SKAction.moveBy(x: -drift, y: -drift * 0.3, duration: nextFloat(random, min: 0.8, max: 1.2)),
+                SKAction.moveBy(
+                    x: drift, y: drift * 0.3, duration: nextFloat(random, min: 0.8, max: 1.2) * speed),
+                SKAction.moveBy(
+                    x: -drift, y: -drift * 0.3, duration: nextFloat(random, min: 0.8, max: 1.2) * speed),
             ])
             line.run(.repeatForever(move))
 
-            // alpha 変動で風の強弱を表現
             let baseAlpha = line.alpha
             let alphaStrong = min(baseAlpha * 1.3, 1.0)
             let alphaWeak = baseAlpha * 0.4
-            let fadeStrong = SKAction.fadeAlpha(to: alphaStrong, duration: nextFloat(random, min: 0.8, max: 1.1))
+            let fadeStrong = SKAction.fadeAlpha(
+                to: alphaStrong, duration: nextFloat(random, min: 0.8, max: 1.1) * speed)
             fadeStrong.timingMode = .easeInEaseOut
-            let fadeWeak = SKAction.fadeAlpha(to: alphaWeak, duration: nextFloat(random, min: 0.8, max: 1.3))
+            let fadeWeak = SKAction.fadeAlpha(
+                to: alphaWeak, duration: nextFloat(random, min: 0.8, max: 1.3) * speed)
             fadeWeak.timingMode = .easeInEaseOut
-            let fadeBase = SKAction.fadeAlpha(to: baseAlpha, duration: nextFloat(random, min: 0.8, max: 1.1))
+            let fadeBase = SKAction.fadeAlpha(
+                to: baseAlpha, duration: nextFloat(random, min: 0.8, max: 1.1) * speed)
             fadeBase.timingMode = .easeInEaseOut
             let gust = SKAction.sequence([fadeStrong, fadeWeak, fadeBase])
             line.run(.repeatForever(gust))
 
             container.addChild(line)
         }
+        applyGrowthPhase(phase, to: container)
         return container
     }
 }

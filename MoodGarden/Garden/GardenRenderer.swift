@@ -1,33 +1,29 @@
 import SpriteKit
 
 struct GardenRenderer {
-    private static let elementMap: [MoodType: any GardenElement] = [
-        .peaceful: MossElement(),
-        .happy: FlowerElement(),
-        .energetic: GrassElement(),
-        .anxious: FogElement(),
-        .sad: RainElement(),
-        .angry: WindElement(),
-        .tired: LeafElement(),
+    private static let elementMap: [ElementType: any GardenElement] = [
+        .moss: MossElement(),
+        .flower: FlowerElement(),
+        .grass: GrassElement(),
+        .fog: FogElement(),
+        .raindrop: RainElement(),
+        .wind: WindElement(),
+        .fallenLeaf: LeafElement(),
     ]
 
-    func createNode(for data: GardenElementData, cellSize: CGSize) -> SKNode {
-        guard let element = Self.elementMap[data.mood] else {
-            assertionFailure("Missing garden element for mood: \(data.mood)")
-            return SKNode()
-        }
-        let node = element.createNode(seed: data.seed, cellSize: cellSize)
-        node.name = "element_day_\(data.day)"
+    func createNode(for spec: ElementSpec, sceneSize: CGSize) -> SKNode {
+        let element = Self.elementMap[spec.elementType]
+        let node =
+            element?.createNode(seed: spec.seed, phase: spec.phase, sceneSize: sceneSize) ?? SKNode()
+        node.name = "element_\(spec.elementType.rawValue)_\(spec.seed)"
         return node
     }
 
     func createNodes(
-        for entries: [GardenElementData],
-        layout: GardenGridLayout
+        for specs: [ElementSpec], positions: [CGPoint], sceneSize: CGSize
     ) -> [(node: SKNode, position: CGPoint)] {
-        entries.map { entry in
-            let node = createNode(for: entry, cellSize: layout.cellSize)
-            let position = layout.position(forDay: entry.day)
+        zip(specs, positions).map { spec, position in
+            let node = createNode(for: spec, sceneSize: sceneSize)
             return (node: node, position: position)
         }
     }

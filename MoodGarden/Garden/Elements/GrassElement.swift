@@ -2,8 +2,14 @@ import GameplayKit
 import SpriteKit
 
 struct GrassElement: GardenElement {
-    func createNode(seed: Int, cellSize: CGSize) -> SKNode {
+    let elementType = ElementType.grass
+    let preferredZone = PlacementZone.hilltop
+    let estimatedNodes = 3
+
+    func createNode(seed: Int, phase: GrowthPhase, sceneSize: CGSize) -> SKNode {
         let random = makeRandom(seed: seed)
+        let cellSize = refSize(from: sceneSize)
+        let speed = animationSpeed(for: phase)
         let container = SKNode()
         let bladeCount = 3 + Int(random.nextInt(upperBound: 3))
 
@@ -30,20 +36,20 @@ struct GrassElement: GardenElement {
                 y: -cellSize.height * 0.25
             )
 
-            // delay をランダムに調整（以前の固定 index * 0.2 より自然な揺れに）
             let delayBase = nextFloat(random, min: 0.0, max: 0.5)
             let delay = SKAction.wait(forDuration: Double(index) * 0.15 + delayBase)
             let sway = SKAction.sequence([
-                SKAction.rotate(byAngle: 0.08, duration: 1.0),
-                SKAction.rotate(byAngle: -0.08, duration: 1.0),
+                SKAction.rotate(byAngle: 0.08, duration: 1.0 * speed),
+                SKAction.rotate(byAngle: -0.08, duration: 1.0 * speed),
             ])
             blade.run(.sequence([delay, .repeatForever(sway)]))
 
-            // ブレード先端の微震え（alpha 変動で表現）
             let tipAlphaLow = blade.alpha * 0.75
-            let fadeOut = SKAction.fadeAlpha(to: tipAlphaLow, duration: nextFloat(random, min: 0.8, max: 1.1))
+            let fadeOut = SKAction.fadeAlpha(
+                to: tipAlphaLow, duration: nextFloat(random, min: 0.8, max: 1.1) * speed)
             fadeOut.timingMode = .easeInEaseOut
-            let fadeIn = SKAction.fadeAlpha(to: blade.alpha, duration: nextFloat(random, min: 0.8, max: 1.1))
+            let fadeIn = SKAction.fadeAlpha(
+                to: blade.alpha, duration: nextFloat(random, min: 0.8, max: 1.1) * speed)
             fadeIn.timingMode = .easeInEaseOut
             let tipShiver = SKAction.sequence([fadeOut, fadeIn])
             let shiverDelay = SKAction.wait(forDuration: Double(index) * 0.25)
@@ -51,6 +57,7 @@ struct GrassElement: GardenElement {
 
             container.addChild(blade)
         }
+        applyGrowthPhase(phase, to: container)
         return container
     }
 }

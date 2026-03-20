@@ -41,7 +41,9 @@ struct GardenView: View {
         }
         .onChange(of: viewModel.currentMonthEntries.count) { oldCount, newCount in
             if newCount == oldCount + 1, let last = viewModel.currentMonthEntries.last {
-                gardenScene.addEntry(makeElementData(from: last), animated: true)
+                let newState = AtmosphereEngine.analyze(
+                    entries: [last], season: currentSeason)
+                gardenScene.addElements(from: newState.elementManifest, animated: true)
             } else {
                 updateScene()
             }
@@ -92,15 +94,11 @@ struct GardenView: View {
     }
 
     private func updateScene() {
-        let entries = viewModel.currentMonthEntries.map(makeElementData)
-        gardenScene.configure(with: entries)
+        let state = AtmosphereEngine.analyze(
+            entries: viewModel.currentMonthEntries, season: currentSeason)
+        gardenScene.configure(with: state)
         let month = Calendar.current.component(.month, from: Date())
         gardenScene.configureSeason(month: month)
-    }
-
-    private func makeElementData(from entry: MoodEntry) -> GardenElementData {
-        let day = Calendar.current.component(.day, from: entry.date)
-        return GardenElementData(day: day, mood: entry.mood, seed: entry.gardenSeed)
     }
 
     private static let monthFormatter: DateFormatter = {

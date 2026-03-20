@@ -39,15 +39,9 @@ struct ArchiveDetailView: View {
         .navigationTitle(displayName)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            let calendar = Calendar.current
-            let elementData = entries.map { entry in
-                GardenElementData(
-                    day: calendar.component(.day, from: entry.date),
-                    mood: entry.mood,
-                    seed: entry.gardenSeed
-                )
-            }
-            detailScene.configure(with: elementData)
+            let season = Season.from(month: month)
+            let state = AtmosphereEngine.analyze(entries: entries, season: season)
+            detailScene.configure(with: state)
             detailScene.configureSeason(month: month)
         }
     }

@@ -2,8 +2,14 @@ import GameplayKit
 import SpriteKit
 
 struct RainElement: GardenElement {
-    func createNode(seed: Int, cellSize: CGSize) -> SKNode {
+    let elementType = ElementType.raindrop
+    let preferredZone = PlacementZone.sky
+    let estimatedNodes = 3
+
+    func createNode(seed: Int, phase: GrowthPhase, sceneSize: CGSize) -> SKNode {
         let random = makeRandom(seed: seed)
+        let cellSize = refSize(from: sceneSize)
+        let speed = animationSpeed(for: phase)
         let container = SKNode()
         let dropCount = 3 + Int(random.nextInt(upperBound: 3))
 
@@ -17,17 +23,15 @@ struct RainElement: GardenElement {
 
             let drop = SKShapeNode(path: path)
             drop.strokeColor = MoodType.sad.uiColor
-            // 太さバリエーション
             drop.lineWidth = nextFloat(random, min: 1.0, max: 2.5)
             drop.alpha = nextFloat(random, min: 0.5, max: 0.8)
             drop.position = CGPoint(x: dropX, y: cellSize.height * 0.2)
 
             let fallDistance = cellSize.height * 0.5
-            let duration = nextFloat(random, min: 0.8, max: 1.2)
+            let duration = nextFloat(random, min: 0.8, max: 1.2) * speed
 
-            // 着地リプル: 落下終端でスケールパルス
-            let rippleScale = SKAction.scale(to: 1.4, duration: 0.8)
-            let rippleRestore = SKAction.scale(to: 1.0, duration: 0.8)
+            let rippleScale = SKAction.scale(to: 1.4, duration: 0.8 * speed)
+            let rippleRestore = SKAction.scale(to: 1.0, duration: 0.8 * speed)
             rippleScale.timingMode = .easeInEaseOut
             rippleRestore.timingMode = .easeInEaseOut
 
@@ -35,9 +39,9 @@ struct RainElement: GardenElement {
                 SKAction.moveBy(x: 0, y: -fallDistance, duration: duration),
                 rippleScale,
                 rippleRestore,
-                SKAction.fadeOut(withDuration: 0.8),
+                SKAction.fadeOut(withDuration: 0.8 * speed),
                 SKAction.move(to: CGPoint(x: dropX, y: cellSize.height * 0.2), duration: 0),
-                SKAction.fadeAlpha(to: drop.alpha, duration: 0.8),
+                SKAction.fadeAlpha(to: drop.alpha, duration: 0.8 * speed),
             ])
             drop.run(.repeatForever(fall))
 
@@ -52,6 +56,7 @@ struct RainElement: GardenElement {
         puddle.position = CGPoint(x: 0, y: -cellSize.height * 0.3)
         container.addChild(puddle)
 
+        applyGrowthPhase(phase, to: container)
         return container
     }
 }
