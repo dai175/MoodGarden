@@ -72,15 +72,12 @@ struct GardenView: View {
 
     private var gardenSpriteView: some View {
         SpriteView(scene: gardenScene)
+            .allowsHitTesting(false)
     }
 
     private var moodSelectorSection: some View {
-        Group {
-            if !viewModel.hasTodayEntry {
-                MoodSelectorView()
-            }
-        }
-        .frame(height: 60)
+        MoodSelectorView()
+            .frame(height: 60)
     }
 
     private func updateScene() {

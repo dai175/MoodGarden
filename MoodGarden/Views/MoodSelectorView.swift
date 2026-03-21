@@ -15,9 +15,11 @@ struct MoodSelectorView: View {
 
     var body: some View {
         ZStack {
-            if showUndo {
-                undoView
-                    .transition(.opacity)
+            if viewModel.hasTodayEntry {
+                if showUndo {
+                    undoView
+                        .transition(.opacity)
+                }
             } else if isExpanded {
                 arcView
                     .transition(.opacity)
@@ -47,6 +49,8 @@ struct MoodSelectorView: View {
                 .frame(width: 12, height: 12)
                 .scaleEffect(pulseScale)
                 .opacity(0.8)
+                .frame(width: 44, height: 44)
+                .contentShape(Circle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Record mood")
