@@ -4,51 +4,29 @@ import SpriteKit
 struct LeafElement: GardenElement {
     let elementType = ElementType.fallenLeaf
     let preferredZone = PlacementZone.foreground
-    let estimatedNodes = 2
+    let estimatedNodes = 1
 
     func createNode(seed: Int, phase: GrowthPhase, sceneSize: CGSize) -> SKNode {
         let random = makeRandom(seed: seed)
         let cellSize = refSize(from: sceneSize)
         let speed = animationSpeed(for: phase)
-        let container = SKNode()
-        let leafCount = 1 + Int(random.nextInt(upperBound: 3))
-        let baseColor = MoodType.tired.uiColor
 
-        for _ in 0..<leafCount {
-            let width = nextFloat(random, min: 0.15, max: 0.25) * cellSize.width
-            let height = width * nextFloat(random, min: 0.5, max: 0.8)
+        let widthFrac = nextFloat(random, min: 0.5, max: 0.8)
+        let sprite = makeImageSprite(named: "elem_fallenLeaf", sceneSize: sceneSize, widthFraction: widthFrac)
+        sprite.alpha = nextFloat(random, min: 0.7, max: 0.9)
+        sprite.zRotation = nextFloat(random, min: -0.3, max: 0.3)
 
-            let brownShift = nextFloat(random, min: -0.05, max: 0.05)
-            let brightnessScale = nextFloat(random, min: 0.8, max: 1.0)
-            let leaf = makeSoftEllipse(
-                size: CGSize(width: width, height: height),
-                color: baseColor.withHueOffset(brownShift, brightnessMultiplier: brightnessScale),
-                softness: 0.3
-            )
-            leaf.alpha = nextFloat(random, min: 0.6, max: 0.9)
-            leaf.zRotation = nextFloat(random, min: 0, max: .pi * 2)
-            leaf.position = CGPoint(
-                x: nextFloat(random, min: -0.25, max: 0.25) * cellSize.width,
-                y: nextFloat(random, min: -0.25, max: 0.25) * cellSize.height
-            )
+        let sway = swayRotation(angle: 0.03, duration: 3.0 * speed)
+        sprite.run(.repeatForever(sway))
 
-            let rotSpeed = nextFloat(random, min: 1.0, max: 1.5) * speed
-            let rotate = SKAction.rotate(byAngle: .pi * 2, duration: rotSpeed * 8)
-            let verticalDrift = driftAction(dx: 0, dy: cellSize.height * 0.05, duration: rotSpeed * 2)
-            leaf.run(.repeatForever(rotate))
-            leaf.run(.repeatForever(verticalDrift))
+        let swayAmount = nextFloat(random, min: 0.02, max: 0.05) * cellSize.width
+        let swayDuration = nextFloat(random, min: 1.2, max: 1.8) * speed
+        sprite.run(.repeatForever(driftAction(dx: swayAmount, dy: 0, duration: swayDuration)))
 
-            let swayAmount = nextFloat(random, min: 0.04, max: 0.08) * cellSize.width
-            let swayDuration = nextFloat(random, min: 0.9, max: 1.4) * speed
-            leaf.run(.repeatForever(driftAction(dx: -swayAmount, dy: 0, duration: swayDuration)))
+        let fadeDuration = nextFloat(random, min: 1.0, max: 1.5) * speed
+        sprite.run(.repeatForever(pulseAlpha(from: sprite.alpha, to: sprite.alpha * 0.7, duration: fadeDuration)))
 
-            let leafAlpha = leaf.alpha
-            let fadeDuration = nextFloat(random, min: 1.0, max: 1.5) * speed
-            leaf.run(.repeatForever(pulseAlpha(from: leafAlpha, to: leafAlpha * 0.6, duration: fadeDuration)))
-
-            container.addChild(leaf)
-        }
-        applyGrowthPhase(phase, to: container)
-        return container
+        applyGrowthPhase(phase, to: sprite)
+        return sprite
     }
 }
