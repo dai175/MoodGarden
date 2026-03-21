@@ -15,23 +15,11 @@ struct GardenView: View {
 
     var body: some View {
         ZStack {
-            ZStack {
-                LinearGradient(
-                    colors: [
-                        DesignConstants.Colors.backgroundPrimary,
-                        DesignConstants.Colors.backgroundSecondary,
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                DesignConstants.Colors.seasonalTint(for: currentSeason)
-            }
-            .ignoresSafeArea()
+            gardenSpriteView
+                .ignoresSafeArea()
 
             VStack {
                 monthHeaderView
-                Spacer()
-                gardenSpriteView
                 Spacer()
                 moodSelectorSection
             }
@@ -84,11 +72,6 @@ struct GardenView: View {
 
     private var gardenSpriteView: some View {
         SpriteView(scene: gardenScene)
-            .aspectRatio(
-                CGFloat(DesignConstants.Layout.gridColumns) / CGFloat(DesignConstants.Layout.gridRows),
-                contentMode: .fit
-            )
-            .clipShape(RoundedRectangle(cornerRadius: DesignConstants.Layout.cornerRadius))
     }
 
     private var moodSelectorSection: some View {

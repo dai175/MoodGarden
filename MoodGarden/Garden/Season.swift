@@ -16,6 +16,45 @@ enum Season: CaseIterable {
         }
     }
 
+    var backgroundImageName: String {
+        switch self {
+        case .spring: return "bg_spring"
+        case .summer: return "bg_summer"
+        case .autumn: return "bg_autumn"
+        case .winter: return "bg_winter"
+        }
+    }
+
+    struct GradientColors {
+        let top: UIColor
+        let bottom: UIColor
+    }
+
+    var gradientColors: GradientColors {
+        switch self {
+        case .spring:
+            return GradientColors(
+                top: UIColor(red: 0.06, green: 0.12, blue: 0.10, alpha: 1.0),
+                bottom: UIColor(red: 0.04, green: 0.08, blue: 0.05, alpha: 1.0)
+            )
+        case .summer:
+            return GradientColors(
+                top: UIColor(red: 0.06, green: 0.10, blue: 0.08, alpha: 1.0),
+                bottom: UIColor(red: 0.04, green: 0.09, blue: 0.05, alpha: 1.0)
+            )
+        case .autumn:
+            return GradientColors(
+                top: UIColor(red: 0.07, green: 0.10, blue: 0.09, alpha: 1.0),
+                bottom: UIColor(red: 0.04, green: 0.08, blue: 0.05, alpha: 1.0)
+            )
+        case .winter:
+            return GradientColors(
+                top: UIColor(red: 0.05, green: 0.08, blue: 0.12, alpha: 1.0),
+                bottom: UIColor(red: 0.03, green: 0.06, blue: 0.08, alpha: 1.0)
+            )
+        }
+    }
+
     var tintColor: UIColor {
         switch self {
         case .spring:
