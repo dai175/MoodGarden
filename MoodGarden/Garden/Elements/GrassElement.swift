@@ -13,6 +13,7 @@ struct GrassElement: GardenElement {
         let widthFrac = nextFloat(random, min: 0.6, max: 0.9)
         let sprite = makeImageSprite(named: "elem_grass", sceneSize: sceneSize, widthFraction: widthFrac)
         sprite.alpha = nextFloat(random, min: 0.7, max: 0.9)
+        applyGrowthPhase(phase, to: sprite)
 
         let sway = swayRotation(angle: 0.06, duration: 2.5 * speed)
         sprite.run(.repeatForever(sway))
@@ -20,7 +21,6 @@ struct GrassElement: GardenElement {
         let fadeDuration = nextFloat(random, min: 0.8, max: 1.2) * speed
         sprite.run(.repeatForever(pulseAlpha(from: sprite.alpha, to: sprite.alpha * 0.8, duration: fadeDuration)))
 
-        applyGrowthPhase(phase, to: sprite)
         return sprite
     }
 }

@@ -15,6 +15,7 @@ struct LeafElement: GardenElement {
         let sprite = makeImageSprite(named: "elem_fallenLeaf", sceneSize: sceneSize, widthFraction: widthFrac)
         sprite.alpha = nextFloat(random, min: 0.7, max: 0.9)
         sprite.zRotation = nextFloat(random, min: -0.3, max: 0.3)
+        applyGrowthPhase(phase, to: sprite)
 
         let sway = swayRotation(angle: 0.03, duration: 3.0 * speed)
         sprite.run(.repeatForever(sway))
@@ -26,7 +27,6 @@ struct LeafElement: GardenElement {
         let fadeDuration = nextFloat(random, min: 1.0, max: 1.5) * speed
         sprite.run(.repeatForever(pulseAlpha(from: sprite.alpha, to: sprite.alpha * 0.7, duration: fadeDuration)))
 
-        applyGrowthPhase(phase, to: sprite)
         return sprite
     }
 }
