@@ -2,6 +2,57 @@ import GameplayKit
 import SpriteKit
 import UIKit
 
+/// Alpha compensation for soft-edge textures vs former SKShapeNode rendering.
+private let textureAlphaCompensation: CGFloat = 0.85
+
+/// Cache for soft-edge textures, keyed by quantized size + color + softness.
+private let softTextureCache = SoftTextureCache()
+
+private final class SoftTextureCache: @unchecked Sendable {
+    private let lock = NSLock()
+    private var cache: [String: SKTexture] = [:]
+
+    /// Round to 4px grid for cache-friendly bucketing.
+    private func quantize(_ value: CGFloat) -> Int {
+        Int(ceil(value / 4) * 4)
+    }
+
+    private func colorHex(_ color: UIColor) -> UInt32 {
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        color.getRed(&r, green: &g, blue: &b, alpha: &a)
+        let ri = UInt32(r * 255) & 0xFF
+        let gi = UInt32(g * 255) & 0xFF
+        let bi = UInt32(b * 255) & 0xFF
+        let ai = UInt32(a * 255) & 0xFF
+        return (ri << 24) | (gi << 16) | (bi << 8) | ai
+    }
+
+    func texture(
+        size: CGSize, color: UIColor, softness: CGFloat,
+        suffix: String = "",
+        generator: (CGSize) -> SKTexture
+    ) -> (texture: SKTexture, quantizedSize: CGSize) {
+        let qw = quantize(size.width)
+        let qh = quantize(size.height)
+        let key = "\(qw)x\(qh)_\(colorHex(color))_\(Int(softness * 100))\(suffix)"
+        let qSize = CGSize(width: qw, height: qh)
+        lock.lock()
+        if let cached = cache[key] {
+            lock.unlock()
+            return (cached, qSize)
+        }
+        lock.unlock()
+        let tex = generator(qSize)
+        lock.lock()
+        cache[key] = tex
+        lock.unlock()
+        return (tex, qSize)
+    }
+}
+
 protocol GardenElement {
     var elementType: ElementType { get }
     var preferredZone: PlacementZone { get }
@@ -27,7 +78,7 @@ extension GardenElement {
     /// Apply growth phase scale and alpha to a node.
     func applyGrowthPhase(_ phase: GrowthPhase, to node: SKNode) {
         node.setScale(phase.scale)
-        node.alpha *= phase.alpha * 0.85
+        node.alpha *= phase.alpha * textureAlphaCompensation
     }
 
     /// Scale animation durations by growth phase (mature elements animate slower).
@@ -74,13 +125,13 @@ extension GardenElement {
     func makeSoftCircle(radius: CGFloat, color: UIColor, softness: CGFloat = 0.3) -> SKSpriteNode {
         let diameter = radius * 2
         let size = CGSize(width: diameter, height: diameter)
-        let texture = makeSoftTexture(size: size, isCircle: true, color: color, softness: softness)
+        let texture = makeSoftTexture(size: size, color: color, softness: softness)
         return SKSpriteNode(texture: texture, size: size)
     }
 
     /// Create a soft-edged ellipse sprite with radial alpha fade.
     func makeSoftEllipse(size: CGSize, color: UIColor, softness: CGFloat = 0.3) -> SKSpriteNode {
-        let texture = makeSoftTexture(size: size, isCircle: false, color: color, softness: softness)
+        let texture = makeSoftTexture(size: size, color: color, softness: softness)
         return SKSpriteNode(texture: texture, size: size)
     }
 
@@ -91,31 +142,42 @@ extension GardenElement {
     ) -> SKSpriteNode {
         let padding = glowRadius * 2
         let textureSize = CGSize(width: size.width + padding, height: size.height + padding)
-        let renderer = UIGraphicsImageRenderer(size: textureSize)
-        let image = renderer.image { context in
-            let cgContext = context.cgContext
-            let ellipseRect = CGRect(
-                x: padding / 2, y: padding / 2,
-                width: size.width, height: size.height
-            )
-            let glow = glowColor ?? color.withAlphaComponent(0.6)
-            cgContext.setShadow(offset: .zero, blur: glowRadius, color: glow.cgColor)
-            drawSoftEllipse(in: cgContext, rect: ellipseRect, color: color, softness: softness)
+        let suffix = "_glow\(Int(glowRadius))"
+        let (texture, _) = softTextureCache.texture(
+            size: textureSize, color: color, softness: softness, suffix: suffix
+        ) { qSize in
+            let renderer = UIGraphicsImageRenderer(size: qSize)
+            let image = renderer.image { context in
+                let cgContext = context.cgContext
+                let ellipseRect = CGRect(
+                    x: padding / 2, y: padding / 2,
+                    width: qSize.width - padding, height: qSize.height - padding
+                )
+                let glow = glowColor ?? color.withAlphaComponent(0.6)
+                cgContext.setShadow(offset: .zero, blur: glowRadius, color: glow.cgColor)
+                self.drawSoftEllipse(
+                    in: cgContext, rect: ellipseRect, color: color, softness: softness)
+            }
+            return SKTexture(image: image)
         }
-        let texture = SKTexture(image: image)
         return SKSpriteNode(texture: texture, size: textureSize)
     }
 
     private func makeSoftTexture(
-        size: CGSize, isCircle: Bool, color: UIColor, softness: CGFloat
+        size: CGSize, color: UIColor, softness: CGFloat
     ) -> SKTexture {
-        let renderer = UIGraphicsImageRenderer(size: size)
-        let image = renderer.image { context in
-            let cgContext = context.cgContext
-            let rect = CGRect(origin: .zero, size: size)
-            drawSoftEllipse(in: cgContext, rect: rect, color: color, softness: softness)
+        let (texture, _) = softTextureCache.texture(
+            size: size, color: color, softness: softness
+        ) { qSize in
+            let renderer = UIGraphicsImageRenderer(size: qSize)
+            let image = renderer.image { context in
+                let cgContext = context.cgContext
+                let rect = CGRect(origin: .zero, size: qSize)
+                self.drawSoftEllipse(in: cgContext, rect: rect, color: color, softness: softness)
+            }
+            return SKTexture(image: image)
         }
-        return SKTexture(image: image)
+        return texture
     }
 
     private func drawSoftEllipse(

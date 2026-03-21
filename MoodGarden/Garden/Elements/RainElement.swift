@@ -49,9 +49,11 @@ struct RainElement: GardenElement {
         }
 
         let puddleWidth = nextFloat(random, min: 0.3, max: 0.5) * cellSize.width
-        let puddle = SKShapeNode(ellipseOf: CGSize(width: puddleWidth, height: puddleWidth * 0.25))
-        puddle.fillColor = MoodType.sad.uiColor
-        puddle.strokeColor = .clear
+        let puddle = makeSoftEllipse(
+            size: CGSize(width: puddleWidth, height: puddleWidth * 0.25),
+            color: MoodType.sad.uiColor,
+            softness: 0.35
+        )
         puddle.alpha = 0.3
         puddle.position = CGPoint(x: 0, y: -cellSize.height * 0.3)
         container.addChild(puddle)
