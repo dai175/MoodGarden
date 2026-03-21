@@ -68,7 +68,7 @@ enum MoodAtmosphere {
                 SelectedElement(elementType: .ripple, zone: .waterside, estimatedNodes: 2),
             ],
             supplementary: [
-                SelectedElement(elementType: .puddle, zone: .foreground, estimatedNodes: 2),
+                SelectedElement(elementType: .puddle, zone: .waterside, estimatedNodes: 2),
                 SelectedElement(elementType: .fog, zone: .anywhere, estimatedNodes: 2),
             ]
         ),
