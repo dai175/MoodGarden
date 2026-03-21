@@ -26,7 +26,7 @@ struct GardenRendererTests {
     }
 
     @Test(
-        "Creates node for each implemented element type",
+        "Creates named node for each implemented element type",
         arguments: [
             ElementType.moss, .flower, .grass, .fog, .raindrop, .wind, .fallenLeaf,
             .butterfly, .sunray, .rainbow, .puddle, .ripple, .vine, .mushroom,
@@ -35,7 +35,12 @@ struct GardenRendererTests {
     func createsNodeForElementType(elementType: ElementType) {
         let spec = makeSpec(elementType: elementType)
         let node = renderer.createNode(for: spec, sceneSize: sceneSize)
-        #expect(node.children.isEmpty == false)
+        // Image-based elements return a single SKSpriteNode (no children),
+        // while programmatic elements use an SKNode container with children.
+        // Verify the node is properly named and non-trivial (has children or is a sprite).
+        #expect(node.name?.contains(elementType.rawValue) == true)
+        let hasContent = !node.children.isEmpty || node is SKSpriteNode
+        #expect(hasContent)
     }
 
     @Test("Node name contains element type")
@@ -55,9 +60,10 @@ struct GardenRendererTests {
 
     @Test("Different seeds can produce different variations")
     func differentSeeds() {
+        // Use a container-based element (vine) where seed affects child count.
         var childCounts: Set<Int> = []
         for seed in 0..<20 {
-            let spec = makeSpec(elementType: .moss, seed: seed)
+            let spec = makeSpec(elementType: .vine, seed: seed)
             let node = renderer.createNode(for: spec, sceneSize: sceneSize)
             childCounts.insert(node.children.count)
         }
