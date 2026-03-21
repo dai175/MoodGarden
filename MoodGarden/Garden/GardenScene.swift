@@ -98,15 +98,17 @@ final class GardenScene: SKScene {
         for (index, (node, position)) in nodes.enumerated() {
             let spec = specs[index]
             node.position = position
+            applyDepthEffect(to: node, spec: spec)
             let targetLayer = spec.elementType.isGround ? groundElementsLayer : aerialElementsLayer
 
             if animated {
+                let targetAlpha = node.alpha
+                let targetScale = node.xScale
                 node.alpha = 0
-                let originalScale = node.xScale
-                node.setScale(originalScale * 0.5)
+                node.setScale(targetScale * 0.5)
                 targetLayer.addChild(node)
-                let fadeIn = SKAction.fadeIn(withDuration: 1.2)
-                let scaleUp = SKAction.scale(to: originalScale, duration: 1.2)
+                let fadeIn = SKAction.fadeAlpha(to: targetAlpha, duration: 1.2)
+                let scaleUp = SKAction.scale(to: targetScale, duration: 1.2)
                 fadeIn.timingMode = .easeOut
                 scaleUp.timingMode = .easeOut
                 node.run(.group([fadeIn, scaleUp]))
@@ -143,7 +145,9 @@ final class GardenScene: SKScene {
 
         for (index, (node, position)) in nodes.enumerated() {
             node.position = position
-            if specs[index].elementType.isGround {
+            let spec = specs[index]
+            applyDepthEffect(to: node, spec: spec)
+            if spec.elementType.isGround {
                 groundElementsLayer.addChild(node)
             } else {
                 aerialElementsLayer.addChild(node)
@@ -165,6 +169,20 @@ final class GardenScene: SKScene {
         atmosphereOverlay.path = CGPath(rect: rect, transform: nil)
         atmosphereOverlay.fillColor = season.tintColor
         atmosphereOverlay.alpha = 1.0
+    }
+
+    private func applyDepthEffect(to node: SKNode, spec: ElementSpec) {
+        // Only apply depth scaling to ground elements; aerial elements (fog, wind, etc.) skip it.
+        guard spec.elementType.isGround else { return }
+
+        let depthScale = DepthScale.scale(y: node.position.y, sceneHeight: size.height)
+        let depthAlpha = DepthScale.alpha(y: node.position.y, sceneHeight: size.height)
+        let depthZ = DepthScale.zOffset(y: node.position.y, sceneHeight: size.height)
+
+        node.xScale *= depthScale
+        node.yScale *= depthScale
+        node.alpha *= depthAlpha
+        node.zPosition += depthZ
     }
 
     private func addFogTransition() {
