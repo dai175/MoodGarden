@@ -62,7 +62,8 @@ MVVM with SwiftUI for screens and SpriteKit for real-time garden rendering.
 
 ```
 MoodGarden/
-├── App/          # Entry point, app state
+├── MoodGardenApp.swift  # Entry point
+├── App/          # App state
 ├── Models/       # SwiftData models, MoodType enum
 ├── ViewModels/   # MVVM view models
 ├── Views/        # SwiftUI screens
