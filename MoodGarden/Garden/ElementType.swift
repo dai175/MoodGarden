@@ -29,4 +29,18 @@ enum ElementType: String, CaseIterable {
             return false
         }
     }
+
+    /// Asset catalog image name for image-based elements. Returns nil for programmatic-only elements.
+    var imageName: String? {
+        switch self {
+        case .moss: return "elem_moss"
+        case .flower: return "elem_flower"
+        case .grass: return "elem_grass"
+        case .fog: return "elem_fog"
+        case .raindrop: return "elem_raindrop"
+        case .wind: return "elem_wind"
+        case .fallenLeaf: return "elem_fallenLeaf"
+        default: return nil
+        }
+    }
 }

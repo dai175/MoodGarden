@@ -4,61 +4,29 @@ import SpriteKit
 struct RainElement: GardenElement {
     let elementType = ElementType.raindrop
     let preferredZone = PlacementZone.sky
-    let estimatedNodes = 6
+    let estimatedNodes = 1
 
     func createNode(seed: Int, phase: GrowthPhase, sceneSize: CGSize) -> SKNode {
         let random = makeRandom(seed: seed)
         let cellSize = refSize(from: sceneSize)
         let speed = animationSpeed(for: phase)
-        let container = SKNode()
-        let dropCount = 3 + Int(random.nextInt(upperBound: 3))
 
-        for _ in 0..<dropCount {
-            let dropX = nextFloat(random, min: -0.35, max: 0.35) * cellSize.width
-            let lineHeight = nextFloat(random, min: 0.15, max: 0.3) * cellSize.height
+        let widthFrac = nextFloat(random, min: 0.5, max: 0.8)
+        let sprite = makeImageSprite(named: "elem_raindrop", sceneSize: sceneSize, widthFraction: widthFrac)
+        sprite.alpha = nextFloat(random, min: 0.6, max: 0.85)
 
-            let path = CGMutablePath()
-            path.move(to: CGPoint(x: 0, y: lineHeight / 2))
-            path.addLine(to: CGPoint(x: 0, y: -lineHeight / 2))
+        let fallDistance = cellSize.height * 0.3
+        let duration = nextFloat(random, min: 1.0, max: 1.5) * speed
+        let startY = sprite.position.y
+        let fall = SKAction.sequence([
+            SKAction.moveBy(x: 0, y: -fallDistance, duration: duration),
+            SKAction.fadeOut(withDuration: 0.3 * speed),
+            SKAction.move(to: CGPoint(x: 0, y: startY), duration: 0),
+            SKAction.fadeAlpha(to: sprite.alpha, duration: 0.5 * speed),
+        ])
+        sprite.run(.repeatForever(fall))
 
-            let drop = SKShapeNode(path: path)
-            drop.strokeColor = MoodType.sad.uiColor
-            drop.lineWidth = nextFloat(random, min: 1.0, max: 2.5)
-            drop.alpha = nextFloat(random, min: 0.5, max: 0.8)
-            drop.position = CGPoint(x: dropX, y: cellSize.height * 0.2)
-
-            let fallDistance = cellSize.height * 0.5
-            let duration = nextFloat(random, min: 0.8, max: 1.2) * speed
-
-            let rippleScale = SKAction.scale(to: 1.4, duration: 0.8 * speed)
-            let rippleRestore = SKAction.scale(to: 1.0, duration: 0.8 * speed)
-            rippleScale.timingMode = .easeInEaseOut
-            rippleRestore.timingMode = .easeInEaseOut
-
-            let fall = SKAction.sequence([
-                SKAction.moveBy(x: 0, y: -fallDistance, duration: duration),
-                rippleScale,
-                rippleRestore,
-                SKAction.fadeOut(withDuration: 0.8 * speed),
-                SKAction.move(to: CGPoint(x: dropX, y: cellSize.height * 0.2), duration: 0),
-                SKAction.fadeAlpha(to: drop.alpha, duration: 0.8 * speed),
-            ])
-            drop.run(.repeatForever(fall))
-
-            container.addChild(drop)
-        }
-
-        let puddleWidth = nextFloat(random, min: 0.3, max: 0.5) * cellSize.width
-        let puddle = makeSoftEllipse(
-            size: CGSize(width: puddleWidth, height: puddleWidth * 0.25),
-            color: MoodType.sad.uiColor,
-            softness: 0.35
-        )
-        puddle.alpha = 0.3
-        puddle.position = CGPoint(x: 0, y: -cellSize.height * 0.3)
-        container.addChild(puddle)
-
-        applyGrowthPhase(phase, to: container)
-        return container
+        applyGrowthPhase(phase, to: sprite)
+        return sprite
     }
 }

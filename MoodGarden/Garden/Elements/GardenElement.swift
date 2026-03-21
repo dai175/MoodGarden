@@ -119,6 +119,22 @@ extension GardenElement {
         return .sequence([forward, backward])
     }
 
+    // MARK: - Image-Based Sprite Helper
+
+    /// Create a sprite node from an asset catalog image, sized relative to the scene.
+    /// `widthFraction` controls how wide the sprite is relative to `refSize.width`.
+    func makeImageSprite(
+        named imageName: String, sceneSize: CGSize, widthFraction: CGFloat = 0.8
+    ) -> SKSpriteNode {
+        let texture = SKTexture(imageNamed: imageName)
+        let cell = refSize(from: sceneSize)
+        let targetWidth = cell.width * widthFraction
+        let aspectRatio = texture.size().height / texture.size().width
+        let targetHeight = targetWidth * aspectRatio
+        let sprite = SKSpriteNode(texture: texture, size: CGSize(width: targetWidth, height: targetHeight))
+        return sprite
+    }
+
     // MARK: - Soft-Edge Texture Helpers
 
     /// Create a soft-edged circle sprite with radial alpha fade.
