@@ -56,7 +56,8 @@ The pre-commit hook auto-formats staged `.swift` files and blocks commits on Swi
 
 ### Project Structure
 
-- `App/` - Entry point (`MoodGardenApp.swift`), app state (`AppState.swift`)
+- `MoodGardenApp.swift` - Entry point (project root)
+- `App/` - App state (`AppState.swift`)
 - `Models/` - SwiftData models: `MoodEntry` (date, mood, gardenSeed), `MonthlyGarden` (snapshot), `MoodType` enum (7 moods)
 - `ViewModels/` - MVVM view models: `GardenViewModel`, `ArchiveViewModel`, `SettingsViewModel`
 - `Views/` - SwiftUI screens: Garden (home), MoodSelector, Archive, Settings, Onboarding
@@ -69,6 +70,7 @@ The pre-commit hook auto-formats staged `.swift` files and blocks commits on Swi
   - Placement: `PlacementRule`, `PlacementZone`
   - Elements: `ElementType` (ground/aerial/water categories), `ElementSpec`, 14 element sprites
   - Seasonal: `Season`, `SeasonalLayer` (cherry blossoms, fireflies, falling leaves, snow)
+  - Utilities: `Comparable+Clamp` (value clamping extension), `UIColor+Garden` (color helpers)
 - `Services/` - Notification scheduling, snapshot rendering
 
 ### Key Concepts
