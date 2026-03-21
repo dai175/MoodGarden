@@ -16,9 +16,11 @@ struct FogElement: GardenElement {
         for _ in 0..<patchCount {
             let width = nextFloat(random, min: 0.4, max: 0.7) * cellSize.width
             let height = nextFloat(random, min: 0.15, max: 0.3) * cellSize.height
-            let fog = SKShapeNode(ellipseOf: CGSize(width: width, height: height))
-            fog.fillColor = MoodType.anxious.uiColor
-            fog.strokeColor = .clear
+            let fog = makeSoftEllipse(
+                size: CGSize(width: width, height: height),
+                color: MoodType.anxious.uiColor,
+                softness: 0.5
+            )
             fog.alpha = nextFloat(random, min: 0.2, max: 0.4)
 
             let startX = nextFloat(random, min: -0.3, max: 0.3) * cellSize.width

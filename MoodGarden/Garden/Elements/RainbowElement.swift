@@ -41,7 +41,7 @@ struct RainbowElement: GardenElement {
             arc.strokeColor = arcColors[colorIndex]
             arc.lineWidth = nextFloat(random, min: 1.0, max: 2.0)
             arc.fillColor = .clear
-            arc.alpha = nextFloat(random, min: 0.3, max: 0.55)
+            arc.alpha = nextFloat(random, min: 0.25, max: 0.45)
 
             // Gentle fade in/out cycle
             let baseAlpha = arc.alpha

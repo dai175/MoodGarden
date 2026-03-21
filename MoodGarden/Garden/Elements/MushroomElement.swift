@@ -12,7 +12,7 @@ struct MushroomElement: GardenElement {
         let speed = animationSpeed(for: phase)
         let container = SKNode()
 
-        // Stem — small rectangle
+        // Stem — small rectangle (kept as SKShapeNode, small element)
         let stemWidth = nextFloat(random, min: 0.04, max: 0.07) * cellSize.width
         let stemHeight = nextFloat(random, min: 0.12, max: 0.2) * cellSize.height
         let stem = SKShapeNode(rectOf: CGSize(width: stemWidth, height: stemHeight), cornerRadius: stemWidth * 0.3)
@@ -22,13 +22,15 @@ struct MushroomElement: GardenElement {
         stem.position = CGPoint(x: 0, y: -stemHeight * 0.3)
         container.addChild(stem)
 
-        // Cap — wider ellipse on top
+        // Cap — soft-edged ellipse on top
         let capWidth = nextFloat(random, min: 0.12, max: 0.2) * cellSize.width
         let capHeight = capWidth * nextFloat(random, min: 0.5, max: 0.7)
-        let cap = SKShapeNode(ellipseOf: CGSize(width: capWidth, height: capHeight))
         let hueShift = nextFloat(random, min: -0.05, max: 0.05)
-        cap.fillColor = MoodType.tired.uiColor.withHueOffset(hueShift)
-        cap.strokeColor = .clear
+        let cap = makeSoftEllipse(
+            size: CGSize(width: capWidth, height: capHeight),
+            color: MoodType.tired.uiColor.withHueOffset(hueShift),
+            softness: 0.3
+        )
         cap.alpha = nextFloat(random, min: 0.7, max: 0.9)
         cap.position = CGPoint(x: 0, y: stemHeight * 0.15)
         cap.zPosition = 1

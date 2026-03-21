@@ -47,13 +47,13 @@ enum MoodType: String, Codable, CaseIterable {
 
     var uiColor: UIColor {
         switch self {
-        case .peaceful: return UIColor(red: 0.114, green: 0.620, blue: 0.459, alpha: 1)
-        case .happy: return UIColor(red: 0.984, green: 0.737, blue: 0.306, alpha: 1)
-        case .energetic: return UIColor(red: 0.502, green: 0.859, blue: 0.208, alpha: 1)
-        case .anxious: return UIColor(red: 0.569, green: 0.545, blue: 0.620, alpha: 1)
-        case .sad: return UIColor(red: 0.365, green: 0.541, blue: 0.725, alpha: 1)
-        case .angry: return UIColor(red: 0.647, green: 0.165, blue: 0.165, alpha: 1)
-        case .tired: return UIColor(red: 0.651, green: 0.494, blue: 0.322, alpha: 1)
+        case .peaceful: return UIColor(red: 0.12, green: 0.48, blue: 0.38, alpha: 1)
+        case .happy: return UIColor(red: 0.78, green: 0.62, blue: 0.32, alpha: 1)
+        case .energetic: return UIColor(red: 0.38, green: 0.62, blue: 0.24, alpha: 1)
+        case .anxious: return UIColor(red: 0.45, green: 0.43, blue: 0.52, alpha: 1)
+        case .sad: return UIColor(red: 0.30, green: 0.44, blue: 0.58, alpha: 1)
+        case .angry: return UIColor(red: 0.52, green: 0.18, blue: 0.16, alpha: 1)
+        case .tired: return UIColor(red: 0.50, green: 0.40, blue: 0.28, alpha: 1)
         }
     }
 }

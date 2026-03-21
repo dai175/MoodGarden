@@ -13,9 +13,11 @@ struct FlowerElement: GardenElement {
         let container = SKNode()
 
         let centerRadius = nextFloat(random, min: 0.08, max: 0.12) * cellSize.width
-        let center = SKShapeNode(circleOfRadius: centerRadius)
-        center.fillColor = MoodType.happy.uiColor
-        center.strokeColor = .clear
+        let center = makeSoftCircle(
+            radius: centerRadius,
+            color: MoodType.happy.uiColor,
+            softness: 0.25
+        )
         center.zPosition = 1
         center.setScale(0.9)
         container.addChild(center)
@@ -33,9 +35,11 @@ struct FlowerElement: GardenElement {
 
         for index in 0..<petalCount {
             let angle = CGFloat.pi * 2 * CGFloat(index) / CGFloat(petalCount)
-            let petal = SKShapeNode(ellipseOf: CGSize(width: petalWidth, height: petalLength))
-            petal.fillColor = MoodType.happy.uiColor.withHueOffset(hueShift)
-            petal.strokeColor = .clear
+            let petal = makeSoftEllipse(
+                size: CGSize(width: petalWidth, height: petalLength),
+                color: MoodType.happy.uiColor.withHueOffset(hueShift),
+                softness: 0.3
+            )
             let baseAlpha = nextFloat(random, min: 0.6, max: 0.9)
             petal.alpha = baseAlpha
             petal.zRotation = angle

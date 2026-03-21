@@ -13,7 +13,7 @@ struct VineElement: GardenElement {
         let speed = animationSpeed(for: phase)
         let container = SKNode()
 
-        // Curved vine stem
+        // Curved vine stem (kept as SKShapeNode — line-based)
         let stemHeight = nextFloat(random, min: 0.35, max: 0.55) * cellSize.height
         let curvature = nextFloat(random, min: -0.15, max: 0.15) * cellSize.width
         let stemPath = CGMutablePath()
@@ -31,7 +31,7 @@ struct VineElement: GardenElement {
         stem.alpha = nextFloat(random, min: 0.6, max: 0.85)
         container.addChild(stem)
 
-        // Small leaves along the vine
+        // Small leaves along the vine — soft-edged
         let leafCount = 2 + Int(random.nextInt(upperBound: 2))
         let hueShift = nextFloat(random, min: -0.04, max: 0.04)
 
@@ -41,9 +41,11 @@ struct VineElement: GardenElement {
             let leafX = curvature * (2 * t - t * t)
 
             let leafSize = nextFloat(random, min: 0.04, max: 0.07) * cellSize.width
-            let leaf = SKShapeNode(ellipseOf: CGSize(width: leafSize, height: leafSize * 1.6))
-            leaf.fillColor = MoodType.energetic.uiColor.withHueOffset(hueShift)
-            leaf.strokeColor = .clear
+            let leaf = makeSoftEllipse(
+                size: CGSize(width: leafSize, height: leafSize * 1.6),
+                color: MoodType.energetic.uiColor.withHueOffset(hueShift),
+                softness: 0.3
+            )
             leaf.alpha = nextFloat(random, min: 0.6, max: 0.8)
             leaf.position = CGPoint(x: leafX, y: leafY)
 
