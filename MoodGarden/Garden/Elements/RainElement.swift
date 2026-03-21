@@ -14,6 +14,7 @@ struct RainElement: GardenElement {
         let widthFrac = nextFloat(random, min: 0.5, max: 0.8)
         let sprite = makeImageSprite(named: "elem_raindrop", sceneSize: sceneSize, widthFraction: widthFrac)
         sprite.alpha = nextFloat(random, min: 0.6, max: 0.85)
+        applyGrowthPhase(phase, to: sprite)
 
         let fallDistance = cellSize.height * 0.3
         let duration = nextFloat(random, min: 1.0, max: 1.5) * speed
@@ -26,7 +27,6 @@ struct RainElement: GardenElement {
         ])
         sprite.run(.repeatForever(fall))
 
-        applyGrowthPhase(phase, to: sprite)
         return sprite
     }
 }

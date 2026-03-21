@@ -14,6 +14,7 @@ struct WindElement: GardenElement {
         let widthFrac = nextFloat(random, min: 0.7, max: 1.0)
         let sprite = makeImageSprite(named: "elem_wind", sceneSize: sceneSize, widthFraction: widthFrac)
         sprite.alpha = nextFloat(random, min: 0.3, max: 0.55)
+        applyGrowthPhase(phase, to: sprite)
 
         let drift = nextFloat(random, min: 0.12, max: 0.25) * cellSize.width
         let moveDuration = nextFloat(random, min: 0.8, max: 1.3) * speed
@@ -28,7 +29,6 @@ struct WindElement: GardenElement {
         gustRestore.timingMode = .easeInEaseOut
         sprite.run(.repeatForever(.sequence([gustUp, gustDown, gustRestore])))
 
-        applyGrowthPhase(phase, to: sprite)
         return sprite
     }
 }
