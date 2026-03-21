@@ -12,12 +12,14 @@ struct PuddleElement: GardenElement {
         let speed = animationSpeed(for: phase)
         let container = SKNode()
 
-        // Main puddle — flat ellipse
+        // Main puddle — soft-edged flat ellipse
         let puddleWidth = nextFloat(random, min: 0.35, max: 0.55) * cellSize.width
         let puddleHeight = puddleWidth * nextFloat(random, min: 0.25, max: 0.35)
-        let puddle = SKShapeNode(ellipseOf: CGSize(width: puddleWidth, height: puddleHeight))
-        puddle.fillColor = MoodType.sad.uiColor
-        puddle.strokeColor = .clear
+        let puddle = makeSoftEllipse(
+            size: CGSize(width: puddleWidth, height: puddleHeight),
+            color: MoodType.sad.uiColor,
+            softness: 0.35
+        )
         puddle.alpha = nextFloat(random, min: 0.35, max: 0.55)
         container.addChild(puddle)
 
@@ -29,11 +31,13 @@ struct PuddleElement: GardenElement {
                 pulseAlpha(from: min(baseAlpha * 1.5, 0.7), to: baseAlpha * 0.6, duration: rippleDuration)
             ))
 
-        // Shimmer highlight — small bright spot
+        // Shimmer highlight — small soft bright spot
         let shimmerSize = puddleWidth * nextFloat(random, min: 0.15, max: 0.25)
-        let shimmer = SKShapeNode(ellipseOf: CGSize(width: shimmerSize, height: shimmerSize * 0.5))
-        shimmer.fillColor = .white
-        shimmer.strokeColor = .clear
+        let shimmer = makeSoftEllipse(
+            size: CGSize(width: shimmerSize, height: shimmerSize * 0.5),
+            color: .white,
+            softness: 0.4
+        )
         shimmer.alpha = 0.15
         shimmer.position = CGPoint(
             x: nextFloat(random, min: -0.1, max: 0.1) * puddleWidth,

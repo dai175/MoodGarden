@@ -18,19 +18,14 @@ struct WindElement: GardenElement {
             let angle = nextFloat(random, min: -0.3, max: 0.3)
             let thickness = nextFloat(random, min: 1.5, max: 3.0)
 
-            let path = CGMutablePath()
-            path.move(to: CGPoint(x: -length / 2, y: 0))
-            let cp1 = CGPoint(x: -length / 6, y: cellSize.height * 0.05)
-            let cp2 = CGPoint(x: length / 6, y: -cellSize.height * 0.05)
-            path.addCurve(to: CGPoint(x: length / 2, y: 0), control1: cp1, control2: cp2)
-
-            let line = SKShapeNode(path: path)
-            line.strokeColor = MoodType.angry.uiColor
-            line.lineWidth = thickness
-            line.lineCap = .round
-            line.alpha = nextFloat(random, min: 0.5, max: 0.8)
-            line.zRotation = angle
-            line.position = CGPoint(
+            let wisp = makeSoftEllipse(
+                size: CGSize(width: length, height: thickness * 2),
+                color: MoodType.angry.uiColor,
+                softness: 0.5
+            )
+            wisp.alpha = nextFloat(random, min: 0.25, max: 0.5)
+            wisp.zRotation = angle
+            wisp.position = CGPoint(
                 x: nextFloat(random, min: -0.15, max: 0.15) * cellSize.width,
                 y: nextFloat(random, min: -0.2, max: 0.2) * cellSize.height
             )
@@ -38,28 +33,33 @@ struct WindElement: GardenElement {
             let drift = nextFloat(random, min: 0.15, max: 0.3) * cellSize.width
             let move = SKAction.sequence([
                 SKAction.moveBy(
-                    x: drift, y: drift * 0.3, duration: nextFloat(random, min: 0.8, max: 1.2) * speed),
+                    x: drift, y: drift * 0.3,
+                    duration: nextFloat(random, min: 0.8, max: 1.2) * speed),
                 SKAction.moveBy(
-                    x: -drift, y: -drift * 0.3, duration: nextFloat(random, min: 0.8, max: 1.2) * speed),
+                    x: -drift, y: -drift * 0.3,
+                    duration: nextFloat(random, min: 0.8, max: 1.2) * speed),
             ])
-            line.run(.repeatForever(move))
+            wisp.run(.repeatForever(move))
 
-            let baseAlpha = line.alpha
-            let alphaStrong = min(baseAlpha * 1.3, 1.0)
+            let baseAlpha = wisp.alpha
+            let alphaStrong = min(baseAlpha * 1.3, 0.6)
             let alphaWeak = baseAlpha * 0.4
             let fadeStrong = SKAction.fadeAlpha(
-                to: alphaStrong, duration: nextFloat(random, min: 0.8, max: 1.1) * speed)
+                to: alphaStrong,
+                duration: nextFloat(random, min: 0.8, max: 1.1) * speed)
             fadeStrong.timingMode = .easeInEaseOut
             let fadeWeak = SKAction.fadeAlpha(
-                to: alphaWeak, duration: nextFloat(random, min: 0.8, max: 1.3) * speed)
+                to: alphaWeak,
+                duration: nextFloat(random, min: 0.8, max: 1.3) * speed)
             fadeWeak.timingMode = .easeInEaseOut
             let fadeBase = SKAction.fadeAlpha(
-                to: baseAlpha, duration: nextFloat(random, min: 0.8, max: 1.1) * speed)
+                to: baseAlpha,
+                duration: nextFloat(random, min: 0.8, max: 1.1) * speed)
             fadeBase.timingMode = .easeInEaseOut
             let gust = SKAction.sequence([fadeStrong, fadeWeak, fadeBase])
-            line.run(.repeatForever(gust))
+            wisp.run(.repeatForever(gust))
 
-            container.addChild(line)
+            container.addChild(wisp)
         }
         applyGrowthPhase(phase, to: container)
         return container

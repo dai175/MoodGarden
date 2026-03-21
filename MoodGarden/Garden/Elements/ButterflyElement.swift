@@ -23,17 +23,20 @@ struct ButterflyElement: GardenElement {
         body.zPosition = 1
         container.addChild(body)
 
-        // Wings — two ellipses mirrored horizontally
+        // Wings — soft-edged ellipses with additive blending
         let wingWidth = nextFloat(random, min: 0.15, max: 0.22) * cellSize.width
         let wingHeight = nextFloat(random, min: 0.10, max: 0.16) * cellSize.height
         let hueShift = nextFloat(random, min: -0.06, max: 0.06)
         let wingAlpha = nextFloat(random, min: 0.6, max: 0.85)
 
         for side: CGFloat in [-1, 1] {
-            let wing = SKShapeNode(ellipseOf: CGSize(width: wingWidth, height: wingHeight))
-            wing.fillColor = MoodType.happy.uiColor.withHueOffset(hueShift * side)
-            wing.strokeColor = .clear
+            let wing = makeSoftEllipse(
+                size: CGSize(width: wingWidth, height: wingHeight),
+                color: MoodType.happy.uiColor.withHueOffset(hueShift * side),
+                softness: 0.3
+            )
             wing.alpha = wingAlpha
+            wing.blendMode = .add
             wing.position = CGPoint(x: side * wingWidth * 0.45, y: bodyHeight * 0.1)
 
             // Wing flap — scaleY oscillation

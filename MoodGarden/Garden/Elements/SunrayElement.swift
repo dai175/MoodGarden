@@ -18,10 +18,15 @@ struct SunrayElement: GardenElement {
         for index in 0..<rayCount {
             let length = nextFloat(random, min: 0.3, max: 0.55) * cellSize.height
             let width = nextFloat(random, min: 0.02, max: 0.04) * cellSize.width
-            let ray = SKShapeNode(rectOf: CGSize(width: width, height: length), cornerRadius: width / 2)
-            ray.fillColor = MoodType.happy.uiColor
-            ray.strokeColor = .clear
+            let ray = makeSoftEllipseWithGlow(
+                size: CGSize(width: width, height: length),
+                color: MoodType.happy.uiColor,
+                softness: 0.35,
+                glowRadius: 3,
+                glowColor: MoodType.happy.uiColor.withAlphaComponent(0.4)
+            )
             ray.alpha = nextFloat(random, min: 0.3, max: 0.55)
+            ray.blendMode = .add
 
             let spreadAngle = nextFloat(random, min: 0.1, max: 0.25) * CGFloat(index - rayCount / 2)
             ray.zRotation = baseAngle + spreadAngle

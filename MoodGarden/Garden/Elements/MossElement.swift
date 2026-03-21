@@ -16,9 +16,11 @@ struct MossElement: GardenElement {
         for patchIndex in 0..<patchCount {
             let width = nextFloat(random, min: 0.3, max: 0.6) * cellSize.width
             let height = nextFloat(random, min: 0.2, max: 0.4) * cellSize.height
-            let ellipse = SKShapeNode(ellipseOf: CGSize(width: width, height: height))
-            ellipse.fillColor = MoodType.peaceful.uiColor
-            ellipse.strokeColor = .clear
+            let ellipse = makeSoftEllipse(
+                size: CGSize(width: width, height: height),
+                color: MoodType.peaceful.uiColor,
+                softness: 0.35
+            )
             ellipse.alpha = nextFloat(random, min: 0.5, max: 0.8)
 
             ellipse.position = CGPoint(
