@@ -38,24 +38,18 @@ final class BackgroundLayer: SKNode {
     // MARK: - Background
 
     private func applyBackground(season: Season, sceneSize: CGSize) {
-        let textureName = season.backgroundImageName
-        if let image = UIImage(named: textureName) {
-            backgroundNode.texture = SKTexture(image: image)
-            backgroundNode.size = sceneSize
-            backgroundNode.position = .zero
-            backgroundNode.zPosition = 0
-        } else {
-            applyGradientFallback(season: season, sceneSize: sceneSize)
-        }
-    }
-
-    private func applyGradientFallback(season: Season, sceneSize: CGSize) {
-        let colors = season.gradientColors
-        backgroundNode.texture = makeGradientTexture(
-            size: sceneSize, topColor: colors.top, bottomColor: colors.bottom)
         backgroundNode.size = sceneSize
         backgroundNode.position = .zero
         backgroundNode.zPosition = 0
+
+        let textureName = season.backgroundImageName
+        if let image = UIImage(named: textureName) {
+            backgroundNode.texture = SKTexture(image: image)
+        } else {
+            let colors = season.gradientColors
+            backgroundNode.texture = makeGradientTexture(
+                size: sceneSize, topColor: colors.top, bottomColor: colors.bottom)
+        }
     }
 
     private func makeGradientTexture(size: CGSize, topColor: UIColor, bottomColor: UIColor)
