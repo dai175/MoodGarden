@@ -7,24 +7,20 @@ struct MoodSelectorView: View {
     @State private var showUndo = false
     @State private var lastRecordedMood: MoodType?
     @State private var undoUsedThisSession = false
-    @State private var pulseScale: CGFloat = 1.0
-
-    private let arcRadius: CGFloat = 100
-    private let arcStartAngle: Double = -90
-    private let arcEndAngle: Double = 90
+    @State private var handleOpacity: CGFloat = 0.6
 
     var body: some View {
-        ZStack {
+        VStack {
             if viewModel.hasTodayEntry {
                 if showUndo {
                     undoView
                         .transition(.opacity)
                 }
             } else if isExpanded {
-                arcView
+                expandedRow
                     .transition(.opacity)
             } else {
-                glowingDot
+                handleView
                     .transition(.opacity)
             }
         }
@@ -40,43 +36,25 @@ struct MoodSelectorView: View {
 
     // MARK: - Collapsed State
 
-    private var glowingDot: some View {
+    private var handleView: some View {
         Button {
             isExpanded = true
         } label: {
-            Circle()
-                .fill(DesignConstants.Colors.accent)
-                .frame(width: 12, height: 12)
-                .scaleEffect(pulseScale)
-                .opacity(0.8)
-                .frame(width: 44, height: 44)
-                .contentShape(Circle())
+            Capsule()
+                .fill(DesignConstants.Colors.accent.opacity(handleOpacity))
+                .frame(width: 48, height: 6)
+                .frame(width: 80, height: 44)
+                .contentShape(Capsule())
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Record mood")
-        .onAppear {
-            withAnimation(
-                .easeInOut(duration: 1.5).repeatForever(autoreverses: true)
-            ) {
-                pulseScale = 1.3
-            }
-        }
     }
 
-    // MARK: - Arc Layout
+    // MARK: - Expanded Row
 
-    private var arcView: some View {
-        ZStack {
-            // Dismiss area
-            Color.clear
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    isExpanded = false
-                }
-
-            // Arc of mood icons
-            ForEach(Array(MoodType.allCases.enumerated()), id: \.element) { index, mood in
-                let position = arcPosition(for: index, total: MoodType.allCases.count)
+    private var expandedRow: some View {
+        HStack(spacing: 16) {
+            ForEach(MoodType.allCases, id: \.self) { mood in
                 Button {
                     selectMood(mood)
                 } label: {
@@ -84,19 +62,24 @@ struct MoodSelectorView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(mood.rawValue)
-                .offset(x: position.x, y: position.y)
             }
         }
-        .frame(width: arcRadius * 2 + 60, height: arcRadius + 60)
-    }
-
-    private func arcPosition(for index: Int, total: Int) -> CGPoint {
-        let step = (arcEndAngle - arcStartAngle) / Double(total - 1)
-        let angleDegrees = arcStartAngle + step * Double(index)
-        let angleRadians = angleDegrees * .pi / 180
-        let x = cos(angleRadians) * arcRadius
-        let y = sin(angleRadians) * arcRadius
-        return CGPoint(x: x, y: y)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            Capsule()
+                .fill(DesignConstants.Colors.backgroundSecondary.opacity(0.6))
+        )
+        .overlay {
+            // Dismiss area behind the row
+            Color.clear
+                .contentShape(Rectangle())
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .onTapGesture {
+                    isExpanded = false
+                }
+                .allowsHitTesting(false)
+        }
     }
 
     // MARK: - Undo
