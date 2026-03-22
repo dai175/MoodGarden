@@ -17,8 +17,13 @@ struct MoodSelectorView: View {
                         .transition(.opacity)
                 }
             } else if isExpanded {
-                expandedRow
-                    .transition(.opacity)
+                ZStack {
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture { isExpanded = false }
+                    expandedRow
+                }
+                .transition(.opacity)
             } else {
                 handleView
                     .transition(.opacity)
@@ -70,16 +75,6 @@ struct MoodSelectorView: View {
             Capsule()
                 .fill(DesignConstants.Colors.backgroundSecondary.opacity(0.6))
         )
-        .overlay {
-            // Dismiss area behind the row
-            Color.clear
-                .contentShape(Rectangle())
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .onTapGesture {
-                    isExpanded = false
-                }
-                .allowsHitTesting(false)
-        }
     }
 
     // MARK: - Undo

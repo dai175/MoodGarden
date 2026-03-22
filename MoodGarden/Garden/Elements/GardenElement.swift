@@ -44,9 +44,7 @@ private final class SoftTextureCache: @unchecked Sendable {
             lock.unlock()
             return (cached, qSize)
         }
-        lock.unlock()
         let tex = generator(qSize)
-        lock.lock()
         cache[key] = tex
         lock.unlock()
         return (tex, qSize)

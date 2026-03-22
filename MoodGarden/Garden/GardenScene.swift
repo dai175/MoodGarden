@@ -18,6 +18,7 @@ final class GardenScene: SKScene {
     private var windState = WindState()
     private var currentState: AtmosphereState = .empty
     private var currentMonth = Calendar.current.component(.month, from: Date())
+    private var currentSeason: Season { Season.from(month: currentMonth) }
     private var lastOverlayMonth: Int?
 
     override init() {
@@ -72,10 +73,9 @@ final class GardenScene: SKScene {
     override func didChangeSize(_ oldSize: CGSize) {
         super.didChangeSize(oldSize)
         guard size.width > 0, size.height > 0 else { return }
-        let season = Season.from(month: currentMonth)
-        backgroundLayer.configure(season: season, sceneSize: size)
+        backgroundLayer.configure(season: currentSeason, sceneSize: size)
         rebuildElements()
-        seasonalLayer.configure(season: season, sceneSize: size)
+        seasonalLayer.configure(season: currentSeason, sceneSize: size)
         updateAtmosphereOverlay()
     }
 
@@ -85,9 +85,8 @@ final class GardenScene: SKScene {
         let monthChanged = currentMonth != month
         currentMonth = month
         if monthChanged { lastOverlayMonth = nil }
-        let season = Season.from(month: month)
-        backgroundLayer.configure(season: season, sceneSize: size)
-        seasonalLayer.configure(season: season, sceneSize: size)
+        backgroundLayer.configure(season: currentSeason, sceneSize: size)
+        seasonalLayer.configure(season: currentSeason, sceneSize: size)
         updateAtmosphereOverlay()
     }
 
@@ -116,8 +115,7 @@ final class GardenScene: SKScene {
 
             // Apply seasonal tint to non-ground elements (ground gets tinted via applyDepthEffect)
             if !spec.elementType.isGround {
-                let season = Season.from(month: currentMonth)
-                applyTintRecursive(to: node, color: season.tintColor, additionalBlend: 0)
+                applyTintRecursive(to: node, color: currentSeason.tintColor, additionalBlend: 0)
             }
 
             switch animation {
@@ -198,7 +196,6 @@ final class GardenScene: SKScene {
         guard size.width > 0, size.height > 0 else { return }
         guard lastOverlayMonth != currentMonth else { return }
         lastOverlayMonth = currentMonth
-        let season = Season.from(month: currentMonth)
         let rect = CGRect(
             x: -size.width / 2,
             y: -size.height / 2,
@@ -206,7 +203,7 @@ final class GardenScene: SKScene {
             height: size.height
         )
         atmosphereOverlay.path = CGPath(rect: rect, transform: nil)
-        atmosphereOverlay.fillColor = season.tintColor
+        atmosphereOverlay.fillColor = currentSeason.tintColor
         atmosphereOverlay.alpha = 1.0
     }
 
@@ -228,7 +225,7 @@ final class GardenScene: SKScene {
         let aerialBlend = (1.0 - depth) * 0.08  // max +0.08 for farthest elements
         applyTintRecursive(
             to: node,
-            color: Season.from(month: currentMonth).tintColor,
+            color: currentSeason.tintColor,
             additionalBlend: aerialBlend
         )
     }
@@ -236,8 +233,7 @@ final class GardenScene: SKScene {
     // MARK: - Seasonal Tinting
 
     private func applySeasonalTint(to layer: SKNode) {
-        let season = Season.from(month: currentMonth)
-        let tint = season.tintColor
+        let tint = currentSeason.tintColor
         for child in layer.children {
             applyTintRecursive(to: child, color: tint, additionalBlend: 0)
         }
