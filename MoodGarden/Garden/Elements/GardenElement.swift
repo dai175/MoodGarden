@@ -74,9 +74,10 @@ extension GardenElement {
     }
 
     /// Apply growth phase scale and alpha to a node.
-    func applyGrowthPhase(_ phase: GrowthPhase, to node: SKNode) {
+    /// Set `isImageSprite` to `true` for image-based sprites that don't need soft-edge alpha compensation.
+    func applyGrowthPhase(_ phase: GrowthPhase, to node: SKNode, isImageSprite: Bool = false) {
         node.setScale(phase.scale)
-        node.alpha *= phase.alpha * textureAlphaCompensation
+        node.alpha *= phase.alpha * (isImageSprite ? 1.0 : textureAlphaCompensation)
     }
 
     /// Scale animation durations by growth phase (mature elements animate slower).

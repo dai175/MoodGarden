@@ -7,7 +7,7 @@ struct MoodSelectorView: View {
     @State private var showUndo = false
     @State private var lastRecordedMood: MoodType?
     @State private var undoUsedThisSession = false
-    @State private var handleOpacity: CGFloat = 0.6
+    private let handleOpacity = 0.6
 
     var body: some View {
         VStack {

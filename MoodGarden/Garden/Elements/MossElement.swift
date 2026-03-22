@@ -12,7 +12,7 @@ struct MossElement: GardenElement {
         let widthFrac = nextFloat(random, min: 0.6, max: 0.9)
         let sprite = makeImageSprite(named: "elem_moss", sceneSize: sceneSize, widthFraction: widthFrac)
         sprite.alpha = nextFloat(random, min: 0.7, max: 0.95)
-        applyGrowthPhase(phase, to: sprite)
+        applyGrowthPhase(phase, to: sprite, isImageSprite: true)
 
         return sprite
     }

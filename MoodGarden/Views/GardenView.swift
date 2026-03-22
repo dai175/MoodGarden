@@ -77,7 +77,7 @@ struct GardenView: View {
 
     private var moodSelectorSection: some View {
         MoodSelectorView()
-            .frame(height: 60)
+            .frame(minHeight: 0)
     }
 
     private func updateScene() {
