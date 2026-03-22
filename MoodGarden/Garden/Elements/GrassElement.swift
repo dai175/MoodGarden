@@ -18,9 +18,6 @@ struct GrassElement: GardenElement {
         let sway = swayRotation(angle: 0.06, duration: 2.5 * speed)
         sprite.run(.repeatForever(sway))
 
-        let fadeDuration = nextFloat(random, min: 0.8, max: 1.2) * speed
-        sprite.run(.repeatForever(pulseAlpha(from: sprite.alpha, to: sprite.alpha * 0.8, duration: fadeDuration)))
-
         return sprite
     }
 }

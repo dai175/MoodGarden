@@ -43,14 +43,6 @@ struct RainbowElement: GardenElement {
             arc.fillColor = .clear
             arc.alpha = nextFloat(random, min: 0.25, max: 0.45)
 
-            // Gentle fade in/out cycle
-            let baseAlpha = arc.alpha
-            let fadeDuration = nextFloat(random, min: 2.5, max: 4.0) * speed
-            let arcPulse = pulseAlpha(
-                from: min(baseAlpha * 1.4, 0.7), to: baseAlpha * 0.4, duration: fadeDuration)
-            let phaseDelay = SKAction.wait(forDuration: Double(index) * 0.3)
-            arc.run(.sequence([phaseDelay, .repeatForever(arcPulse)]))
-
             container.addChild(arc)
         }
 
