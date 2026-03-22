@@ -59,13 +59,13 @@ enum PlacementRule {
                         x: slotMinX + slotWidth / 2,
                         y: yMin + yRange / 2
                     )
-                    // Try center and offset positions to avoid collision
+                    // Try center and offset positions to avoid collision, clamped to slot bounds
                     let offsets: [CGPoint] = [
                         center,
-                        CGPoint(x: center.x + minimumSpacing, y: center.y),
-                        CGPoint(x: center.x - minimumSpacing, y: center.y),
-                        CGPoint(x: center.x, y: center.y + minimumSpacing),
-                        CGPoint(x: center.x, y: center.y - minimumSpacing),
+                        CGPoint(x: min(center.x + minimumSpacing, slotBounds.maxX), y: center.y),
+                        CGPoint(x: max(center.x - minimumSpacing, slotBounds.minX), y: center.y),
+                        CGPoint(x: center.x, y: min(center.y + minimumSpacing, slotBounds.maxY)),
+                        CGPoint(x: center.x, y: max(center.y - minimumSpacing, slotBounds.minY)),
                     ]
                     let fallback =
                         offsets.first {

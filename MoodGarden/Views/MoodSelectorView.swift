@@ -64,6 +64,7 @@ struct MoodSelectorView: View {
                     selectMood(mood)
                 } label: {
                     MoodIcon(mood: mood)
+                        .frame(minWidth: 44, minHeight: 44)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(mood.rawValue)
