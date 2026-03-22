@@ -1,6 +1,12 @@
 import SpriteKit
 import UIKit
 
+enum ElementAnimation {
+    case none
+    case fadeIn
+    case delayedEntrance
+}
+
 final class GardenScene: SKScene {
     private let renderer = GardenRenderer()
     private let backgroundLayer = BackgroundLayer()
@@ -93,7 +99,7 @@ final class GardenScene: SKScene {
         backgroundLayer.applyHueShift(state.hueShift)
     }
 
-    func addElements(from specs: [ElementSpec], animated: Bool) {
+    func addElements(from specs: [ElementSpec], animation: ElementAnimation) {
         guard size.width > 0, size.height > 0 else { return }
 
         // Merge new specs into currentState so rebuildElements() preserves them
@@ -114,7 +120,11 @@ final class GardenScene: SKScene {
                 applyTintRecursive(to: node, color: season.tintColor, additionalBlend: 0)
             }
 
-            if animated {
+            switch animation {
+            case .none:
+                targetLayer.addChild(node)
+
+            case .fadeIn:
                 let targetAlpha = node.alpha
                 let targetScale = node.xScale
                 node.alpha = 0
@@ -125,12 +135,24 @@ final class GardenScene: SKScene {
                 fadeIn.timingMode = .easeOut
                 scaleUp.timingMode = .easeOut
                 node.run(.group([fadeIn, scaleUp]))
-            } else {
+
+            case .delayedEntrance:
+                let targetAlpha = node.alpha
+                let targetScale = node.xScale
+                let seedScale = GrowthPhase.seed.scale * targetScale
+                node.alpha = 0
+                node.setScale(seedScale)
                 targetLayer.addChild(node)
+                let delay = SKAction.wait(forDuration: 0.5)
+                let fadeIn = SKAction.fadeAlpha(to: targetAlpha, duration: 0.8)
+                let grow = SKAction.scale(to: targetScale, duration: 0.8)
+                fadeIn.timingMode = .easeOut
+                grow.timingMode = .easeOut
+                node.run(.sequence([delay, .group([fadeIn, grow])]))
             }
         }
 
-        if animated {
+        if animation == .fadeIn {
             addFogTransition()
         }
     }
@@ -139,7 +161,8 @@ final class GardenScene: SKScene {
         TransitionDirector.runTransition(
             on: self, mood: mood, totalRecords: totalRecords
         ) { [weak self] in
-            self?.addElements(from: newSpecs, animated: false)
+            self?.addElements(from: newSpecs, animation: .delayedEntrance)
+            self?.scheduleSettleAnimation()
         }
     }
 
@@ -272,6 +295,24 @@ final class GardenScene: SKScene {
                 node.position.x += cos(direction) * strength * 0.15
             }
         }
+    }
+
+    private func scheduleSettleAnimation() {
+        let delay = SKAction.wait(forDuration: 1.5)
+        let settle = SKAction.run { [weak self] in
+            guard let self else { return }
+            for layer in [self.groundElementsLayer, self.aerialElementsLayer] {
+                for node in layer.children {
+                    let current = node.xScale
+                    let squish = SKAction.scale(to: current * 0.97, duration: 0.3)
+                    let restore = SKAction.scale(to: current, duration: 0.3)
+                    squish.timingMode = .easeInEaseOut
+                    restore.timingMode = .easeInEaseOut
+                    node.run(.sequence([squish, restore]))
+                }
+            }
+        }
+        run(.sequence([delay, settle]))
     }
 
     private func addFogTransition() {
