@@ -40,6 +40,47 @@ struct PlacementRuleTests {
         #expect(a == b)
     }
 
+    @Test func positionsRespectZoneBoundsStrictly() {
+        let zones: [PlacementZone] = [.hilltop, .waterside, .sky]
+        let specs = zones.enumerated().map { index, zone in
+            ElementSpec(
+                entryID: UUID(), elementType: .flower, seed: index * 7,
+                phase: .bloom, zone: zone, estimatedNodes: 2
+            )
+        }
+        let positions = PlacementRule.computePositions(for: specs, sceneSize: sceneSize)
+        #expect(positions.count == specs.count)
+
+        for (index, zone) in zones.enumerated() {
+            let bounds = zone.absoluteBounds(sceneSize: sceneSize)
+            let pos = positions[index]
+            #expect(
+                bounds.contains(pos),
+                "Position \(pos) outside \(zone) bounds \(bounds)"
+            )
+        }
+    }
+
+    @Test func elementsSpreadHorizontally() {
+        // Place 5 elements in the same zone — their X positions should spread
+        // across at least 40% of the zone width.
+        let zone = PlacementZone.hilltop
+        let specs = (0..<5).map { i in
+            ElementSpec(
+                entryID: UUID(), elementType: .grass, seed: i + 100,
+                phase: .bloom, zone: zone, estimatedNodes: 2
+            )
+        }
+        let positions = PlacementRule.computePositions(for: specs, sceneSize: sceneSize)
+        let xs = positions.map(\.x)
+        let spread = (xs.max() ?? 0) - (xs.min() ?? 0)
+        let zoneBounds = zone.absoluteBounds(sceneSize: sceneSize)
+        #expect(
+            spread >= zoneBounds.width * 0.4,
+            "Horizontal spread \(spread) is less than 40% of zone width \(zoneBounds.width)"
+        )
+    }
+
     @Test func minimumSpacingRespected() {
         let specs = (0..<8).map { i in
             ElementSpec(
