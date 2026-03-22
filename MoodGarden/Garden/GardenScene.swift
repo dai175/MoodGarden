@@ -16,6 +16,7 @@ final class GardenScene: SKScene {
     private let atmosphereOverlay = SKShapeNode()
 
     private var windState = WindState()
+    private var lastUpdateTime: TimeInterval = 0
     private var currentState: AtmosphereState = .empty
     private var currentMonth = Calendar.current.component(.month, from: Date())
     private var currentSeason: Season { Season.from(month: currentMonth) }
@@ -66,8 +67,10 @@ final class GardenScene: SKScene {
 
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
+        let deltaTime = lastUpdateTime > 0 ? currentTime - lastUpdateTime : 1.0 / 60.0
+        lastUpdateTime = currentTime
         windState.update(currentTime: currentTime)
-        applyWind()
+        applyWind(deltaTime: deltaTime)
     }
 
     override func didChangeSize(_ oldSize: CGSize) {
@@ -188,7 +191,8 @@ final class GardenScene: SKScene {
             }
         }
 
-        applySeasonalTint(to: groundElementsLayer)
+        // Ground elements get tinted via applyDepthEffect (with aerial perspective blend).
+        // Only apply seasonal tint to aerial elements here.
         applySeasonalTint(to: aerialElementsLayer)
     }
 
@@ -258,9 +262,10 @@ final class GardenScene: SKScene {
 
     // MARK: - Wind
 
-    private func applyWind() {
+    private func applyWind(deltaTime: TimeInterval) {
         let strength = windState.strength
         let direction = windState.direction
+        let dt = CGFloat(deltaTime * 60)  // normalize to 60fps
 
         for node in groundElementsLayer.children {
             guard let name = node.name else { continue }
@@ -273,9 +278,9 @@ final class GardenScene: SKScene {
                 let targetRotation =
                     direction * strength * 0.15
                     + sin(phaseOffset) * 0.02
-                node.zRotation += (targetRotation - node.zRotation) * 0.05
+                node.zRotation += (targetRotation - node.zRotation) * 0.05 * dt
             } else if name.hasPrefix("element_fallenLeaf_") {
-                node.position.x += cos(direction) * strength * 0.2
+                node.position.x += direction * strength * 0.2 * dt
             }
         }
 
@@ -283,12 +288,12 @@ final class GardenScene: SKScene {
             guard let name = node.name else { continue }
 
             if name.hasPrefix("element_fog_") || name.hasPrefix("element_wind_") {
-                node.position.x += cos(direction) * strength * 0.3
+                node.position.x += direction * strength * 0.3 * dt
             } else if name.hasPrefix("element_raindrop_") {
                 let targetRotation = direction * strength * 0.1
-                node.zRotation += (targetRotation - node.zRotation) * 0.08
+                node.zRotation += (targetRotation - node.zRotation) * 0.08 * dt
             } else if name.hasPrefix("element_butterfly_") {
-                node.position.x += cos(direction) * strength * 0.15
+                node.position.x += direction * strength * 0.15 * dt
             }
         }
     }

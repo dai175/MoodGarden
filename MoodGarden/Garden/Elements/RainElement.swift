@@ -14,15 +14,14 @@ struct RainElement: GardenElement {
         let widthFrac = nextFloat(random, min: 0.5, max: 0.8)
         let sprite = makeImageSprite(named: "elem_raindrop", sceneSize: sceneSize, widthFraction: widthFrac)
         sprite.alpha = nextFloat(random, min: 0.6, max: 0.85)
-        applyGrowthPhase(phase, to: sprite)
+        applyGrowthPhase(phase, to: sprite, isImageSprite: true)
 
         let fallDistance = cellSize.height * 0.3
         let duration = nextFloat(random, min: 1.0, max: 1.5) * speed
-        let startY = sprite.position.y
         let fall = SKAction.sequence([
             SKAction.moveBy(x: 0, y: -fallDistance, duration: duration),
             SKAction.fadeOut(withDuration: 0.3 * speed),
-            SKAction.move(to: CGPoint(x: 0, y: startY), duration: 0),
+            SKAction.moveBy(x: 0, y: fallDistance, duration: 0),
             SKAction.fadeAlpha(to: sprite.alpha, duration: 0.5 * speed),
         ])
         sprite.run(.repeatForever(fall))

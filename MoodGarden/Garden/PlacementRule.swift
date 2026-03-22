@@ -53,12 +53,24 @@ enum PlacementRule {
                     }
                 }
 
-                // Fallback: slot center
+                // Fallback: slot center with spacing check
                 if !placed {
-                    let fallback = CGPoint(
+                    let center = CGPoint(
                         x: slotMinX + slotWidth / 2,
                         y: yMin + yRange / 2
                     )
+                    // Try center and offset positions to avoid collision
+                    let offsets: [CGPoint] = [
+                        center,
+                        CGPoint(x: center.x + minimumSpacing, y: center.y),
+                        CGPoint(x: center.x - minimumSpacing, y: center.y),
+                        CGPoint(x: center.x, y: center.y + minimumSpacing),
+                        CGPoint(x: center.x, y: center.y - minimumSpacing),
+                    ]
+                    let fallback =
+                        offsets.first {
+                            !grid.hasNeighbor(near: $0, distance: minimumSpacing)
+                        } ?? center  // last resort: place anyway
                     grid.insert(fallback)
                     positions[entry.index] = fallback
                 }

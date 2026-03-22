@@ -118,9 +118,11 @@ struct AtmosphereEngineTests {
     @Test func seasonAffectsElementSelection() throws {
         let container = try TestHelpers.makeModelContainer()
         let context = container.mainContext
-        // Use many entries with varied seeds to amplify seasonal probability differences
-        let entries = (0..<20).map { i in
-            makeEntry(mood: .happy, daysAgo: i, seed: i * 7 + 3, in: context)
+        // Mix happy + energetic moods to maximize spring-favored elements (flower, butterfly, grass)
+        // Energetic has grass as base (spring-favored), happy has flower as base
+        let moods: [MoodType] = [.happy, .energetic]
+        let entries = (0..<30).map { i in
+            makeEntry(mood: moods[i % 2], daysAgo: i, seed: i * 7 + 3, in: context)
         }
         let springState = AtmosphereEngine.analyze(
             entries: entries, season: .spring, referenceDate: fixedDate
@@ -128,11 +130,10 @@ struct AtmosphereEngineTests {
         let winterState = AtmosphereEngine.analyze(
             entries: entries, season: .winter, referenceDate: fixedDate
         )
-        // Spring bonus favors flower/butterfly/grass for happy mood's supplementary pool
-        // Count spring-favored elements in each result
+        // Spring bonus favors flower/butterfly/grass in supplementary selection
         let springFavored: Set<ElementType> = [.flower, .butterfly, .grass]
         let springCount = springState.elementManifest.filter { springFavored.contains($0.elementType) }.count
         let winterCount = winterState.elementManifest.filter { springFavored.contains($0.elementType) }.count
-        #expect(springCount >= winterCount, "Spring should produce at least as many spring-favored elements as winter")
+        #expect(springCount > winterCount, "Spring should produce more spring-favored elements than winter")
     }
 }

@@ -12,8 +12,9 @@ struct GrassElement: GardenElement {
 
         let widthFrac = nextFloat(random, min: 0.6, max: 0.9)
         let sprite = makeImageSprite(named: "elem_grass", sceneSize: sceneSize, widthFraction: widthFrac)
+        sprite.anchorPoint = CGPoint(x: 0.5, y: 0.0)
         sprite.alpha = nextFloat(random, min: 0.7, max: 0.9)
-        applyGrowthPhase(phase, to: sprite)
+        applyGrowthPhase(phase, to: sprite, isImageSprite: true)
 
         let sway = swayRotation(angle: 0.06, duration: 2.5 * speed)
         sprite.run(.repeatForever(sway))
