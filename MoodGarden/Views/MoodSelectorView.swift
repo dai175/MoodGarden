@@ -5,23 +5,21 @@ struct MoodSelectorView: View {
     @Environment(AppState.self) private var appState
     @Binding var isExpanded: Bool
     @State private var showUndo = false
-    @State private var lastRecordedMood: MoodType?
     @State private var undoUsedThisSession = false
     private let handleOpacity = 0.6
 
     var body: some View {
         ZStack {
-            handleView
-                .opacity(!viewModel.hasTodayEntry && !isExpanded ? 1 : 0)
-                .allowsHitTesting(!viewModel.hasTodayEntry && !isExpanded)
-
-            expandedRow
-                .opacity(!viewModel.hasTodayEntry && isExpanded ? 1 : 0)
-                .allowsHitTesting(!viewModel.hasTodayEntry && isExpanded)
-
-            undoView
-                .opacity(viewModel.hasTodayEntry && showUndo ? 1 : 0)
-                .allowsHitTesting(viewModel.hasTodayEntry && showUndo)
+            if !viewModel.hasTodayEntry && !isExpanded {
+                handleView
+                    .transition(.opacity)
+            } else if !viewModel.hasTodayEntry && isExpanded {
+                expandedRow
+                    .transition(.opacity)
+            } else if viewModel.hasTodayEntry && showUndo {
+                undoView
+                    .transition(.opacity)
+            }
         }
         .animation(DesignConstants.Animation.standard, value: isExpanded)
         .animation(DesignConstants.Animation.standard, value: showUndo)
@@ -98,7 +96,6 @@ struct MoodSelectorView: View {
     private func selectMood(_ mood: MoodType) {
         viewModel.recordMood(mood)
         appState.totalRecordCount += 1
-        lastRecordedMood = mood
         isExpanded = false
 
         if !undoUsedThisSession {
@@ -111,6 +108,5 @@ struct MoodSelectorView: View {
         appState.totalRecordCount = max(0, appState.totalRecordCount - 1)
         undoUsedThisSession = true
         showUndo = false
-        lastRecordedMood = nil
     }
 }
