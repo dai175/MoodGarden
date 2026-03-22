@@ -8,31 +8,60 @@ enum PlacementRule {
 
     static func computePositions(for specs: [ElementSpec], sceneSize: CGSize) -> [CGPoint] {
         var grid = SpatialGrid(cellSize: minimumSpacing)
-        var positions: [CGPoint] = []
-        positions.reserveCapacity(specs.count)
+        var positions = Array(repeating: CGPoint.zero, count: specs.count)
 
-        for spec in specs {
-            let random = GKMersenneTwisterRandomSource(seed: UInt64(bitPattern: Int64(spec.seed)))
-            let bounds = spec.zone.absoluteBounds(sceneSize: sceneSize)
-            var placed = false
+        // Group specs by zone, preserving original indices
+        var zoneGroups: [PlacementZone: [(index: Int, spec: ElementSpec)]] = [:]
+        for (index, spec) in specs.enumerated() {
+            zoneGroups[spec.zone, default: []].append((index, spec))
+        }
 
-            // Try up to 20 times to find a non-overlapping position
-            for _ in 0..<20 {
-                let candidate = randomPoint(in: bounds, using: random)
+        for (zone, group) in zoneGroups {
+            let bounds = zone.absoluteBounds(sceneSize: sceneSize)
+            let count = group.count
 
-                if !grid.hasNeighbor(near: candidate, distance: minimumSpacing) {
-                    grid.insert(candidate)
-                    positions.append(candidate)
-                    placed = true
-                    break
+            // Horizontal slot width for even distribution
+            let slotWidth = count > 0 ? bounds.width / CGFloat(count) : bounds.width
+
+            // Y margin: use central 60% of zone height (20% margin top/bottom)
+            let yMargin = bounds.height * 0.2
+            let yMin = bounds.origin.y + yMargin
+            let yRange = bounds.height - yMargin * 2
+
+            for (slotIndex, entry) in group.enumerated() {
+                let spec = entry.spec
+                let random = GKMersenneTwisterRandomSource(
+                    seed: UInt64(bitPattern: Int64(spec.seed))
+                )
+
+                let slotMinX = bounds.origin.x + CGFloat(slotIndex) * slotWidth
+                let slotBounds = CGRect(
+                    x: slotMinX,
+                    y: yMin,
+                    width: slotWidth,
+                    height: max(yRange, 1)
+                )
+
+                var placed = false
+                for _ in 0..<20 {
+                    let candidate = randomPoint(in: slotBounds, using: random)
+                    if !grid.hasNeighbor(near: candidate, distance: minimumSpacing) {
+                        grid.insert(candidate)
+                        positions[entry.index] = candidate
+                        placed = true
+                        break
+                    }
                 }
-            }
 
-            // Fallback: place anyway if zone is crowded
-            if !placed {
-                let fallback = randomPoint(in: bounds, using: random)
-                grid.insert(fallback)
-                positions.append(fallback)
+                // Fallback: slot center
+                if !placed {
+                    let fallback = CGPoint(
+                        x: slotMinX + slotWidth / 2,
+                        y: yMin + yRange / 2
+                    )
+                    grid.insert(fallback)
+                    positions[entry.index] = fallback
+                }
             }
         }
 
