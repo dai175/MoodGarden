@@ -108,6 +108,12 @@ final class GardenScene: SKScene {
             applyDepthEffect(to: node, spec: spec)
             let targetLayer = spec.elementType.isGround ? groundElementsLayer : aerialElementsLayer
 
+            // Apply seasonal tint to non-ground elements (ground gets tinted via applyDepthEffect)
+            if !spec.elementType.isGround {
+                let season = Season.from(month: currentMonth)
+                applyTintRecursive(to: node, color: season.tintColor, additionalBlend: 0)
+            }
+
             if animated {
                 let targetAlpha = node.alpha
                 let targetScale = node.xScale
@@ -160,6 +166,9 @@ final class GardenScene: SKScene {
                 aerialElementsLayer.addChild(node)
             }
         }
+
+        applySeasonalTint(to: groundElementsLayer)
+        applySeasonalTint(to: aerialElementsLayer)
     }
 
     private func updateAtmosphereOverlay() {
@@ -190,6 +199,42 @@ final class GardenScene: SKScene {
         node.yScale *= depthScale
         node.alpha *= depthAlpha
         node.zPosition += depthZ
+
+        // Aerial perspective: distant elements get additional color blend
+        let depth = DepthScale.depthFactor(y: node.position.y, sceneHeight: size.height)
+        let aerialBlend = (1.0 - depth) * 0.08  // max +0.08 for farthest elements
+        applyTintRecursive(
+            to: node,
+            color: Season.from(month: currentMonth).tintColor,
+            additionalBlend: aerialBlend
+        )
+    }
+
+    // MARK: - Seasonal Tinting
+
+    private func applySeasonalTint(to layer: SKNode) {
+        let season = Season.from(month: currentMonth)
+        let tint = season.tintColor
+        for child in layer.children {
+            applyTintRecursive(to: child, color: tint, additionalBlend: 0)
+        }
+    }
+
+    private func applyTintRecursive(
+        to node: SKNode, color: UIColor, additionalBlend: CGFloat
+    ) {
+        if let sprite = node as? SKSpriteNode {
+            // Use tintColor RGB at full alpha; colorBlendFactor controls blend amount
+            var r: CGFloat = 0
+            var g: CGFloat = 0
+            var b: CGFloat = 0
+            color.getRed(&r, green: &g, blue: &b, alpha: nil)
+            sprite.color = UIColor(red: r, green: g, blue: b, alpha: 1.0)
+            sprite.colorBlendFactor = 0.15 + additionalBlend
+        }
+        for child in node.children {
+            applyTintRecursive(to: child, color: color, additionalBlend: additionalBlend)
+        }
     }
 
     // MARK: - Wind
