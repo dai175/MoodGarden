@@ -9,6 +9,7 @@ final class GardenScene: SKScene {
     private let seasonalLayer = SeasonalLayer()
     private let atmosphereOverlay = SKShapeNode()
 
+    private var windState = WindState()
     private var currentState: AtmosphereState = .empty
     private var currentMonth = Calendar.current.component(.month, from: Date())
     private var lastOverlayMonth: Int?
@@ -54,6 +55,12 @@ final class GardenScene: SKScene {
         super.didMove(to: view)
         isPaused = false
         view.isPaused = false
+    }
+
+    override func update(_ currentTime: TimeInterval) {
+        super.update(currentTime)
+        windState.update(currentTime: currentTime)
+        applyWind()
     }
 
     override func didChangeSize(_ oldSize: CGSize) {
@@ -183,6 +190,43 @@ final class GardenScene: SKScene {
         node.yScale *= depthScale
         node.alpha *= depthAlpha
         node.zPosition += depthZ
+    }
+
+    // MARK: - Wind
+
+    private func applyWind() {
+        let strength = windState.strength
+        let direction = windState.direction
+
+        for node in groundElementsLayer.children {
+            guard let name = node.name else { continue }
+
+            if name.hasPrefix("element_flower_")
+                || name.hasPrefix("element_grass_")
+                || name.hasPrefix("element_vine_")
+            {
+                let phaseOffset = (node.position.x + node.position.y) * 0.01
+                let targetRotation =
+                    direction * strength * 0.15
+                    + sin(phaseOffset) * 0.02
+                node.zRotation += (targetRotation - node.zRotation) * 0.05
+            } else if name.hasPrefix("element_fallenLeaf_") {
+                node.position.x += cos(direction) * strength * 0.2
+            }
+        }
+
+        for node in aerialElementsLayer.children {
+            guard let name = node.name else { continue }
+
+            if name.hasPrefix("element_fog_") || name.hasPrefix("element_wind_") {
+                node.position.x += cos(direction) * strength * 0.3
+            } else if name.hasPrefix("element_raindrop_") {
+                let targetRotation = direction * strength * 0.1
+                node.zRotation += (targetRotation - node.zRotation) * 0.08
+            } else if name.hasPrefix("element_butterfly_") {
+                node.position.x += cos(direction) * strength * 0.15
+            }
+        }
     }
 
     private func addFogTransition() {
