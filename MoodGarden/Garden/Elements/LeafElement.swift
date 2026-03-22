@@ -24,9 +24,6 @@ struct LeafElement: GardenElement {
         let swayDuration = nextFloat(random, min: 1.2, max: 1.8) * speed
         sprite.run(.repeatForever(driftAction(dx: swayAmount, dy: 0, duration: swayDuration)))
 
-        let fadeDuration = nextFloat(random, min: 1.0, max: 1.5) * speed
-        sprite.run(.repeatForever(pulseAlpha(from: sprite.alpha, to: sprite.alpha * 0.7, duration: fadeDuration)))
-
         return sprite
     }
 }

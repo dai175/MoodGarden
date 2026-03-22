@@ -35,14 +35,6 @@ struct SunrayElement: GardenElement {
                 y: nextFloat(random, min: -0.05, max: 0.05) * cellSize.height
             )
 
-            // Alpha pulse
-            let baseAlpha = ray.alpha
-            let pulseDuration = nextFloat(random, min: 1.5, max: 2.5) * speed
-            let rayPulse = pulseAlpha(
-                from: min(baseAlpha * 1.6, 0.7), to: baseAlpha * 0.5, duration: pulseDuration)
-            let phaseDelay = SKAction.wait(forDuration: Double(index) * 0.5)
-            ray.run(.sequence([phaseDelay, .repeatForever(rayPulse)]))
-
             // Gentle rotation
             let rotAmount = nextFloat(random, min: 0.03, max: 0.08)
             let rotDuration = nextFloat(random, min: 3.0, max: 5.0) * speed

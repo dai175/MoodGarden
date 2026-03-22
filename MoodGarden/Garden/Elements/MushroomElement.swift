@@ -9,7 +9,6 @@ struct MushroomElement: GardenElement {
     func createNode(seed: Int, phase: GrowthPhase, sceneSize: CGSize) -> SKNode {
         let random = makeRandom(seed: seed)
         let cellSize = refSize(from: sceneSize)
-        let speed = animationSpeed(for: phase)
         let container = SKNode()
 
         // Stem — small rectangle (kept as SKShapeNode, small element)
@@ -38,14 +37,6 @@ struct MushroomElement: GardenElement {
 
         applyGrowthPhase(phase, to: container)
 
-        // Subtle scale pulse — breathing effect (relative to growth phase scale)
-        let baseScale = phase.scale
-        let pulseDuration = nextFloat(random, min: 2.0, max: 3.5) * speed
-        let pulseUp = SKAction.scale(to: baseScale * 1.04, duration: pulseDuration)
-        let pulseDown = SKAction.scale(to: baseScale * 0.97, duration: pulseDuration)
-        pulseUp.timingMode = .easeInEaseOut
-        pulseDown.timingMode = .easeInEaseOut
-        container.run(.repeatForever(.sequence([pulseUp, pulseDown])))
         return container
     }
 }
