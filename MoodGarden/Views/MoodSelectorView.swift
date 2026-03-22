@@ -3,31 +3,25 @@ import SwiftUI
 struct MoodSelectorView: View {
     @Environment(GardenViewModel.self) private var viewModel
     @Environment(AppState.self) private var appState
-    @State private var isExpanded = false
+    @Binding var isExpanded: Bool
     @State private var showUndo = false
     @State private var lastRecordedMood: MoodType?
     @State private var undoUsedThisSession = false
     private let handleOpacity = 0.6
 
     var body: some View {
-        VStack {
-            if viewModel.hasTodayEntry {
-                if showUndo {
-                    undoView
-                        .transition(.opacity)
-                }
-            } else if isExpanded {
-                ZStack {
-                    Color.clear
-                        .contentShape(Rectangle())
-                        .onTapGesture { isExpanded = false }
-                    expandedRow
-                }
-                .transition(.opacity)
-            } else {
-                handleView
-                    .transition(.opacity)
-            }
+        ZStack {
+            handleView
+                .opacity(!viewModel.hasTodayEntry && !isExpanded ? 1 : 0)
+                .allowsHitTesting(!viewModel.hasTodayEntry && !isExpanded)
+
+            expandedRow
+                .opacity(!viewModel.hasTodayEntry && isExpanded ? 1 : 0)
+                .allowsHitTesting(!viewModel.hasTodayEntry && isExpanded)
+
+            undoView
+                .opacity(viewModel.hasTodayEntry && showUndo ? 1 : 0)
+                .allowsHitTesting(viewModel.hasTodayEntry && showUndo)
         }
         .animation(DesignConstants.Animation.standard, value: isExpanded)
         .animation(DesignConstants.Animation.standard, value: showUndo)

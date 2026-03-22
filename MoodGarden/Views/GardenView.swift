@@ -8,41 +8,49 @@ struct GardenView: View {
     @Binding var showSettings: Bool
 
     @State private var gardenScene = GardenScene()
+    @State private var isMoodSelectorExpanded = false
 
     private var currentSeason: Season {
         Season.from(month: Calendar.current.component(.month, from: Date()))
     }
 
     var body: some View {
-        ZStack {
-            gardenSpriteView
-                .ignoresSafeArea()
-
-            VStack {
-                monthHeaderView
-                Spacer()
-                moodSelectorSection
+        gardenSpriteView
+            .ignoresSafeArea()
+            .overlay {
+                if isMoodSelectorExpanded {
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture { isMoodSelectorExpanded = false }
+                        .ignoresSafeArea()
+                }
             }
-            .padding()
-        }
-        .onAppear {
-            updateScene()
-        }
-        .onChange(of: viewModel.currentMonthEntries.count) { oldCount, newCount in
-            if newCount == oldCount + 1, let last = viewModel.currentMonthEntries.last {
-                let newState = AtmosphereEngine.analyze(
-                    entries: viewModel.currentMonthEntries, season: currentSeason
-                )
-                let newSpecs = newState.elementManifest.filter { $0.entryID == last.id }
-                gardenScene.performTransition(
-                    mood: last.mood,
-                    totalRecords: appState.totalRecordCount,
-                    newSpecs: newSpecs
-                )
-            } else {
+            .overlay {
+                VStack {
+                    monthHeaderView
+                    Spacer()
+                    moodSelectorSection
+                }
+                .padding()
+            }
+            .onAppear {
                 updateScene()
             }
-        }
+            .onChange(of: viewModel.currentMonthEntries.count) { oldCount, newCount in
+                if newCount == oldCount + 1, let last = viewModel.currentMonthEntries.last {
+                    let newState = AtmosphereEngine.analyze(
+                        entries: viewModel.currentMonthEntries, season: currentSeason
+                    )
+                    let newSpecs = newState.elementManifest.filter { $0.entryID == last.id }
+                    gardenScene.performTransition(
+                        mood: last.mood,
+                        totalRecords: appState.totalRecordCount,
+                        newSpecs: newSpecs
+                    )
+                } else {
+                    updateScene()
+                }
+            }
     }
 
     private var monthHeaderView: some View {
@@ -76,7 +84,7 @@ struct GardenView: View {
     }
 
     private var moodSelectorSection: some View {
-        MoodSelectorView()
+        MoodSelectorView(isExpanded: $isMoodSelectorExpanded)
             .frame(minHeight: 0)
     }
 
